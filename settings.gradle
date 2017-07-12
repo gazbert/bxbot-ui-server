@@ -1,0 +1,17 @@
+rootProject.name = 'bxbot-ui-server-parent'
+
+include ':bxbot-ui-server-domain-objects'
+include ':bxbot-ui-server-xml-datastore'
+include ':bxbot-ui-server-repository'
+include ':bxbot-ui-server-core'
+include ':bxbot-ui-server-services'
+include ':bxbot-ui-server-rest-api'
+include ':bxbot-ui-server-app'
+
+project(':bxbot-ui-server-domain-objects').projectDir = "$rootDir/bxbot-ui-server-domain-objects" as File
+project(':bxbot-ui-server-xml-datastore').projectDir = "$rootDir/bxbot-ui-server-xml-datastore" as File
+project(':bxbot-ui-server-repository').projectDir = "$rootDir/bxbot-ui-server-repository" as File
+project(':bxbot-ui-server-core').projectDir = "$rootDir/bxbot-ui-server-core" as File
+project(':bxbot-ui-server-services').projectDir = "$rootDir/bxbot-ui-server-services" as File
+project(':bxbot-ui-server-rest-api').projectDir = "$rootDir/bxbot-ui-server-rest-api" as File
+project(':bxbot-ui-server-app').projectDir = "$rootDir/bxbot-ui-server-app" as File

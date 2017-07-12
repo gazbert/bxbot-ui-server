@@ -1,0 +1,14 @@
+description = 'BX-bot UI Server App'
+
+apply plugin: 'org.springframework.boot'
+bootRepackage {
+    mainClass = 'com.gazbert.bxbot.ui.server.BXBotUIServer'
+}
+
+dependencies {
+    compile project(':bxbot-ui-server-domain-objects')
+    compile project(':bxbot-ui-server-xml-datastore')
+    compile project(':bxbot-ui-server-repository')
+    compile project(':bxbot-ui-server-core')
+    compile project(':bxbot-ui-server-rest-api')
+}

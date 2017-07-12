@@ -1,0 +1,35 @@
+# Java stuff
+*.class
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs; hopefully not many of these ;-)
+hs_err_pid*
+
+# Eclipse
+.classpath
+.project
+.settings
+
+# IntelliJ
+*.iml
+/.idea
+/out
+
+# Build and log dirs
+**/bin
+**/target
+**/dist
+**/build
+**/libs
+**/logs
+*.log
+*.log.gz
+
+# Allow maven and gradle wrapper jars - we need these for TravisCI
+!.mvn/wrapper/maven-wrapper.jar
+!/gradle/wrapper/gradle-wrapper.jar
+
+# bot pid when running locally
+.bxbot.pid
