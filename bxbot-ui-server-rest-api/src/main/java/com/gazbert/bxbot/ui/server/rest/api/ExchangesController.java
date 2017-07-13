@@ -26,9 +26,10 @@ package com.gazbert.bxbot.ui.server.rest.api;
 import com.gazbert.bxbot.ui.server.domain.exchange.BaseResponse;
 import com.gazbert.bxbot.ui.server.domain.exchange.Exchange;
 //import com.gazbert.bxbot.domain.exchange.Exchanges;
-import com.gazbert.bxbot.ui.server.rest.security.User;
+
 //import com.gazbert.bxbot.domain.exchange.ExchangeConfig;
 //import com.gazbert.bxbot.services.ExchangeConfigService;
+import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

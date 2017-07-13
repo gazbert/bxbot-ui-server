@@ -1,15 +1,11 @@
--- noinspection SqlNoDataSourceInspectionForFile
--- noinspection SqlDialectInspectionForFile
+INSERT INTO USER (ID, USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ENABLED, LASTPASSWORDRESETDATE) VALUES (1, 'admin', '$2a$08$lDnHPz7eUkSi6ao14Twuau08mzhWrL4kyZGGU5xfiGALO/Vxd5DOi', 'admin', 'admin', 'admin@admin.com', 1, PARSEDATETIME('01-01-2016', 'dd-MM-yyyy'));
+INSERT INTO USER (ID, USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ENABLED, LASTPASSWORDRESETDATE) VALUES (2, 'user', '$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC', 'user', 'user', 'enabled@user.com', 1, PARSEDATETIME('01-01-2016','dd-MM-yyyy'));
+INSERT INTO USER (ID, USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ENABLED, LASTPASSWORDRESETDATE) VALUES (3, 'disabled', '$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC', 'user', 'user', 'disabled@user.com', 0, PARSEDATETIME('01-01-2016','dd-MM-yyyy'));
 
--------------------------------------------------------------------------------
--- TODO Work in progress... not safe for production!
--------------------------------------------------------------------------------
-insert into user(id, name, login_id, password) values (1,'BX-bot UI','bxbot-ui','bxbot-ui');
-insert into user(id, name, login_id, password) values (2,'Another User','anotheruser','password');
+INSERT INTO ROLE (ID, NAME) VALUES (1, 'ROLE_USER');
+INSERT INTO ROLE (ID, NAME) VALUES (2, 'ROLE_ADMIN');
 
-insert into role(id, name) values (1,'ROLE_USER');
-insert into role(id, name) values (2,'ROLE_ADMIN');
-
-insert into user_role(user_id, role_id) values (1,1);
-insert into user_role(user_id, role_id) values (1,2);
-insert into user_role(user_id, role_id) values (2,1);
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 1);
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 2);
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 1);
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES (3, 1);

@@ -23,8 +23,8 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.rest.security.User;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
+import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

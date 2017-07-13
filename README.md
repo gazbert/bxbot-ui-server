@@ -7,3 +7,9 @@ A Spring Boot backend for use with [BX-bot UI](https://github.com/gazbert/bxbot-
 It forwards configuration updates and commands from BX-bot UI to [BX-bots](https://github.com/gazbert/bxbot.git) running in the cloud. 
 
 Coming soon...
+
+#Credits
+This app was made possible thanks to the following awesomeness:
+
+* An excellent [sample app](https://github.com/szerhusenBC/jwt-spring-security-demo)
+  demonstrating JWT Authentication with Spring Boot by Stephan Zerhusen.       

@@ -21,16 +21,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.security;
+package com.gazbert.bxbot.ui.server.rest.security.config;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 /**
- * Repository for Users.
+ * CORS config for the app's REST API.
  *
  * @author gazbert
  */
-public interface UserRepository extends CrudRepository<User, Long> {
+@Configuration
+public class RestCorsConfig {
+    @Bean
+    public CorsFilter corsFilter() {
 
-    User findByLoginId(String loginId);
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+
+        // TODO - Lock down to specific host in Prod
+        config.addAllowedOrigin("*");
+        //config.addAllowedOrigin("http://localhost:3000");
+
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 }

@@ -4,6 +4,9 @@ apply plugin: 'org.springframework.boot'
 bootRepackage {
     mainClass = 'com.gazbert.bxbot.ui.server.BXBotUIServer'
 }
+springBoot {
+    mainClass = 'com.gazbert.bxbot.ui.server.BXBotUIServer'
+}
 
 dependencies {
     compile project(':bxbot-ui-server-domain-objects')
