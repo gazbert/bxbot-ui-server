@@ -8,8 +8,8 @@ It forwards configuration updates and commands from BX-bot UI to [BX-bots](https
 
 Coming soon...
 
-#Credits
-This app was made possible thanks to the following awesomeness:
+# Credits
+This app was made possible thanks to the following:
 
 * An excellent [sample app](https://github.com/szerhusenBC/jwt-spring-security-demo)
   demonstrating JWT Authentication with Spring Boot by Stephan Zerhusen.       
