@@ -23,10 +23,7 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.domain.exchange.BaseResponse;
-import com.gazbert.bxbot.ui.server.domain.exchange.Exchange;
-//import com.gazbert.bxbot.domain.exchange.Exchanges;
-
+import com.gazbert.bxbot.ui.server.domain.bot.*;
 //import com.gazbert.bxbot.domain.exchange.ExchangeConfig;
 //import com.gazbert.bxbot.services.ExchangeConfigService;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
@@ -39,117 +36,114 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
- * Controller for directing Exchange config requests.
- * <p>
- * Exchange config can only be fetched and updated - there is only 1 Exchange Adapter per bot.
+ * Controller for directing Bot details.
  *
  * @author gazbert
  * @since 1.0
  */
 @RestController
 @RequestMapping("/api/")
-public class ExchangesController {
+public class BotDetailsController {
 
-//    private final ExchangeConfigService exchangeConfigService;
+//    private final BotDetailsConfigService BotDetailsConfigService;
 
 //    @Autowired
-//    public ExchangesController(ExchangeConfigService exchangeConfigService) {
-//        Assert.notNull(exchangeConfigService, "exchangeConfigService dependency cannot be null!");
-//        this.exchangeConfigService = exchangeConfigService;
+//    public BotsController(BotDetailsConfigService BotDetailsConfigService) {
+//        Assert.notNull(BotDetailsConfigService, "BotDetailsConfigService dependency cannot be null!");
+//        this.BotDetailsConfigService = BotDetailsConfigService;
 //    }
 
     /**
-     * Returns Exchange configuration for the bot.
+     * Returns Bot details.
      *
-     * @return the Exchange configuration.
+     * @return the BotDetails configuration.
      */
-    @RequestMapping(value = "/exchanges", method = RequestMethod.GET)
-    public BaseResponse getExchange(@AuthenticationPrincipal User user) {
+    @RequestMapping(value = "/bots", method = RequestMethod.GET)
+    public BaseResponse getBots(@AuthenticationPrincipal User user) {
 
-//        final ExchangeConfig exchangeConfig = exchangeConfigService.getConfig();
+//        final BotDetailsConfig BotDetailsConfig = BotDetailsConfigService.getConfig();
 //        // Strip out the Authentication config for now - too risky to expose trading api keys
-//        exchangeConfig.setAuthenticationConfig(null);
+//        BotDetailsConfig.setAuthenticationConfig(null);
 
         final BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(getExchanges());
+        baseResponse.setData(getBots());
         return baseResponse;
     }
 
     /**
-     * Updates Exchange configuration for the bot.
+     * Updates BotDetails configuration for the bot.
      *
-     * @return 204 'No Content' HTTP status code if exchange config was updated, some other HTTP status code otherwise.
+     * @return 204 'No Content' HTTP status code if BotDetails config was updated, some other HTTP status code otherwise.
      */
-//    @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
-//    ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig config) {
+//    @RequestMapping(value = "/BotDetails", method = RequestMethod.PUT)
+//    ResponseEntity<?> updateBotDetails(@AuthenticationPrincipal User user, @RequestBody BotDetailsConfig config) {
 //
-//        exchangeConfigService.updateConfig(config);
+//        BotDetailsConfigService.updateConfig(config);
 //        final HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/").buildAndExpand().toUri());
 //        return new ResponseEntity<>(null, httpHeaders, HttpStatus.NO_CONTENT);
 //    }
 
     // Stub for now
-    private List<Exchange> getExchanges() {
+    private List<BotDetails> getBots() {
 
-        final Exchange btce = new Exchange();
+        final BotDetails btce = new BotDetails();
         btce.setId("btce");
         btce.setName("BTC-e");
         btce.setStatus("Running");
 
-        final Exchange bitstamp = new Exchange();
+        final BotDetails bitstamp = new BotDetails();
         bitstamp.setId("bitstamp");
         bitstamp.setName("Bitstamp");
         bitstamp.setStatus("Running");
 
-        final Exchange gdax = new Exchange();
+        final BotDetails gdax = new BotDetails();
         gdax.setId("gdax");
         gdax.setName("GDAX");
         gdax.setStatus("Stopped");
 
-        final Exchange gemini = new Exchange();
+        final BotDetails gemini = new BotDetails();
         gemini.setId("gemini");
         gemini.setName("Gemini");
         gemini.setStatus("Running");
 
-        final Exchange okcoin = new Exchange();
+        final BotDetails okcoin = new BotDetails();
         okcoin.setId("okcoin");
         okcoin.setName("OK Coin");
         okcoin.setStatus("Stopped");
 
-        final Exchange huobi = new Exchange();
+        final BotDetails huobi = new BotDetails();
         huobi.setId("huobi");
         huobi.setName("Huobi");
         huobi.setStatus("Stopped");
 
-        final Exchange itbit = new Exchange();
+        final BotDetails itbit = new BotDetails();
         itbit.setId("itbit");
         itbit.setName("itBit");
         itbit.setStatus("Running");
 
-        final Exchange kraken = new Exchange();
+        final BotDetails kraken = new BotDetails();
         kraken.setId("kraken");
         kraken.setName("Kraken");
         kraken.setStatus("Stopped");
 
-        final Exchange bitfinex = new Exchange();
+        final BotDetails bitfinex = new BotDetails();
         bitfinex.setId("bitfinex");
         bitfinex.setName("Bitfinex");
         bitfinex.setStatus("Stopped");
 
-        final List<Exchange> cannedExchanges = new ArrayList<>();
-        cannedExchanges.add(btce);
-        cannedExchanges.add(bitstamp);
-        cannedExchanges.add(gdax);
-        cannedExchanges.add(gemini);
-        cannedExchanges.add(okcoin);
-        cannedExchanges.add(huobi);
-        cannedExchanges.add(itbit);
-        cannedExchanges.add(kraken);
-        cannedExchanges.add(bitfinex);
+        final List<BotDetails> cannedBotDetails = new ArrayList<>();
+        cannedBotDetails.add(btce);
+        cannedBotDetails.add(bitstamp);
+        cannedBotDetails.add(gdax);
+        cannedBotDetails.add(gemini);
+        cannedBotDetails.add(okcoin);
+        cannedBotDetails.add(huobi);
+        cannedBotDetails.add(itbit);
+        cannedBotDetails.add(kraken);
+        cannedBotDetails.add(bitfinex);
 
-        return cannedExchanges;
+        return cannedBotDetails;
     }
 }
 

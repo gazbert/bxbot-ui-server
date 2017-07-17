@@ -1,6 +1,6 @@
 jwt:
   header: Authorization
-  secret: mySecret
+  secret: Ch@ng3Me!
   expiration: 86400
   route:
     authentication:

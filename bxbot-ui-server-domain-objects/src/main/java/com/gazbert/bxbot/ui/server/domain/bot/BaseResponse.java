@@ -1,4 +1,4 @@
-package com.gazbert.bxbot.ui.server.domain.exchange;
+package com.gazbert.bxbot.ui.server.domain.bot;
 
 import com.google.common.base.MoreObjects;
 

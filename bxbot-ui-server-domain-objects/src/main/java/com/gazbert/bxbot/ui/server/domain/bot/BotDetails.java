@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.domain.exchange;
+package com.gazbert.bxbot.ui.server.domain.bot;
 
 import com.google.common.base.MoreObjects;
 
@@ -29,7 +29,7 @@ import com.google.common.base.MoreObjects;
  *
  * @author gazbert
  */
-public class Exchange {
+public class BotDetails {
 
     private String id;
     private String name;
