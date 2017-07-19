@@ -8,7 +8,7 @@ A Spring Boot backend for use with [BX-bot UI](https://github.com/gazbert/bxbot-
 
 It forwards configuration updates and commands from BX-bot UI to [BX-bots](https://github.com/gazbert/bxbot.git) running in the cloud. 
 
-NOTE: _This project is very much work in progress and not yet safe for production._
+_NOTE: This project is very much work in progress and not safe for production._
 
 ## Credits
 This app was made possible thanks to the following:
