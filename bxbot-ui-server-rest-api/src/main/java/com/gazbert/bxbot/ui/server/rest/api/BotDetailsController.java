@@ -23,11 +23,12 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.domain.bot.*;
-//import com.gazbert.bxbot.domain.exchange.ExchangeConfig;
-//import com.gazbert.bxbot.services.ExchangeConfigService;
+import com.gazbert.bxbot.ui.server.domain.bot.BotDetails;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,66 +37,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for directing Bot details.
+ * Controller for directing Bot Details requests.
  *
  * @author gazbert
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class BotDetailsController {
 
-//    private final BotDetailsConfigService BotDetailsConfigService;
-
-//    @Autowired
-//    public BotsController(BotDetailsConfigService BotDetailsConfigService) {
-//        Assert.notNull(BotDetailsConfigService, "BotDetailsConfigService dependency cannot be null!");
-//        this.BotDetailsConfigService = BotDetailsConfigService;
-//    }
-
     /**
-     * Returns Bot details.
+     * Returns the Bot details for all the bots.
      *
      * @return the BotDetails configuration.
      */
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
-    public BaseResponse getBots(@AuthenticationPrincipal User user) {
-
-//        final BotDetailsConfig BotDetailsConfig = BotDetailsConfigService.getConfig();
-//        // Strip out the Authentication config for now - too risky to expose trading api keys
-//        BotDetailsConfig.setAuthenticationConfig(null);
-
-        final BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(getBots());
-        return baseResponse;
+    public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
+        return new ResponseDataWrapper(getBots());
     }
 
     /**
-     * Updates BotDetails configuration for the bot.
+     * Returns the Bot Details for a given Bot id.
      *
-     * @return 204 'No Content' HTTP status code if BotDetails config was updated, some other HTTP status code otherwise.
+     * @param user  the authenticated user.
+     * @param botId the id of the Bot to fetch.
+     * @return the Bot Details configuration.
      */
-//    @RequestMapping(value = "/BotDetails", method = RequestMethod.PUT)
-//    ResponseEntity<?> updateBotDetails(@AuthenticationPrincipal User user, @RequestBody BotDetailsConfig config) {
-//
-//        BotDetailsConfigService.updateConfig(config);
-//        final HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/").buildAndExpand().toUri());
-//        return new ResponseEntity<>(null, httpHeaders, HttpStatus.NO_CONTENT);
-//    }
+    @RequestMapping(value = "/bots/{botId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-    // Stub for now
+        final BotDetails botDetails = getBot(botId);
+        return botDetails.getId() != null
+                ? new ResponseEntity<>(new ResponseDataWrapper(botDetails), null, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // ------------------------------------------------------------------------
+    // Private utils
+    // ------------------------------------------------------------------------
+
+    /*
+     * Stub for now.
+     */
     private List<BotDetails> getBots() {
-
-        final BotDetails btce = new BotDetails();
-        btce.setId("btce");
-        btce.setName("BTC-e");
-        btce.setStatus("Running");
 
         final BotDetails bitstamp = new BotDetails();
         bitstamp.setId("bitstamp");
         bitstamp.setName("Bitstamp");
         bitstamp.setStatus("Running");
+
+        final BotDetails btce = new BotDetails();
+        btce.setId("btce");
+        btce.setName("BTC-e");
+        btce.setStatus("Running");
 
         final BotDetails gdax = new BotDetails();
         gdax.setId("gdax");
@@ -144,6 +138,19 @@ public class BotDetailsController {
         cannedBotDetails.add(bitfinex);
 
         return cannedBotDetails;
+    }
+
+    /*
+     * Stub for now.
+     */
+    private BotDetails getBot(String botId) {
+
+        final BotDetails btce = new BotDetails();
+        btce.setId(botId);
+        btce.setName("Bitstamp");
+        btce.setStatus("Running");
+
+        return btce;
     }
 }
 
