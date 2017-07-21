@@ -29,8 +29,10 @@ import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
 import com.gazbert.bxbot.ui.server.services.ExchangeAdapterConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,14 +50,18 @@ import java.util.Map;
 public class ExchangeAdapterConfigServiceImpl implements ExchangeAdapterConfigService {
 
     private static final Logger LOG = LogManager.getLogger();
+    private final RestTemplate restTemplate;
 
-    public ExchangeAdapterConfigServiceImpl() {
+    public ExchangeAdapterConfigServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+
+        // TODO - lookup user/pass for Bot from secure storage
+        this.restTemplate = restTemplateBuilder.basicAuthorization("admin", "notSafeForProduction").build();
     }
 
     @Override
     public ExchangeAdapterConfig fetchExchangeAdapterConfigForBot(String id) {
         LOG.info(() -> "Fetching config for Exchange Adapter id: " + id);
-        return getExchangeAdapterConfig(id);
+        return getRemoteExchangeAdapterConfig(id);
     }
 
     /*
@@ -82,5 +88,21 @@ public class ExchangeAdapterConfigServiceImpl implements ExchangeAdapterConfigSe
         exchangeAdapterConfig.setNetworkConfig(networkConfig);
 
         return exchangeAdapterConfig;
+    }
+
+    /*
+     * Query remote bot.
+     */
+    private ExchangeAdapterConfig getRemoteExchangeAdapterConfig(String id) {
+
+        // TODO - Lookup up Bot routing info based on id...
+
+        // ...then call it...
+        final ExchangeAdapterConfig config =
+                restTemplate.getForObject("http://localhost:8081/api/config/exchange", ExchangeAdapterConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + config);
+
+        return config;
     }
 }

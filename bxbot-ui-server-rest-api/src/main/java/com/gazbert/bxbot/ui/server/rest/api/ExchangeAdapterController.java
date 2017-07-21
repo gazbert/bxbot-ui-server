@@ -45,8 +45,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ExchangeAdapterController {
 
-    @Autowired
-    private ExchangeAdapterConfigService exchangeAdapterConfigService;
+    private final ExchangeAdapterConfigService exchangeAdapterConfigService;
+
+    public ExchangeAdapterController(ExchangeAdapterConfigService exchangeAdapterConfigService) {
+        this.exchangeAdapterConfigService = exchangeAdapterConfigService;
+    }
 
     /**
      * Returns the Exchange Adapter Details for a Exchange id. The Exchange id is the same as the Bot id, given the
