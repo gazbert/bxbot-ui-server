@@ -27,17 +27,27 @@ import com.google.common.base.MoreObjects;
 
 /**
  * Domain object representing the Exchange Adapter config.
+ * <p>
+ * For now, decision taken not to expose AuthenticationConfig (API key + secret) through REST API - changes have to be
+ * made on the local bot node. Might revisit this in the future.
  *
  * @author gazbert
  */
 public class ExchangeAdapterConfig {
 
+    private long id;
     private String name;
-    private String exchangeAdapter;
-    private AuthenticationConfig authenticationConfig;
+    private String className;
     private NetworkConfig networkConfig;
     private OtherConfig otherConfig;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -47,20 +57,12 @@ public class ExchangeAdapterConfig {
         this.name = name;
     }
 
-    public String getExchangeAdapter() {
-        return exchangeAdapter;
+    public String getClassName() {
+        return className;
     }
 
-    public void setExchangeAdapter(String exchangeAdapter) {
-        this.exchangeAdapter = exchangeAdapter;
-    }
-
-    public AuthenticationConfig getAuthenticationConfig() {
-        return authenticationConfig;
-    }
-
-    public void setAuthenticationConfig(AuthenticationConfig authenticationConfig) {
-        this.authenticationConfig = authenticationConfig;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public void setNetworkConfig(NetworkConfig networkConfig) {
@@ -82,10 +84,9 @@ public class ExchangeAdapterConfig {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
+                .add("id", id)
                 .add("name", name)
-                .add("exchangeAdapter", exchangeAdapter)
-                // WARNING - careful showing this!
-                //.add("authenticationConfig", authenticationConfig)
+                .add("className", className)
                 .add("networkConfig", networkConfig)
                 .add("otherConfig", otherConfig)
                 .toString();

@@ -39,6 +39,8 @@ public class NetworkConfig {
     private List<Integer> nonFatalErrorHttpStatusCodes;
     private List<String> nonFatalErrorMessages;
 
+//    public nonFatalErrorHttpStatusCodes: ErrorCode[],
+//    public nonFatalErrorMessages: ErrorMessage[]) {
 
     public NetworkConfig() {
         nonFatalErrorHttpStatusCodes = new ArrayList<>();

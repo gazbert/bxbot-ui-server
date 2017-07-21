@@ -48,10 +48,11 @@ import java.util.*;
 public class ExchangeAdapterController {
 
     /**
-     * Returns the Exchange Adapter Details for a given Bot id.
+     * Returns the Exchange Adapter Details for a Exchange id. The Exchange id is the same as the Bot id, given the
+     * 1:1 relationship between an Exchange and a Bot: a Bot can only run 1 Exchange.
      *
      * @param user the authenticated user.
-     * @param id the id of the Bot to fetch the Exchange Adapter details for.
+     * @param id the id of the Exchange (Bot) to fetch the Exchange Adapter details for.
      * @return the Exchange Adapter Details configuration.
      */
     @RequestMapping(value = "/exchange_adapters/{id}", method = RequestMethod.GET)
@@ -82,13 +83,12 @@ public class ExchangeAdapterController {
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(30);
         networkConfig.setNonFatalErrorHttpStatusCodes(Arrays.asList(522, 524, 525));
-        networkConfig.setNonFatalErrorMessages(Arrays.asList("Connection reset", "Connection reset",
+        networkConfig.setNonFatalErrorMessages(Arrays.asList("Connection reset", "Connection closed by peer",
                 "Remote host closed connection during handshake"));
 
         final ExchangeAdapterConfig exchangeAdapterConfig = new ExchangeAdapterConfig();
         exchangeAdapterConfig.setName("Bitstamp");
-        exchangeAdapterConfig.setExchangeAdapter("com.gazbert.bxbot.exchanges.BitstampExchangeAdapter");
-        exchangeAdapterConfig.setAuthenticationConfig(authenticationConfig);
+        exchangeAdapterConfig.setClassName("com.gazbert.bxbot.exchanges.BitstampExchangeAdapter");
         exchangeAdapterConfig.setNetworkConfig(networkConfig);
 
         return exchangeAdapterConfig;
