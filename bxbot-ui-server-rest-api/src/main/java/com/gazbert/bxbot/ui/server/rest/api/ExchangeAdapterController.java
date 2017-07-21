@@ -23,10 +23,10 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.domain.exchange.AuthenticationConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeAdapterConfig;
-import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
+import com.gazbert.bxbot.ui.server.services.ExchangeAdapterConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.*;
 
 /**
  * Controller for directing Exchange Adapter config requests.
@@ -47,51 +45,24 @@ import java.util.*;
 @RequestMapping("/api")
 public class ExchangeAdapterController {
 
+    @Autowired
+    private ExchangeAdapterConfigService exchangeAdapterConfigService;
+
     /**
      * Returns the Exchange Adapter Details for a Exchange id. The Exchange id is the same as the Bot id, given the
      * 1:1 relationship between an Exchange and a Bot: a Bot can only run 1 Exchange.
      *
      * @param user the authenticated user.
-     * @param id the id of the Exchange (Bot) to fetch the Exchange Adapter details for.
+     * @param id   the id of the Exchange (Bot) to fetch the Exchange Adapter details for.
      * @return the Exchange Adapter Details configuration.
      */
     @RequestMapping(value = "/exchange_adapters/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String id) {
 
-        final ExchangeAdapterConfig exchangeAdapterConfig = getExchangeAdapterConfig(id);
+        final ExchangeAdapterConfig exchangeAdapterConfig = exchangeAdapterConfigService.fetchExchangeAdapterConfigForBot(id);
         return exchangeAdapterConfig != null
                 ? new ResponseEntity<>(new ResponseDataWrapper(exchangeAdapterConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    // ------------------------------------------------------------------------
-    // Private utils
-    // ------------------------------------------------------------------------
-
-    /*
-     * Stub for now.
-     */
-    private ExchangeAdapterConfig getExchangeAdapterConfig(String botId) {
-
-        final Map<String, String> authItems = new HashMap<>();
-        authItems.put("key", "my-api-key");
-        authItems.put("secret", "my-secret");
-
-        final AuthenticationConfig authenticationConfig = new AuthenticationConfig();
-        authenticationConfig.setItems(authItems);
-
-        final NetworkConfig networkConfig = new NetworkConfig();
-        networkConfig.setConnectionTimeout(30);
-        networkConfig.setNonFatalErrorHttpStatusCodes(Arrays.asList(522, 524, 525));
-        networkConfig.setNonFatalErrorMessages(Arrays.asList("Connection reset", "Connection closed by peer",
-                "Remote host closed connection during handshake"));
-
-        final ExchangeAdapterConfig exchangeAdapterConfig = new ExchangeAdapterConfig();
-        exchangeAdapterConfig.setName("Bitstamp");
-        exchangeAdapterConfig.setClassName("com.gazbert.bxbot.exchanges.BitstampExchangeAdapter");
-        exchangeAdapterConfig.setNetworkConfig(networkConfig);
-
-        return exchangeAdapterConfig;
     }
 }
 
