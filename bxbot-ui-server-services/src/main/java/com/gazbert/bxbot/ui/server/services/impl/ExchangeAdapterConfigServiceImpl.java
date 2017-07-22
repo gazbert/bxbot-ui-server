@@ -61,7 +61,7 @@ public class ExchangeAdapterConfigServiceImpl implements ExchangeAdapterConfigSe
     @Override
     public ExchangeAdapterConfig fetchExchangeAdapterConfigForBot(String id) {
         LOG.info(() -> "Fetching config for Exchange Adapter id: " + id);
-        return getRemoteExchangeAdapterConfig(id);
+        return getExchangeAdapterConfig(id);
     }
 
     /*
