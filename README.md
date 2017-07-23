@@ -6,7 +6,7 @@
 
 ## What is BX-bot UI Server?
 A Spring Boot backend for use with [BX-bot UI](https://github.com/gazbert/bxbot-ui.git). 
-It forwards configuration updates and commands from BX-bot UI to [BX-bots](https://github.com/gazbert/bxbot.git) running in the cloud. 
+It proxies configuration updates and commands from BX-bot UI to [BX-bots](https://github.com/gazbert/bxbot.git) running in the cloud. 
 
 ## Architecture
 ![bxbot-ui-server-architecture.png](./docs/bxbot-ui-server-architecture.png)
