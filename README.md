@@ -11,7 +11,7 @@ It forwards configuration updates and commands from BX-bot UI to [BX-bots](https
 ## Architecture
 ![bxbot-ui-server-architecture.png](./docs/bxbot-ui-server-architecture.png)
 
-- **[BX-bot - (n)]((https://github.com/gazbert/bxbot.git))** - multiple BX-bot instances running in the cloud. 
+- **[BX-bot - (n)](https://github.com/gazbert/bxbot.git)** - multiple BX-bot instances running in the cloud. 
   Each bot integrates with 1 Exchange. The bot provides a secured REST API for BX-bot UI Server to consume.
 - **BX-bot UI Server** - provides a secured ([JWT](https://jwt.io/) over HTTPS) REST API for BX-bot UI to consume. 
   It proxies configuration updates and commands to the BX-bots.
