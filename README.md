@@ -11,13 +11,13 @@ It proxies configuration updates and commands from BX-bot UI to [BX-bots](https:
 ## Architecture
 ![bxbot-ui-server-architecture.png](./docs/bxbot-ui-server-architecture.png)
 
-- **[BX-bot - (n)](https://github.com/gazbert/bxbot.git)** - multiple BX-bot instances running in the cloud. 
-  Each bot integrates with 1 Exchange. The bot provides a secured REST API for BX-bot UI Server to consume.
-- **BX-bot UI Server** - provides a secured ([JWT](https://jwt.io/) over HTTPS) REST API for BX-bot UI to consume. 
-  It proxies configuration updates and commands to the BX-bots.
 - **[BX-bot UI](https://github.com/gazbert/bxbot-ui.git)** - an admin interface for sending configuration updates and 
   commands to BX-bots running in the cloud. It consumes BX-bot UI Server's REST API.
- 
+- **BX-bot UI Server** - provides a secured REST API for BX-bot UI to consume - it uses [JWT](https://jwt.io/) to
+  authenticate the user. It proxies the configuration updates and commands to the BX-bots.  
+- **[BX-bot - n](https://github.com/gazbert/bxbot.git)** - a BX-bot instance running in the cloud. 
+  Each bot integrates with 1 Exchange. The bot provides a secured REST API for BX-bot UI Server to consume.
+
 ## Credits
 This app was made possible thanks to the following:
 
