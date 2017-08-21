@@ -29,11 +29,14 @@ import com.google.common.base.MoreObjects;
  *
  * @author gazbert
  */
-public class BotDetails {
+public class BotConfig {
 
     private String id;
     private String name;
     private String status;
+    private String url;
+    private String username;
+    private String password;
 
     public String getId() {
         return id;
@@ -59,12 +62,39 @@ public class BotDetails {
         this.status = status;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
                 .add("status", status)
+                .add("url", url)
+                .add("username", username)
+                .add("password", password)
                 .toString();
     }
 }

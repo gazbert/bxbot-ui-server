@@ -23,7 +23,7 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.domain.bot.BotDetails;
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +49,7 @@ public class BotDetailsController {
     /**
      * Returns the Bot details for all the bots.
      *
-     * @return the BotDetails configuration.
+     * @return the BotConfig configuration.
      */
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
     public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
@@ -66,9 +66,9 @@ public class BotDetailsController {
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        final BotDetails botDetails = getBot(botId);
-        return botDetails.getId() != null
-                ? new ResponseEntity<>(new ResponseDataWrapper(botDetails), null, HttpStatus.OK)
+        final BotConfig botConfig = getBot(botId);
+        return botConfig.getId() != null
+                ? new ResponseEntity<>(new ResponseDataWrapper(botConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -79,54 +79,54 @@ public class BotDetailsController {
     /*
      * Stub for now.
      */
-    private List<BotDetails> getBots() {
+    private List<BotConfig> getBots() {
 
-        final BotDetails bitstamp = new BotDetails();
+        final BotConfig bitstamp = new BotConfig();
         bitstamp.setId("bitstamp");
         bitstamp.setName("Bitstamp");
         bitstamp.setStatus("Running");
 
-        final BotDetails btce = new BotDetails();
+        final BotConfig btce = new BotConfig();
         btce.setId("btce");
         btce.setName("BTC-e");
         btce.setStatus("Running");
 
-        final BotDetails gdax = new BotDetails();
+        final BotConfig gdax = new BotConfig();
         gdax.setId("gdax");
         gdax.setName("GDAX");
         gdax.setStatus("Stopped");
 
-        final BotDetails gemini = new BotDetails();
+        final BotConfig gemini = new BotConfig();
         gemini.setId("gemini");
         gemini.setName("Gemini");
         gemini.setStatus("Running");
 
-        final BotDetails okcoin = new BotDetails();
+        final BotConfig okcoin = new BotConfig();
         okcoin.setId("okcoin");
         okcoin.setName("OK Coin");
         okcoin.setStatus("Stopped");
 
-        final BotDetails huobi = new BotDetails();
+        final BotConfig huobi = new BotConfig();
         huobi.setId("huobi");
         huobi.setName("Huobi");
         huobi.setStatus("Stopped");
 
-        final BotDetails itbit = new BotDetails();
+        final BotConfig itbit = new BotConfig();
         itbit.setId("itbit");
         itbit.setName("itBit");
         itbit.setStatus("Running");
 
-        final BotDetails kraken = new BotDetails();
+        final BotConfig kraken = new BotConfig();
         kraken.setId("kraken");
         kraken.setName("Kraken");
         kraken.setStatus("Stopped");
 
-        final BotDetails bitfinex = new BotDetails();
+        final BotConfig bitfinex = new BotConfig();
         bitfinex.setId("bitfinex");
         bitfinex.setName("Bitfinex");
         bitfinex.setStatus("Stopped");
 
-        final List<BotDetails> cannedBotDetails = new ArrayList<>();
+        final List<BotConfig> cannedBotDetails = new ArrayList<>();
         cannedBotDetails.add(btce);
         cannedBotDetails.add(bitstamp);
         cannedBotDetails.add(gdax);
@@ -143,9 +143,9 @@ public class BotDetailsController {
     /*
      * Stub for now.
      */
-    private BotDetails getBot(String botId) {
+    private BotConfig getBot(String botId) {
 
-        final BotDetails btce = new BotDetails();
+        final BotConfig btce = new BotConfig();
         btce.setId(botId);
         btce.setName("Bitstamp");
         btce.setStatus("Running");
