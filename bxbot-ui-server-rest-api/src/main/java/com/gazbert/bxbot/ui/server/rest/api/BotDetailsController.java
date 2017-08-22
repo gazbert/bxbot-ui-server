@@ -25,9 +25,12 @@ package com.gazbert.bxbot.ui.server.rest.api;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
+import com.gazbert.bxbot.ui.server.services.BotConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +49,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class BotDetailsController {
 
+    private final BotConfigService botConfigService;
+
+    @Autowired
+    public BotDetailsController(BotConfigService botConfigService) {
+        Assert.notNull(botConfigService, "botConfigService dependency cannot be null!");
+        this.botConfigService = botConfigService;
+    }
+
     /**
      * Returns the Bot details for all the bots.
      *
@@ -53,7 +64,7 @@ public class BotDetailsController {
      */
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
     public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
-        return new ResponseDataWrapper(getBots());
+        return new ResponseDataWrapper(botConfigService.getAllBots());
     }
 
     /**
