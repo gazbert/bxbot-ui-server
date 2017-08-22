@@ -30,7 +30,6 @@ import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigItemType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.TradingStrategiesType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.repository.BotConfigRepository;
@@ -40,7 +39,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,19 +64,17 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
     @Override
     public BotConfig findById(String id) {
 
-        throw new UnsupportedOperationException("findById() not implemented yet!");
+        LOG.info(() -> "Fetching config for Bot id: " + id);
 
-//        LOG.info(() -> "Fetching config for Strategy id: " + id);
-//
-//        final TradingStrategiesType internalStrategiesConfig = ConfigurationManager.loadConfig(TradingStrategiesType.class,
-//                FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//        return adaptInternalToExternalConfig(
-//                internalStrategiesConfig.getStrategies()
-//                        .stream()
-//                        .filter((item) -> item.getId().equals(id))
-//                        .distinct()
-//                        .collect(Collectors.toList()));
+        final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
+                FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+        return adaptInternalToExternalConfig(
+                internalBotsConfig.getBots()
+                        .stream()
+                        .filter((item) -> item.getId().equals(id))
+                        .distinct()
+                        .collect(Collectors.toList()));
     }
 
     @Override
@@ -206,25 +202,22 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
         return botConfigItems;
     }
 
-    private static BotConfig adaptInternalToExternalConfig(List<StrategyType> internalStrategyConfigItems) {
+    private static BotConfig adaptInternalToExternalConfig(List<BotType> internalBotsConfigItems) {
 
-        return null;
+        final BotConfig botConfig = new BotConfig();
 
-//        final StrategyConfig strategyConfig = new StrategyConfig();
-//
-//        if (!internalStrategyConfigItems.isEmpty()) {
-//
-//            // Should only ever be 1 unique Strategy id
-//            final StrategyType internalStrategyConfig = internalStrategyConfigItems.get(0);
-//            strategyConfig.setId(internalStrategyConfig.getId());
-//            strategyConfig.setLabel(internalStrategyConfig.getLabel());
-//            strategyConfig.setDescription(internalStrategyConfig.getDescription());
-//            strategyConfig.setClassName(internalStrategyConfig.getClassName());
-//
-//            internalStrategyConfig.getConfiguration().getConfigItem().forEach(internalConfigItem ->
-//                    strategyConfig.getConfigItems().put(internalConfigItem.getName(), internalConfigItem.getValue()));
-//        }
-//        return strategyConfig;
+        if (!internalBotsConfigItems.isEmpty()) {
+
+            // Should only ever be 1 unique Bot id
+            final BotType internalBotConfig = internalBotsConfigItems.get(0);
+            botConfig.setId(internalBotConfig.getId());
+            botConfig.setName(internalBotConfig.getName());
+            botConfig.setStatus(internalBotConfig.getStatus());
+            botConfig.setUrl(internalBotConfig.getUrl());
+            botConfig.setUsername(internalBotConfig.getUsername());
+            botConfig.setPassword(internalBotConfig.getPassword());
+        }
+        return botConfig;
     }
 
     private static StrategyType adaptExternalToInternalConfig(StrategyConfig externalStrategyConfig) {

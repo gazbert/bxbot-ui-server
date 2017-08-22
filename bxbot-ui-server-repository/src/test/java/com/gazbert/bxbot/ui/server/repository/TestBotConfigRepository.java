@@ -26,14 +26,8 @@ package com.gazbert.bxbot.ui.server.repository;
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigItemType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.TradingStrategiesType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.repository.impl.BotConfigRepositoryXmlImpl;
-import com.gazbert.bxbot.ui.server.repository.impl.StrategyConfigRepositoryXmlImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,13 +35,13 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.gazbert.bxbot.ui.server.datastore.FileLocations.*;
+import static com.gazbert.bxbot.ui.server.datastore.FileLocations.BOTS_CONFIG_XML_FILENAME;
+import static com.gazbert.bxbot.ui.server.datastore.FileLocations.BOTS_CONFIG_XSD_FILENAME;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 
 /**
  * Tests Bot configuration repository behaves as expected.
@@ -113,54 +107,52 @@ public class TestBotConfigRepository {
         PowerMock.verifyAll();
     }
 
-//    @Test
-//    public void whenFindByIdCalledWithRecognizedIdThenReturnMatchingStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.findById(STRAT_ID_1);
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+    @Test
+    public void whenFindByIdCalledWithRecognizedIdThenReturnMatchingBot() throws Exception {
 
-//    @Test
-//    public void whenFindByIdCalledWithUnrecognizedIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.findById("unknown-id");
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.findById(BOT_1_ID);
+
+        assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
+        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
+        assertThat(botConfig.getUrl()).isEqualTo(BOT_1_URL);
+        assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
+        assertThat(botConfig.getPassword()).isEqualTo(BOT_1_PASSWORD);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void whenFindByIdCalledWithUnrecognizedIdThenReturnEmptyBot() throws Exception {
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.findById(UNKNOWN_BOT_ID);
+
+        assertThat(botConfig.getId()).isEqualTo(null);
+        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getUrl()).isEqualTo(null);
+        assertThat(botConfig.getUsername()).isEqualTo(null);
+        assertThat(botConfig.getPassword()).isEqualTo(null);
+
+        PowerMock.verifyAll();
+    }
 
 //    @Test
 //    public void whenUpdateStrategyCalledWithKnownIdThenExpectServiceToReturnUpdatedStrategy() throws Exception {
