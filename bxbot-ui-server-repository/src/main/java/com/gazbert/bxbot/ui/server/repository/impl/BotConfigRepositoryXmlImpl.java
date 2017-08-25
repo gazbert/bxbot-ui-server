@@ -31,7 +31,6 @@ import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigItemType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.repository.BotConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,39 +79,37 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
     @Override
     public BotConfig updateBot(BotConfig config) {
 
-        throw new UnsupportedOperationException("updateBot() not implemented yet!");
+        LOG.info(() -> "About to update: " + config);
 
-//        LOG.info(() -> "About to update: " + config);
-//
-//        final TradingStrategiesType internalStrategiesConfig = ConfigurationManager.loadConfig(TradingStrategiesType.class,
-//                FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//        final List<StrategyType> strategyTypes = internalStrategiesConfig.getStrategies()
-//                .stream()
-//                .filter((item) -> item.getId().equals(config.getId()))
-//                .distinct()
-//                .collect(Collectors.toList());
-//
-//        if (!strategyTypes.isEmpty()) {
-//
-//            internalStrategiesConfig.getStrategies().remove(strategyTypes.get(0)); // will only be 1 unique strat
-//            internalStrategiesConfig.getStrategies().add(adaptExternalToInternalConfig(config));
-//            ConfigurationManager.saveConfig(TradingStrategiesType.class, internalStrategiesConfig,
-//                    FileLocations.STRATEGIES_CONFIG_XML_FILENAME);
-//
-//            final TradingStrategiesType updatedInternalStrategiesConfig = ConfigurationManager.loadConfig(
-//                    TradingStrategiesType.class, FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//            return adaptInternalToExternalConfig(
-//                    updatedInternalStrategiesConfig.getStrategies()
-//                            .stream()
-//                            .filter((item) -> item.getId().equals(config.getId()))
-//                            .distinct()
-//                            .collect(Collectors.toList()));
-//        } else {
-//            // no matching id :-(
-//            return new StrategyConfig();
-//        }
+        final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
+                FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+        final List<BotType> botTypes = internalBotsConfig.getBots()
+                .stream()
+                .filter((item) -> item.getId().equals(config.getId()))
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (!botTypes.isEmpty()) {
+
+            internalBotsConfig.getBots().remove(botTypes.get(0)); // will only be 1 unique bot
+            internalBotsConfig.getBots().add(adaptExternalToInternalConfig(config));
+            ConfigurationManager.saveConfig(BotsType.class, internalBotsConfig,
+                    FileLocations.BOTS_CONFIG_XML_FILENAME);
+
+            final BotsType updatedInternalBotsConfig = ConfigurationManager.loadConfig(
+                    BotsType.class, FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+            return adaptInternalToExternalConfig(
+                    updatedInternalBotsConfig.getBots()
+                            .stream()
+                            .filter((item) -> item.getId().equals(config.getId()))
+                            .distinct()
+                            .collect(Collectors.toList()));
+        } else {
+            // no matching id :-(
+            return new BotConfig();
+        }
     }
 
     @Override
@@ -220,23 +217,14 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
         return botConfig;
     }
 
-    private static StrategyType adaptExternalToInternalConfig(StrategyConfig externalStrategyConfig) {
+    private static BotType adaptExternalToInternalConfig(BotConfig externalBotConfig) {
 
-        final ConfigurationType configurationType = new ConfigurationType();
-        externalStrategyConfig.getConfigItems().entrySet()
-                .forEach(item -> {
-                    final ConfigItemType configItem = new ConfigItemType();
-                    configItem.setName(item.getKey());
-                    configItem.setValue(item.getValue());
-                    configurationType.getConfigItem().add(configItem);
-                });
-
-        final StrategyType strategyType = new StrategyType();
-        strategyType.setId(externalStrategyConfig.getId());
-        strategyType.setLabel(externalStrategyConfig.getLabel());
-        strategyType.setDescription(externalStrategyConfig.getDescription());
-        strategyType.setClassName(externalStrategyConfig.getClassName());
-        strategyType.setConfiguration(configurationType);
-        return strategyType;
+        final BotType botType = new BotType();
+        botType.setId(externalBotConfig.getId());
+        botType.setName(externalBotConfig.getName());
+        botType.setStatus(externalBotConfig.getStatus());
+        botType.setUsername(externalBotConfig.getUsername());
+        botType.setPassword(externalBotConfig.getPassword());
+        return botType;
     }
 }
