@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.impl;
+package com.gazbert.bxbot.ui.server.repository.local;
 
 import com.gazbert.bxbot.ui.server.repository.StrategyConfigRepository;
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;

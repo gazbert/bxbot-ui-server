@@ -27,7 +27,7 @@ import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.impl.BotConfigRepositoryXmlImpl;
+import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepositoryXmlImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

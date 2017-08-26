@@ -21,15 +21,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.impl;
+package com.gazbert.bxbot.ui.server.repository.local;
 
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.FileLocations;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigItemType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationType;
-import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.repository.BotConfigRepository;
 import org.apache.logging.log4j.LogManager;
