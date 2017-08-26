@@ -10,9 +10,9 @@ The logging level is set to 'info'.
 
 See log4j2 guide for more options: http://logging.apache.org/log4j/2.x/manual/appenders.html#RollingRandomAccessFileAppender
 -->
-<Configuration status="warn" name="BX-bot" packages="">
+<Configuration status="warn" name="BX-bot UI Server" packages="">
     <Appenders>
-        <RollingFile name="BXBot_RollingFile" fileName="./logs/bxbot.log"
+        <RollingFile name="BXBot_RollingFile" fileName="./logs/bxbot-ui-server.log"
                      filePattern="logs/$${date:yyyy-MM}/bxbot-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%-4r [%t] %d %-5p %c{1} %M() - %m%n</Pattern>

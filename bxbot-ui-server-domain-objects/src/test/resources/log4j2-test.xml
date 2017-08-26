@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" name="BX-bot" packages="">
+<Configuration status="warn" name="BX-bot UI Server" packages="">
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout>
                 <Pattern>%-4r [%t] %d %-5p %c{1} %M() - %m%n</Pattern>
             </PatternLayout>
         </Console>
-        <!--<RollingFile name="BXBot_RollingFile" fileName="./logs/bxbot.log"-->
+        <!--<RollingFile name="BXBot_RollingFile" fileName="./logs/bxbot-ui-server.log"-->
                      <!--filePattern="logs/$${date:yyyy-MM}/bxbot-%d{MM-dd-yyyy}-%i.log.gz">-->
             <!--<PatternLayout>-->
                 <!--<Pattern>%-4r [%t] %d %-5p %c{1} %M() - %m%n</Pattern>-->
