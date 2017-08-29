@@ -94,7 +94,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
             if (botTypes.isEmpty()) {
 
                 final BotConfig newBotConfig = new BotConfig(config);
-                newBotConfig.setId(UUID.randomUUID().toString());
+                newBotConfig.setId(generateUuid());
 
                 internalBotsConfig.getBots().add(adaptExternalToInternalConfig(newBotConfig));
                 ConfigurationManager.saveConfig(BotsType.class, internalBotsConfig,
@@ -104,7 +104,11 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
                         BotsType.class, FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
 
                 return adaptInternalToExternalConfig(
-                        new ArrayList<>(updatedInternalBotsConfig.getBots()));
+                        updatedInternalBotsConfig.getBots()
+                        .stream()
+                        .filter((item) -> item.getId().equals(newBotConfig.getId()))
+                        .distinct()
+                        .collect(Collectors.toList()));
             } else {
                 throw new IllegalStateException("Trying to create new BotConfig but null/empty id already exists. " +
                         "BotConfig: " + config + " Existing BotConfigs: "
@@ -227,5 +231,13 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
         botType.setUsername(externalBotConfig.getUsername());
         botType.setPassword(externalBotConfig.getPassword());
         return botType;
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Util methods
+    // ------------------------------------------------------------------------------------------------
+
+    private String generateUuid() {
+        return UUID.randomUUID().toString();
     }
 }

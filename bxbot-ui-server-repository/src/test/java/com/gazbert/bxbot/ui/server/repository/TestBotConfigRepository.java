@@ -49,10 +49,14 @@ import static org.easymock.EasyMock.*;
  * @author gazbert
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ConfigurationManager.class})
+@PrepareForTest({ConfigurationManager.class, BotConfigRepositoryXmlDatastore.class})
 public class TestBotConfigRepository {
 
+    // Mocked out methods
+    private static final String MOCKED_GENERATE_UUID_METHOD = "generateUuid";
+
     private static final String UNKNOWN_BOT_ID = "unknown-or-new-bot-id";
+    private static final String GENERATED_BOT_ID = "new-bot-id-123";
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
@@ -215,17 +219,20 @@ public class TestBotConfigRepository {
                 eq(BOTS_CONFIG_XSD_FILENAME))).
                 andReturn(allTheInternalBotsConfigPlusNewOne());
 
+        final BotConfigRepository botConfigRepository = PowerMock.createPartialMock(
+                BotConfigRepositoryXmlDatastore.class, MOCKED_GENERATE_UUID_METHOD);
+        PowerMock.expectPrivate(botConfigRepository, MOCKED_GENERATE_UUID_METHOD).andReturn(GENERATED_BOT_ID);
+
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.save(someNewExternalBotConfig());
 
         assertThat(botConfig.getId()).isNotEmpty(); // uuid has been generated
-        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
-        assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
-        assertThat(botConfig.getUrl()).isEqualTo(BOT_1_URL);
-        assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
-        assertThat(botConfig.getPassword()).isEqualTo(BOT_1_PASSWORD);
+        assertThat(botConfig.getName()).isEqualTo(NEW_BOT_NAME);
+        assertThat(botConfig.getStatus()).isEqualTo(NEW_BOT_STATUS);
+        assertThat(botConfig.getUrl()).isEqualTo(NEW_BOT_URL);
+        assertThat(botConfig.getUsername()).isEqualTo(NEW_BOT_USERNAME);
+        assertThat(botConfig.getPassword()).isEqualTo(NEW_BOT_PASSWORD);
 
         PowerMock.verifyAll();
     }
@@ -338,7 +345,7 @@ public class TestBotConfigRepository {
     private static BotsType allTheInternalBotsConfigPlusNewOne() {
 
         final BotType newBot = new BotType();
-        newBot.setId("mocked-uuid");
+        newBot.setId(GENERATED_BOT_ID);
         newBot.setName(NEW_BOT_NAME);
         newBot.setStatus(NEW_BOT_STATUS);
         newBot.setUrl(NEW_BOT_URL);
@@ -359,6 +366,6 @@ public class TestBotConfigRepository {
     }
 
     private static BotConfig someUpdatedExternalBotConfigWithUnknownId() {
-        return new BotConfig(BOT_1_ID + "_UNKNOWN", BOT_1_NAME, BOT_1_STATUS, BOT_1_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        return new BotConfig(UNKNOWN_BOT_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
     }
 }
