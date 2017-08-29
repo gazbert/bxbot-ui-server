@@ -29,7 +29,8 @@ import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationTyp
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.TradingStrategiesType;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
-import com.gazbert.bxbot.ui.server.repository.local.StrategyConfigRepositoryXmlImpl;
+import com.gazbert.bxbot.ui.server.repository.local.StrategyConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.local.impl.StrategyConfigRepositoryXmlImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

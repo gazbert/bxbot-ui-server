@@ -24,7 +24,7 @@
 package com.gazbert.bxbot.ui.server.services.impl;
 
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
-import com.gazbert.bxbot.ui.server.repository.StrategyConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.local.StrategyConfigRepository;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

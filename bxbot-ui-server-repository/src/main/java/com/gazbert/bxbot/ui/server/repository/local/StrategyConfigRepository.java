@@ -21,26 +21,27 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository;
+package com.gazbert.bxbot.ui.server.repository.local;
 
-import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
+
+import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 
 import java.util.List;
 
 /**
- * The Bot configuration repository.
+ * The Strategy configuration repository.
  *
  * @author gazbert
  */
-public interface BotConfigRepository {
+public interface StrategyConfigRepository {
 
-    List<BotConfig> findAllBots();
+    List<StrategyConfig> findAllStrategies();
 
-    BotConfig findById(String id);
+    StrategyConfig findById(String id);
 
-    BotConfig updateBot(BotConfig config);
+    StrategyConfig updateStrategy(StrategyConfig config);
 
-    BotConfig createBot(BotConfig config);
+    StrategyConfig createStrategy(StrategyConfig config);
 
-    BotConfig deleteBotById(String id);
+    StrategyConfig deleteStrategyById(String id);
 }

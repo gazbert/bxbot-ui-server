@@ -21,21 +21,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.local;
+package com.gazbert.bxbot.ui.server.repository.local.impl;
 
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.FileLocations;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.BotConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +52,7 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public List<BotConfig> findAllBots() {
+    public List<BotConfig> findAll() {
 
         final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
                 FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
@@ -60,7 +62,7 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
     @Override
     public BotConfig findById(String id) {
 
-        LOG.info(() -> "Fetching config for Bot id: " + id);
+        LOG.info(() -> "Fetching Bot config for id: " + id);
 
         final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
                 FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
@@ -74,104 +76,104 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
     }
 
     @Override
-    public BotConfig updateBot(BotConfig config) {
+    public BotConfig save(BotConfig config) {
 
-        LOG.info(() -> "About to update: " + config);
+        if (config.getId() == null || config.getId().isEmpty()) {
+
+            LOG.info(() -> "About to create Bot config: " + config);
+
+            final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
+                    FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+            final List<BotType> botTypes = internalBotsConfig.getBots()
+                    .stream()
+                    .filter((item) -> item.getId().equals(config.getId()))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            if (botTypes.isEmpty()) {
+
+                final BotConfig newBotConfig = new BotConfig(config);
+                newBotConfig.setId(UUID.randomUUID().toString());
+
+                internalBotsConfig.getBots().add(adaptExternalToInternalConfig(newBotConfig));
+                ConfigurationManager.saveConfig(BotsType.class, internalBotsConfig,
+                        FileLocations.BOTS_CONFIG_XML_FILENAME);
+
+                final BotsType updatedInternalBotsConfig = ConfigurationManager.loadConfig(
+                        BotsType.class, FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+                return adaptInternalToExternalConfig(
+                        new ArrayList<>(updatedInternalBotsConfig.getBots()));
+            } else {
+                throw new IllegalStateException("Trying to create new BotConfig but null/empty id already exists. " +
+                        "BotConfig: " + config + " Existing BotConfigs: " + internalBotsConfig);
+            }
+
+        } else {
+
+            LOG.info(() -> "About to update Bot Config: " + config);
+
+            final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
+                    FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+            final List<BotType> botTypes = internalBotsConfig.getBots()
+                    .stream()
+                    .filter((item) -> item.getId().equals(config.getId()))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            if (!botTypes.isEmpty()) {
+
+                internalBotsConfig.getBots().remove(botTypes.get(0)); // will only be 1 unique bot
+                internalBotsConfig.getBots().add(adaptExternalToInternalConfig(config));
+                ConfigurationManager.saveConfig(BotsType.class, internalBotsConfig,
+                        FileLocations.BOTS_CONFIG_XML_FILENAME);
+
+                final BotsType updatedInternalBotsConfig = ConfigurationManager.loadConfig(
+                        BotsType.class, FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+                return adaptInternalToExternalConfig(
+                        updatedInternalBotsConfig.getBots()
+                                .stream()
+                                .filter((item) -> item.getId().equals(config.getId()))
+                                .distinct()
+                                .collect(Collectors.toList()));
+            } else {
+                LOG.warn("Trying to update BotConfig but id does not exist BotConfig: " + config +
+                        " Existing BotConfigs: " + adaptAllInternalToAllExternalConfig(internalBotsConfig));
+                return new BotConfig();
+            }
+        }
+    }
+
+    @Override
+    public BotConfig delete(String id) {
+
+        LOG.info(() -> "Deleting Bot config for id: " + id);
 
         final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
                 FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
 
         final List<BotType> botTypes = internalBotsConfig.getBots()
                 .stream()
-                .filter((item) -> item.getId().equals(config.getId()))
+                .filter((item) -> item.getId().equals(id))
                 .distinct()
                 .collect(Collectors.toList());
 
         if (!botTypes.isEmpty()) {
 
-            internalBotsConfig.getBots().remove(botTypes.get(0)); // will only be 1 unique bot
-            internalBotsConfig.getBots().add(adaptExternalToInternalConfig(config));
+            final BotType botToRemove = botTypes.get(0); // will only be 1 unique strat
+            internalBotsConfig.getBots().remove(botToRemove);
             ConfigurationManager.saveConfig(BotsType.class, internalBotsConfig,
                     FileLocations.BOTS_CONFIG_XML_FILENAME);
 
-            final BotsType updatedInternalBotsConfig = ConfigurationManager.loadConfig(
-                    BotsType.class, FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
-
-            return adaptInternalToExternalConfig(
-                    updatedInternalBotsConfig.getBots()
-                            .stream()
-                            .filter((item) -> item.getId().equals(config.getId()))
-                            .distinct()
-                            .collect(Collectors.toList()));
+            return adaptInternalToExternalConfig(Collections.singletonList(botToRemove));
         } else {
-            // no matching id :-(
+            LOG.warn("Trying to delete BotConfig but id does not exist. BotConfig id: " + id + " Existing BotConfigs: "
+                    + adaptAllInternalToAllExternalConfig(internalBotsConfig));
             return new BotConfig();
         }
-    }
-
-    @Override
-    public BotConfig createBot(BotConfig config) {
-
-        throw new UnsupportedOperationException("createBot() not implemented yet!");
-
-//        final TradingStrategiesType internalStrategiesConfig = ConfigurationManager.loadConfig(TradingStrategiesType.class,
-//                FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//        final List<StrategyType> strategyTypes = internalStrategiesConfig.getStrategies()
-//                .stream()
-//                .filter((item) -> item.getId().equals(config.getId()))
-//                .distinct()
-//                .collect(Collectors.toList());
-//
-//        if (strategyTypes.isEmpty()) {
-//
-//            internalStrategiesConfig.getStrategies().add(adaptExternalToInternalConfig(config));
-//            ConfigurationManager.saveConfig(TradingStrategiesType.class, internalStrategiesConfig,
-//                    FileLocations.STRATEGIES_CONFIG_XML_FILENAME);
-//
-//            final TradingStrategiesType updatedInternalStrategiesConfig = ConfigurationManager.loadConfig(
-//                    TradingStrategiesType.class, FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//            return adaptInternalToExternalConfig(
-//                    updatedInternalStrategiesConfig.getStrategies()
-//                            .stream()
-//                            .filter((item) -> item.getId().equals(config.getId()))
-//                            .distinct()
-//                            .collect(Collectors.toList()));
-//        } else {
-//            // already have a matching id :-(
-//            return new StrategyConfig();
-//        }
-    }
-
-    @Override
-    public BotConfig deleteBotById(String id) {
-
-        throw new UnsupportedOperationException("deleteBotById() not implemented yet!");
-
-//        LOG.info(() -> "Deleting config for Strategy id: " + id);
-//
-//        final TradingStrategiesType internalStrategiesConfig = ConfigurationManager.loadConfig(TradingStrategiesType.class,
-//                FileLocations.STRATEGIES_CONFIG_XML_FILENAME, FileLocations.STRATEGIES_CONFIG_XSD_FILENAME);
-//
-//        final List<StrategyType> strategyTypes = internalStrategiesConfig.getStrategies()
-//                .stream()
-//                .filter((item) -> item.getId().equals(id))
-//                .distinct()
-//                .collect(Collectors.toList());
-//
-//        if (!strategyTypes.isEmpty()) {
-//
-//            final StrategyType strategyToRemove = strategyTypes.get(0); // will only be 1 unique strat
-//            internalStrategiesConfig.getStrategies().remove(strategyToRemove);
-//            ConfigurationManager.saveConfig(TradingStrategiesType.class, internalStrategiesConfig,
-//                    FileLocations.STRATEGIES_CONFIG_XML_FILENAME);
-//
-//            return adaptInternalToExternalConfig(Collections.singletonList(strategyToRemove));
-//        } else {
-//            // no matching id :-(
-//            return new StrategyConfig();
-//        }
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -220,6 +222,7 @@ public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
         botType.setId(externalBotConfig.getId());
         botType.setName(externalBotConfig.getName());
         botType.setStatus(externalBotConfig.getStatus());
+        botType.setUrl(externalBotConfig.getUrl());
         botType.setUsername(externalBotConfig.getUsername());
         botType.setPassword(externalBotConfig.getPassword());
         return botType;

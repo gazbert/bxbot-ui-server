@@ -1,4 +1,4 @@
-package com.gazbert.bxbot.ui.server.repository;
+package com.gazbert.bxbot.ui.server.repository.remote;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 

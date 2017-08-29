@@ -21,9 +21,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.local;
+package com.gazbert.bxbot.ui.server.repository.local.impl;
 
-import com.gazbert.bxbot.ui.server.repository.StrategyConfigRepository;
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigItemType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.ConfigurationType;
@@ -31,6 +30,7 @@ import com.gazbert.bxbot.ui.server.datastore.strategy.generated.StrategyType;
 import com.gazbert.bxbot.ui.server.datastore.strategy.generated.TradingStrategiesType;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.datastore.FileLocations;
+import com.gazbert.bxbot.ui.server.repository.local.StrategyConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;

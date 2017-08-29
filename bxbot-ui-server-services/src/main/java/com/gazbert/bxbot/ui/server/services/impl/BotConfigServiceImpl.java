@@ -24,7 +24,7 @@
 package com.gazbert.bxbot.ui.server.services.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.BotConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import com.gazbert.bxbot.ui.server.services.BotConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,30 +57,30 @@ public class BotConfigServiceImpl implements BotConfigService {
 
     @Override
     public List<BotConfig> getAllBots() {
-        return botConfigRepository.findAllBots();
+        return botConfigRepository.findAll();
     }
 
     @Override
     public BotConfig getBot(String id) {
-        LOG.info(() -> "Fetching config for Bot id: " + id);
+        LOG.info(() -> "Fetching Bot config for id: " + id);
         return botConfigRepository.findById(id);
     }
 
     @Override
     public BotConfig updateBot(BotConfig config) {
-        LOG.info(() -> "About to update: " + config);
-        return botConfigRepository.updateBot(config);
+        LOG.info(() -> "About to update Bot config: " + config);
+        return botConfigRepository.save(config);
     }
 
     @Override
     public BotConfig createBot(BotConfig config) {
-        LOG.info(() -> "About to create: " + config);
-        return botConfigRepository.createBot(config);
+        LOG.info(() -> "About to create Bot config: " + config);
+        return botConfigRepository.save(config);
     }
 
     @Override
     public BotConfig deleteBot(String id) {
         LOG.info(() -> "About to delete Bot config for id: " + id);
-        return botConfigRepository.deleteBotById(id);
+        return botConfigRepository.delete(id);
     }
 }

@@ -38,6 +38,28 @@ public class BotConfig {
     private String username;
     private String password;
 
+    // required for Jackson
+    public BotConfig() {
+    }
+
+    public BotConfig(BotConfig botConfig) {
+        this.id = botConfig.id;
+        this.name = botConfig.name;
+        this.status = botConfig.status;
+        this.url = botConfig.url;
+        this.username = botConfig.username;
+        this.password = botConfig.password;
+    }
+
+    public BotConfig(String id, String name, String status, String url, String username, String password) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
     public String getId() {
         return id;
     }

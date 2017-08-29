@@ -27,7 +27,8 @@ import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepositoryXmlImpl;
+import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.local.impl.BotConfigRepositoryXmlImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,8 +41,7 @@ import java.util.List;
 import static com.gazbert.bxbot.ui.server.datastore.FileLocations.BOTS_CONFIG_XML_FILENAME;
 import static com.gazbert.bxbot.ui.server.datastore.FileLocations.BOTS_CONFIG_XSD_FILENAME;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.*;
 
 /**
  * Tests Bot configuration repository behaves as expected.
@@ -68,6 +68,12 @@ public class TestBotConfigRepository {
     private static final String BOT_2_USERNAME = "admin";
     private static final String BOT_2_PASSWORD = "password";
 
+    private static final String NEW_BOT_NAME = "Gemini Bot";
+    private static final String NEW_BOT_STATUS = "Stopped";
+    private static final String NEW_BOT_URL = "https://hostname/bxbot-ui-server";
+    private static final String NEW_BOT_USERNAME = "admin";
+    private static final String NEW_BOT_PASSWORD = "password";
+
 
     @Before
     public void setup() throws Exception {
@@ -75,7 +81,7 @@ public class TestBotConfigRepository {
     }
 
     @Test
-    public void whenFindAllBotsCalledThenExpectRepositoryToReturnThemAll() throws Exception {
+    public void whenFindAllCalledThenExpectRepositoryToReturnAllBotConfigs() throws Exception {
 
         expect(ConfigurationManager.loadConfig(
                 eq(BotsType.class),
@@ -86,7 +92,7 @@ public class TestBotConfigRepository {
         PowerMock.replayAll();
 
         final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
-        final List<BotConfig> botConfigItems = botConfigRepository.findAllBots();
+        final List<BotConfig> botConfigItems = botConfigRepository.findAll();
 
         assertThat(botConfigItems.size()).isEqualTo(2);
 
@@ -108,7 +114,7 @@ public class TestBotConfigRepository {
     }
 
     @Test
-    public void whenFindByIdCalledWithRecognizedIdThenReturnMatchingBot() throws Exception {
+    public void whenFindByIdCalledWithKnownIdThenReturnMatchingBotConfig() throws Exception {
 
         expect(ConfigurationManager.loadConfig(
                 eq(BotsType.class),
@@ -132,7 +138,7 @@ public class TestBotConfigRepository {
     }
 
     @Test
-    public void whenFindByIdCalledWithUnrecognizedIdThenReturnEmptyBot() throws Exception {
+    public void whenFindByIdCalledWithUnknownIdThenReturnEmptyBotConfig() throws Exception {
 
         expect(ConfigurationManager.loadConfig(
                 eq(BotsType.class),
@@ -154,179 +160,152 @@ public class TestBotConfigRepository {
         PowerMock.verifyAll();
     }
 
-//    @Test
-//    public void whenUpdateStrategyCalledWithKnownIdThenExpectServiceToReturnUpdatedStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.updateStrategy(someExternalStrategyConfig());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+    @Test
+    public void whenSaveCalledWithKnownIdThenExpectUpdatedBotConfigToBeReturned() throws Exception {
 
-//    @Test
-//    public void whenUpdateStrategyConfigCalledWithUnrecognizedIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.updateStrategy(someExternalStrategyConfigWithUnknownId());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
 
-//    @Test
-//    public void whenDeleteByIdCalledWithRecognizedIdThenReturnMatchingStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.deleteStrategyById(STRAT_ID_1);
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+        ConfigurationManager.saveConfig(
+                eq(BotsType.class),
+                anyObject(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME));
 
-//    @Test
-//    public void whenDeleteByIdCalledWithUnrecognizedIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.deleteStrategyById("unknown-id");
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
 
-//    @Test
-//    public void whenCreateStrategyCalledWithUnknownThenExpectServiceToReturnCreatedStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfigPlusNewOne());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.createStrategy(someExternalStrategyConfigWithUnknownId());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(UNKNOWN_STRAT_ID);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+        PowerMock.replayAll();
 
-//    @Test
-//    public void whenCreateStrategyConfigCalledWithExistingIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryXmlImpl();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.createStrategy(someExternalStrategyConfig());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getLabel()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfig());
+
+        assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
+        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
+        assertThat(botConfig.getUrl()).isEqualTo(BOT_1_URL);
+        assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
+        assertThat(botConfig.getPassword()).isEqualTo(BOT_1_PASSWORD);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void whenSaveCalledWithEmptyIdThenExpectCreatedBotConfigToBeReturned() throws Exception {
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        ConfigurationManager.saveConfig(
+                eq(BotsType.class),
+                anyObject(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME));
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfigPlusNewOne());
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.save(someNewExternalBotConfig());
+
+        assertThat(botConfig.getId()).isNotEmpty(); // uuid has been generated
+        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
+        assertThat(botConfig.getUrl()).isEqualTo(BOT_1_URL);
+        assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
+        assertThat(botConfig.getPassword()).isEqualTo(BOT_1_PASSWORD);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void whenSaveCalledWithUnknownIdThenExpectEmptyBotConfigToBeReturned() throws Exception {
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfigWithUnknownId());
+
+        assertThat(botConfig.getId()).isEqualTo(null);
+        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getStatus()).isEqualTo(null);
+        assertThat(botConfig.getUrl()).isEqualTo(null);
+        assertThat(botConfig.getUsername()).isEqualTo(null);
+        assertThat(botConfig.getPassword()).isEqualTo(null);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void whenDeleteCalledWithKnownIdThenReturnDeletedBotConfig() throws Exception {
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        ConfigurationManager.saveConfig(
+                eq(BotsType.class),
+                anyObject(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME));
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.delete(BOT_1_ID);
+
+        assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
+        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
+        assertThat(botConfig.getUrl()).isEqualTo(BOT_1_URL);
+        assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
+        assertThat(botConfig.getPassword()).isEqualTo(BOT_1_PASSWORD);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void whenDeleteCalledWithUnknownIdThenReturnEmptyBotConfig() throws Exception {
+
+        expect(ConfigurationManager.loadConfig(
+                eq(BotsType.class),
+                eq(BOTS_CONFIG_XML_FILENAME),
+                eq(BOTS_CONFIG_XSD_FILENAME))).
+                andReturn(allTheInternalBotsConfig());
+
+        PowerMock.replayAll();
+
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfig botConfig = botConfigRepository.delete(UNKNOWN_BOT_ID);
+
+        assertThat(botConfig.getId()).isEqualTo(null);
+        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getStatus()).isEqualTo(null);
+        assertThat(botConfig.getUrl()).isEqualTo(null);
+        assertThat(botConfig.getUsername()).isEqualTo(null);
+        assertThat(botConfig.getPassword()).isEqualTo(null);
+
+        PowerMock.verifyAll();
+    }
 
     // ------------------------------------------------------------------------------------------------
     // Private utils
@@ -356,43 +335,30 @@ public class TestBotConfigRepository {
         return botsType;
     }
 
-//    private static TradingStrategiesType allTheInternalStrategiesConfigPlusNewOne() {
-//
-//        final ConfigItemType buyPriceConfigItem = new ConfigItemType();
-//        buyPriceConfigItem.setName(BUY_PRICE_CONFIG_ITEM_KEY);
-//        buyPriceConfigItem.setValue(BUY_PRICE_CONFIG_ITEM_VALUE);
-//
-//        final ConfigItemType amountToBuyConfigItem = new ConfigItemType();
-//        amountToBuyConfigItem.setName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
-//        amountToBuyConfigItem.setValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//
-//        final ConfigurationType configurationType = new ConfigurationType();
-//        configurationType.getConfigItem().add(buyPriceConfigItem);
-//        configurationType.getConfigItem().add(amountToBuyConfigItem);
-//
-//        final StrategyType newStrat = new StrategyType();
-//        newStrat.setId(UNKNOWN_STRAT_ID);
-//        newStrat.setLabel(STRAT_LABEL_1);
-//        newStrat.setDescription(STRAT_DESCRIPTION_1);
-//        newStrat.setClassName(STRAT_CLASSNAME_1);
-//        newStrat.setConfiguration(configurationType);
-//
-//        final TradingStrategiesType existingStatsPlusNewOne = allTheInternalStrategiesConfig();
-//        existingStatsPlusNewOne.getStrategies().add(newStrat);
-//        return existingStatsPlusNewOne;
-//    }
+    private static BotsType allTheInternalBotsConfigPlusNewOne() {
 
-//    private static StrategyConfig someExternalStrategyConfig() {
-//        final Map<String, String> configItems = new HashMap<>();
-//        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-//        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
-//    }
+        final BotType newBot = new BotType();
+        newBot.setId("mocked-uuid");
+        newBot.setName(NEW_BOT_NAME);
+        newBot.setStatus(NEW_BOT_STATUS);
+        newBot.setUrl(NEW_BOT_URL);
+        newBot.setUsername(NEW_BOT_USERNAME);
+        newBot.setPassword(NEW_BOT_PASSWORD);
 
-//    private static StrategyConfig someExternalStrategyConfigWithUnknownId() {
-//        final Map<String, String> configItems = new HashMap<>();
-//        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-//        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//        return new StrategyConfig(UNKNOWN_STRAT_ID, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
-//    }
+        final BotsType existingBotsPlusNewOne = allTheInternalBotsConfig();
+        existingBotsPlusNewOne.getBots().add(newBot);
+        return existingBotsPlusNewOne;
+    }
+
+    private static BotConfig someNewExternalBotConfig() {
+        return new BotConfig(null, NEW_BOT_NAME, NEW_BOT_STATUS, NEW_BOT_URL, NEW_BOT_USERNAME, NEW_BOT_PASSWORD);
+    }
+
+    private static BotConfig someUpdatedExternalBotConfig() {
+        return new BotConfig(BOT_1_ID, BOT_1_NAME + "_UPDATED", BOT_1_STATUS, BOT_1_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+    }
+
+    private static BotConfig someUpdatedExternalBotConfigWithUnknownId() {
+        return new BotConfig(BOT_1_ID + "_UNKNOWN", BOT_1_NAME, BOT_1_STATUS, BOT_1_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+    }
 }

@@ -21,7 +21,7 @@
                 <include>bxbot.bat</include>
                 <include>config/*.xml</include>
                 <include>config/application.properties</include>
-                <include>config/log4j2.xml</include>
+                <include>config/keystore.p12</include>
             </includes>
         </fileSet>
 

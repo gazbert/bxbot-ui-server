@@ -1,7 +1,7 @@
-package com.gazbert.bxbot.ui.server.repository.remote;
+package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.MarketRepository;
+import com.gazbert.bxbot.ui.server.repository.remote.MarketRepository;
 
 public class MarketRepositoryRestClientImpl implements MarketRepository {
 
