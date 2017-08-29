@@ -107,7 +107,8 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
                         new ArrayList<>(updatedInternalBotsConfig.getBots()));
             } else {
                 throw new IllegalStateException("Trying to create new BotConfig but null/empty id already exists. " +
-                        "BotConfig: " + config + " Existing BotConfigs: " + internalBotsConfig);
+                        "BotConfig: " + config + " Existing BotConfigs: "
+                        + adaptAllInternalToAllExternalConfig(internalBotsConfig));
             }
 
         } else {

@@ -42,13 +42,13 @@ public class BotConfig {
     public BotConfig() {
     }
 
-    public BotConfig(BotConfig botConfig) {
-        this.id = botConfig.id;
-        this.name = botConfig.name;
-        this.status = botConfig.status;
-        this.url = botConfig.url;
-        this.username = botConfig.username;
-        this.password = botConfig.password;
+    public BotConfig(BotConfig other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.status = other.status;
+        this.url = other.url;
+        this.username = other.username;
+        this.password = other.password;
     }
 
     public BotConfig(String id, String name, String status, String url, String username, String password) {
