@@ -36,13 +36,13 @@ import java.util.List;
  */
 public interface BotConfigService {
 
-    List<BotConfig> getAllBots();
+    List<BotConfig> getAllBotConfig();
 
-    BotConfig getBot(String id);
+    BotConfig getBotConfig(String id);
 
-    BotConfig updateBot(BotConfig config);
+    BotConfig updateBotConfig(BotConfig config);
 
-    BotConfig createBot(BotConfig config);
+    BotConfig createBotConfig(BotConfig config);
 
-    BotConfig deleteBot(String id);
+    BotConfig deleteBotConfig(String id);
 }

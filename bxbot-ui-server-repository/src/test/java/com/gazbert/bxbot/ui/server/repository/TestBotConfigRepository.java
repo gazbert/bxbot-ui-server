@@ -28,7 +28,7 @@ import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
-import com.gazbert.bxbot.ui.server.repository.local.impl.BotConfigRepositoryXmlImpl;
+import com.gazbert.bxbot.ui.server.repository.local.impl.BotConfigRepositoryXmlDatastore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,7 +91,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final List<BotConfig> botConfigItems = botConfigRepository.findAll();
 
         assertThat(botConfigItems.size()).isEqualTo(2);
@@ -124,7 +124,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.findById(BOT_1_ID);
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
@@ -148,7 +148,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.findById(UNKNOWN_BOT_ID);
 
         assertThat(botConfig.getId()).isEqualTo(null);
@@ -182,7 +182,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfig());
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
@@ -217,7 +217,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.save(someNewExternalBotConfig());
 
         assertThat(botConfig.getId()).isNotEmpty(); // uuid has been generated
@@ -241,7 +241,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfigWithUnknownId());
 
         assertThat(botConfig.getId()).isEqualTo(null);
@@ -270,7 +270,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.delete(BOT_1_ID);
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
@@ -294,7 +294,7 @@ public class TestBotConfigRepository {
 
         PowerMock.replayAll();
 
-        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlImpl();
+        final BotConfigRepository botConfigRepository = new BotConfigRepositoryXmlDatastore();
         final BotConfig botConfig = botConfigRepository.delete(UNKNOWN_BOT_ID);
 
         assertThat(botConfig.getId()).isEqualTo(null);

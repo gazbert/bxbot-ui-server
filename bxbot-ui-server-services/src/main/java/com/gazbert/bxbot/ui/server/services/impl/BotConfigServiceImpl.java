@@ -56,30 +56,30 @@ public class BotConfigServiceImpl implements BotConfigService {
     }
 
     @Override
-    public List<BotConfig> getAllBots() {
+    public List<BotConfig> getAllBotConfig() {
         return botConfigRepository.findAll();
     }
 
     @Override
-    public BotConfig getBot(String id) {
+    public BotConfig getBotConfig(String id) {
         LOG.info(() -> "Fetching Bot config for id: " + id);
         return botConfigRepository.findById(id);
     }
 
     @Override
-    public BotConfig updateBot(BotConfig config) {
+    public BotConfig updateBotConfig(BotConfig config) {
         LOG.info(() -> "About to update Bot config: " + config);
         return botConfigRepository.save(config);
     }
 
     @Override
-    public BotConfig createBot(BotConfig config) {
+    public BotConfig createBotConfig(BotConfig config) {
         LOG.info(() -> "About to create Bot config: " + config);
         return botConfigRepository.save(config);
     }
 
     @Override
-    public BotConfig deleteBot(String id) {
+    public BotConfig deleteBotConfig(String id) {
         LOG.info(() -> "About to delete Bot config for id: " + id);
         return botConfigRepository.delete(id);
     }

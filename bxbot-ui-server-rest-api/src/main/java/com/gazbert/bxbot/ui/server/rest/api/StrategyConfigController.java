@@ -63,7 +63,7 @@ public class StrategyConfigController {
      */
     @RequestMapping(value = "/strategy", method = RequestMethod.GET)
     public List<StrategyConfig> getAllStrategies(@AuthenticationPrincipal User user) {
-        return strategyConfigService.findAllStrategies();
+        return strategyConfigService.getAllStrategyConfig();
     }
 
     /**
@@ -76,7 +76,7 @@ public class StrategyConfigController {
     @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
-        final StrategyConfig strategyConfig = strategyConfigService.findById(strategyId);
+        final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(strategyId);
         return strategyConfig.getId() != null
                 ? new ResponseEntity<>(strategyConfig, null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -97,7 +97,7 @@ public class StrategyConfigController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final StrategyConfig updatedConfig = strategyConfigService.updateStrategy(config);
+        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(config);
         return updatedConfig.getId() != null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -118,7 +118,7 @@ public class StrategyConfigController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final StrategyConfig createdConfig = strategyConfigService.createStrategy(config);
+        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(config);
         if (createdConfig.getId() != null) {
             final HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setLocation(ServletUriComponentsBuilder
@@ -141,7 +141,7 @@ public class StrategyConfigController {
     @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
-        final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyById(strategyId);
+        final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(strategyId);
         return deletedConfig.getId() != null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

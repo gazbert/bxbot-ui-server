@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.local;
+package com.gazbert.bxbot.ui.server.repository.remote;
 
 
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
@@ -35,13 +35,11 @@ import java.util.List;
  */
 public interface StrategyConfigRepository {
 
-    List<StrategyConfig> findAllStrategies();
+    List<StrategyConfig> findAll();
 
     StrategyConfig findById(String id);
 
-    StrategyConfig updateStrategy(StrategyConfig config);
+    StrategyConfig save(StrategyConfig config);
 
-    StrategyConfig createStrategy(StrategyConfig config);
-
-    StrategyConfig deleteStrategyById(String id);
+    StrategyConfig delete(String id);
 }

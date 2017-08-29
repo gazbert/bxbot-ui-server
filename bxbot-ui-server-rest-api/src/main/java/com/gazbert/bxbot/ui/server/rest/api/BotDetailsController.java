@@ -64,7 +64,7 @@ public class BotDetailsController {
      */
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
     public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
-        return new ResponseDataWrapper(botConfigService.getAllBots());
+        return new ResponseDataWrapper(botConfigService.getAllBotConfig());
     }
 
     /**

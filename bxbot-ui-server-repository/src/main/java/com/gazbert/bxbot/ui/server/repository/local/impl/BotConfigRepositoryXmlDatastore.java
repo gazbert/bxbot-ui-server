@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  */
 @Repository("botConfigRepository")
 @Transactional
-public class BotConfigRepositoryXmlImpl implements BotConfigRepository {
+public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
 
