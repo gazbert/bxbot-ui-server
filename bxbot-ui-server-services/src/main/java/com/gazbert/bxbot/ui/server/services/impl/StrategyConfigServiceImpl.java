@@ -39,6 +39,8 @@ import java.util.List;
 /**
  * Implementation of the Strategy config service.
  *
+ * TODO - Service should use BotConfigRepository to lookup Bot URL + cred and then pass them to the remote StrategyConfigRepository
+ *
  * @author gazbert
  */
 @Service("strategyConfigService")

@@ -43,7 +43,7 @@ import java.util.Map;
  * <p>
  * It will lookup the Exchange (Bot) id in the registry and route the request to the remote Bot.
  *
- * TODO - Service should use BotConfigRepository to lookup Bot URL + cred and then pass them to the remote StrategyConfigRepository
+ * TODO - Service should use BotConfigRepository to lookup Bot URL + cred and then pass them to the remote ExchangeConfigRepository
  *
  * @author gazbert
  */
