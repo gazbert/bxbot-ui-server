@@ -21,16 +21,17 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.services.impl;
+package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.AuthenticationConfig;
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeAdapterConfig;
+import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
-import com.gazbert.bxbot.ui.server.services.ExchangeAdapterConfigService;
+import com.gazbert.bxbot.ui.server.repository.remote.ExchangeConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,37 +40,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of the Exchange Adapter config service.
- * <p>
- * It will lookup the Exchange (Bot) id in the registry and route the request to the remote Bot.
- *
- * TODO - Service should use BotConfigRepository to lookup Bot URL + cred and then pass them to the remote ExchangeConfigRepository
+ * Implementation of the remote Exchange config repository.
  *
  * @author gazbert
  */
-@Service("exchangeAdapterConfigService")
+@Repository("exchangeConfigRepository")
 @Transactional
-public class ExchangeAdapterConfigServiceImpl implements ExchangeAdapterConfigService {
+public class ExchangeConfigRepositoryRestClient implements ExchangeConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
-    private final RestTemplate restTemplate;
 
-    public ExchangeAdapterConfigServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+    private RestTemplateBuilder restTemplateBuilder;
 
-        // TODO - lookup user/pass for Bot from secure storage
-        this.restTemplate = restTemplateBuilder.basicAuthorization("admin", "notSafeForProduction").build();
+    public ExchangeConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplateBuilder = restTemplateBuilder;
     }
 
     @Override
-    public ExchangeAdapterConfig fetchExchangeAdapterConfigForBot(String id) {
-        LOG.info(() -> "Fetching config for Exchange Adapter id: " + id);
-        return getExchangeAdapterConfig(id);
+    public ExchangeConfig get(BotConfig botConfig) {
+        return getRemoteExchangeAdapterConfig(botConfig);
+    }
+
+    @Override
+    public ExchangeConfig save(ExchangeConfig config, BotConfig botConfig) {
+        throw new UnsupportedOperationException("save() not implemented");
     }
 
     /*
      * Stub for now.
-     */
-    private ExchangeAdapterConfig getExchangeAdapterConfig(String botId) {
+    */
+    private ExchangeConfig getExchangeConfig() {
 
         final Map<String, String> authItems = new HashMap<>();
         authItems.put("key", "my-api-key");
@@ -80,31 +80,29 @@ public class ExchangeAdapterConfigServiceImpl implements ExchangeAdapterConfigSe
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(30);
-        networkConfig.setNonFatalErrorHttpStatusCodes(Arrays.asList(522, 524, 525));
+        networkConfig.setNonFatalErrorCodes(Arrays.asList(522, 524, 525));
         networkConfig.setNonFatalErrorMessages(Arrays.asList("Connection reset", "Connection closed by peer",
                 "Remote host closed connection during handshake"));
 
-        final ExchangeAdapterConfig exchangeAdapterConfig = new ExchangeAdapterConfig();
-        exchangeAdapterConfig.setName("Bitstamp");
-        exchangeAdapterConfig.setClassName("com.gazbert.bxbot.exchanges.BitstampExchangeAdapter");
-        exchangeAdapterConfig.setNetworkConfig(networkConfig);
+        final ExchangeConfig exchangeConfig = new ExchangeConfig();
+        exchangeConfig.setExchangeName("Bitstamp");
+        exchangeConfig.setExchangeAdapter("com.gazbert.bxbot.exchanges.BitstampExchangeAdapter");
+        exchangeConfig.setNetworkConfig(networkConfig);
 
-        return exchangeAdapterConfig;
+        return exchangeConfig;
     }
 
     /*
      * Query remote bot.
      */
-    private ExchangeAdapterConfig getRemoteExchangeAdapterConfig(String id) {
+    private ExchangeConfig getRemoteExchangeAdapterConfig(BotConfig botConfig) {
 
-        // TODO - Lookup up Bot routing info based on id...
+        final RestTemplate restTemplate = restTemplateBuilder.basicAuthorization(
+                botConfig.getUsername(), botConfig.getPassword()).build();
 
-        // ...then call it...
-        final ExchangeAdapterConfig config =
-                restTemplate.getForObject("http://localhost:8081/api/config/exchange", ExchangeAdapterConfig.class);
+        final ExchangeConfig config = restTemplate.getForObject(botConfig.getBaseUrl() + "/config/exchange", ExchangeConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + config);
-
         return config;
     }
 }

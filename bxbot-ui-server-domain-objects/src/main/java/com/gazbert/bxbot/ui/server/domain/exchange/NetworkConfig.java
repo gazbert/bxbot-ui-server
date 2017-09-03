@@ -36,14 +36,11 @@ import java.util.List;
 public class NetworkConfig {
 
     private Integer connectionTimeout;
-    private List<Integer> nonFatalErrorHttpStatusCodes;
+    private List<Integer> nonFatalErrorCodes;
     private List<String> nonFatalErrorMessages;
 
-//    public nonFatalErrorHttpStatusCodes: ErrorCode[],
-//    public nonFatalErrorMessages: ErrorMessage[]) {
-
     public NetworkConfig() {
-        nonFatalErrorHttpStatusCodes = new ArrayList<>();
+        nonFatalErrorCodes = new ArrayList<>();
         nonFatalErrorMessages = new ArrayList<>();
     }
 
@@ -55,12 +52,12 @@ public class NetworkConfig {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public List<Integer> getNonFatalErrorHttpStatusCodes() {
-        return nonFatalErrorHttpStatusCodes;
+    public List<Integer> getNonFatalErrorCodes() {
+        return nonFatalErrorCodes;
     }
 
-    public void setNonFatalErrorHttpStatusCodes(List<Integer> nonFatalErrorHttpStatusCodes) {
-        this.nonFatalErrorHttpStatusCodes = nonFatalErrorHttpStatusCodes;
+    public void setNonFatalErrorCodes(List<Integer> nonFatalErrorCodes) {
+        this.nonFatalErrorCodes = nonFatalErrorCodes;
     }
 
     public List<String> getNonFatalErrorMessages() {
@@ -75,7 +72,7 @@ public class NetworkConfig {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("connectionTimeout", connectionTimeout)
-                .add("nonFatalErrorHttpStatusCodes", nonFatalErrorHttpStatusCodes)
+                .add("nonFatalErrorCodes", nonFatalErrorCodes)
                 .add("nonFatalErrorMessages", nonFatalErrorMessages)
                 .toString();
     }

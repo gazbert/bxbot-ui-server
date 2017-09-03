@@ -81,7 +81,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfigItems.get(0).getId()).isEqualTo(STRAT_ID_1);
 //        assertThat(strategyConfigItems.get(0).getLabel()).isEqualTo(STRAT_LABEL_1);
 //        assertThat(strategyConfigItems.get(0).getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfigItems.get(0).getClassName()).isEqualTo(STRAT_CLASSNAME_1);
+//        assertThat(strategyConfigItems.get(0).getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
 //        assertThat(strategyConfigItems.get(0).getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfigItems.get(0).getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfigItems.get(0).getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -90,7 +90,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfigItems.get(1).getId()).isEqualTo(STRAT_ID_2);
 //        assertThat(strategyConfigItems.get(1).getLabel()).isEqualTo(STRAT_LABEL_2);
 //        assertThat(strategyConfigItems.get(1).getDescription()).isEqualTo(STRAT_DESCRIPTION_2);
-//        assertThat(strategyConfigItems.get(1).getClassName()).isEqualTo(STRAT_CLASSNAME_2);
+//        assertThat(strategyConfigItems.get(1).getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_2);
 //        assertThat(strategyConfigItems.get(1).getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfigItems.get(1).getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfigItems.get(1).getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -116,7 +116,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
 //        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -142,7 +142,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(null);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(null);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
 //        assertThat(strategyConfig.getConfigItems().isEmpty());
 //
 //        PowerMock.verifyAll();
@@ -176,7 +176,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
 //        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -202,7 +202,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(null);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(null);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
 //        assertThat(strategyConfig.getConfigItems().isEmpty());
 //
 //        PowerMock.verifyAll();
@@ -230,7 +230,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
 //        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -256,7 +256,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(null);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(null);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
 //        assertThat(strategyConfig.getConfigItems().isEmpty());
 //
 //        PowerMock.verifyAll();
@@ -290,7 +290,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(UNKNOWN_STRAT_ID);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(STRAT_LABEL_1);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(STRAT_CLASSNAME_1);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
 //        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
 //        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
 //        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
@@ -316,7 +316,7 @@ public class TestStrategyConfigRepository {
 //        assertThat(strategyConfig.getId()).isEqualTo(null);
 //        assertThat(strategyConfig.getLabel()).isEqualTo(null);
 //        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getClassName()).isEqualTo(null);
+//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
 //        assertThat(strategyConfig.getConfigItems().isEmpty());
 //
 //        PowerMock.verifyAll();
@@ -332,11 +332,11 @@ public class TestStrategyConfigRepository {
 //    private static TradingStrategiesType allTheInternalStrategiesConfig() {
 //
 //        final ConfigItemType buyPriceConfigItem = new ConfigItemType();
-//        buyPriceConfigItem.setName(BUY_PRICE_CONFIG_ITEM_KEY);
+//        buyPriceConfigItem.setExchangeName(BUY_PRICE_CONFIG_ITEM_KEY);
 //        buyPriceConfigItem.setValue(BUY_PRICE_CONFIG_ITEM_VALUE);
 //
 //        final ConfigItemType amountToBuyConfigItem = new ConfigItemType();
-//        amountToBuyConfigItem.setName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
+//        amountToBuyConfigItem.setExchangeName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
 //        amountToBuyConfigItem.setValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
 //
 //        final ConfigurationType configurationType = new ConfigurationType();
@@ -347,14 +347,14 @@ public class TestStrategyConfigRepository {
 //        strategyType1.setId(STRAT_ID_1);
 //        strategyType1.setLabel(STRAT_LABEL_1);
 //        strategyType1.setDescription(STRAT_DESCRIPTION_1);
-//        strategyType1.setClassName(STRAT_CLASSNAME_1);
+//        strategyType1.setExchangeAdapter(STRAT_CLASSNAME_1);
 //        strategyType1.setConfiguration(configurationType);
 //
 //        final StrategyType strategyType2 = new StrategyType();
 //        strategyType2.setId(STRAT_ID_2);
 //        strategyType2.setLabel(STRAT_LABEL_2);
 //        strategyType2.setDescription(STRAT_DESCRIPTION_2);
-//        strategyType2.setClassName(STRAT_CLASSNAME_2);
+//        strategyType2.setExchangeAdapter(STRAT_CLASSNAME_2);
 //        strategyType2.setConfiguration(configurationType);
 //
 //        final TradingStrategiesType tradingStrategiesType = new TradingStrategiesType();
@@ -367,11 +367,11 @@ public class TestStrategyConfigRepository {
 //    private static TradingStrategiesType allTheInternalStrategiesConfigPlusNewOne() {
 //
 //        final ConfigItemType buyPriceConfigItem = new ConfigItemType();
-//        buyPriceConfigItem.setName(BUY_PRICE_CONFIG_ITEM_KEY);
+//        buyPriceConfigItem.setExchangeName(BUY_PRICE_CONFIG_ITEM_KEY);
 //        buyPriceConfigItem.setValue(BUY_PRICE_CONFIG_ITEM_VALUE);
 //
 //        final ConfigItemType amountToBuyConfigItem = new ConfigItemType();
-//        amountToBuyConfigItem.setName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
+//        amountToBuyConfigItem.setExchangeName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
 //        amountToBuyConfigItem.setValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
 //
 //        final ConfigurationType configurationType = new ConfigurationType();
@@ -382,7 +382,7 @@ public class TestStrategyConfigRepository {
 //        newStrat.setId(UNKNOWN_STRAT_ID);
 //        newStrat.setLabel(STRAT_LABEL_1);
 //        newStrat.setDescription(STRAT_DESCRIPTION_1);
-//        newStrat.setClassName(STRAT_CLASSNAME_1);
+//        newStrat.setExchangeAdapter(STRAT_CLASSNAME_1);
 //        newStrat.setConfiguration(configurationType);
 //
 //        final TradingStrategiesType existingStatsPlusNewOne = allTheInternalStrategiesConfig();

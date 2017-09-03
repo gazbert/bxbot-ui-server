@@ -21,38 +21,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.domain.exchange;
+package com.gazbert.bxbot.ui.server.services;
 
-import com.google.common.base.MoreObjects;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 
 /**
- * Domain object representing other (optional) Exchange Adapter config.
+ * The Exchange configuration service.
  *
  * @author gazbert
  */
-public class OtherConfig {
+public interface ExchangeConfigService {
 
-    private Map<String, String> items;
+    ExchangeConfig getExchangeConfig(String botId);
 
-    public OtherConfig() {
-        items = new HashMap<>();
-    }
-
-    public Map<String, String> getItems() {
-        return items;
-    }
-
-    public void setItems(Map<String, String> items) {
-        this.items = items;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("items", items)
-                .toString();
-    }
+    ExchangeConfig updateExchangeConfig(ExchangeConfig config, String botId);
 }

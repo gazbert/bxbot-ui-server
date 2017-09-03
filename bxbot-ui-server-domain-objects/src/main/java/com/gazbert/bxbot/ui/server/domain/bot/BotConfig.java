@@ -34,7 +34,7 @@ public class BotConfig {
     private String id;
     private String name;
     private String status;
-    private String url;
+    private String baseUrl;
     private String username;
     private String password;
 
@@ -46,16 +46,16 @@ public class BotConfig {
         this.id = other.id;
         this.name = other.name;
         this.status = other.status;
-        this.url = other.url;
+        this.baseUrl = other.baseUrl;
         this.username = other.username;
         this.password = other.password;
     }
 
-    public BotConfig(String id, String name, String status, String url, String username, String password) {
+    public BotConfig(String id, String name, String status, String baseUrl, String username, String password) {
         this.id = id;
         this.name = name;
         this.status = status;
-        this.url = url;
+        this.baseUrl = baseUrl;
         this.username = username;
         this.password = password;
     }
@@ -84,12 +84,12 @@ public class BotConfig {
         this.status = status;
     }
 
-    public String getUrl() {
-        return url;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public String getUsername() {
@@ -114,7 +114,7 @@ public class BotConfig {
                 .add("id", id)
                 .add("name", name)
                 .add("status", status)
-                .add("url", url)
+                .add("baseUrl", baseUrl)
                 .add("username", username)
                 .add("password", password)
                 .toString();

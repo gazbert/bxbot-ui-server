@@ -47,12 +47,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api")
-public class BotDetailsController {
+public class BotsConfigController {
 
     private final BotConfigService botConfigService;
 
     @Autowired
-    public BotDetailsController(BotConfigService botConfigService) {
+    public BotsConfigController(BotConfigService botConfigService) {
         Assert.notNull(botConfigService, "botConfigService dependency cannot be null!");
         this.botConfigService = botConfigService;
     }

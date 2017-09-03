@@ -25,70 +25,34 @@ package com.gazbert.bxbot.ui.server.domain.exchange;
 
 import com.google.common.base.MoreObjects;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Domain object representing the Exchange Adapter config.
- * <p>
- * For now, decision taken not to expose AuthenticationConfig (API key + secret) through REST API - changes have to be
- * made on the local bot node. Might revisit this in the future.
+ * Domain object representing optional Exchange config.
  *
  * @author gazbert
  */
-public class ExchangeAdapterConfig {
+public class OptionalConfig {
 
-    private long id;
-    private String name;
-    private String className;
-    private NetworkConfig networkConfig;
-    private OtherConfig otherConfig;
+    private Map<String, String> items;
 
-    public long getId() {
-        return id;
+    public OptionalConfig() {
+        items = new HashMap<>();
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Map<String, String> getItems() {
+        return items;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public void setNetworkConfig(NetworkConfig networkConfig) {
-        this.networkConfig = networkConfig;
-    }
-
-    public NetworkConfig getNetworkConfig() {
-        return networkConfig;
-    }
-
-    public OtherConfig getOtherConfig() {
-        return otherConfig;
-    }
-
-    public void setOtherConfig(OtherConfig otherConfig) {
-        this.otherConfig = otherConfig;
+    public void setItems(Map<String, String> items) {
+        this.items = items;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("name", name)
-                .add("className", className)
-                .add("networkConfig", networkConfig)
-                .add("otherConfig", otherConfig)
+                .add("items", items)
                 .toString();
     }
 }

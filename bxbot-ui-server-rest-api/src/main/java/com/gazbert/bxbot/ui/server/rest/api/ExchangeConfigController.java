@@ -23,32 +23,37 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeAdapterConfig;
+import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.ExchangeAdapterConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gazbert.bxbot.ui.server.services.ExchangeConfigService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for directing Exchange Adapter config requests.
+ * Controller for directing Exchange config requests.
  *
  * @author gazbert
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api")
-public class ExchangeAdapterController {
+@RequestMapping("/api/config")
+public class ExchangeConfigController {
 
-    private final ExchangeAdapterConfigService exchangeAdapterConfigService;
+    private static final Logger LOG = LogManager.getLogger();
 
-    public ExchangeAdapterController(ExchangeAdapterConfigService exchangeAdapterConfigService) {
-        this.exchangeAdapterConfigService = exchangeAdapterConfigService;
+    private final ExchangeConfigService exchangeConfigService;
+
+    public ExchangeConfigController(ExchangeConfigService exchangeConfigService) {
+        Assert.notNull(exchangeConfigService, "exchangeConfigService dependency cannot be null!");
+        this.exchangeConfigService = exchangeConfigService;
     }
 
     /**
@@ -59,12 +64,15 @@ public class ExchangeAdapterController {
      * @param id   the id of the Exchange (Bot) to fetch the Exchange Adapter details for.
      * @return the Exchange Adapter Details configuration.
      */
-    @RequestMapping(value = "/exchange_adapters/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/exchanges/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String id) {
 
-        final ExchangeAdapterConfig exchangeAdapterConfig = exchangeAdapterConfigService.fetchExchangeAdapterConfigForBot(id);
-        return exchangeAdapterConfig != null
-                ? new ResponseEntity<>(new ResponseDataWrapper(exchangeAdapterConfig), null, HttpStatus.OK)
+        // TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
+        LOG.info("GET /exchanges/" + id + " - getExchange() "); //- caller: " + user.getUsername());
+
+        final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(id);
+        return exchangeConfig != null
+                ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

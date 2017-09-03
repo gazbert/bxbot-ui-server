@@ -61,7 +61,7 @@ public class StrategyConfigController {
      * @param user the authenticated user.
      * @return a list of Strategy configurations.
      */
-    @RequestMapping(value = "/strategy", method = RequestMethod.GET)
+    @RequestMapping(value = "/strategies", method = RequestMethod.GET)
     public List<StrategyConfig> getAllStrategies(@AuthenticationPrincipal User user) {
         return strategyConfigService.getAllStrategyConfig();
     }
@@ -73,7 +73,7 @@ public class StrategyConfigController {
      * @param strategyId the id of the Strategy to fetch.
      * @return the Strategy configuration.
      */
-    @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
         final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(strategyId);
@@ -90,7 +90,7 @@ public class StrategyConfigController {
      * @param config the updated Strategy config.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
-    @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
     ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig config) {
 
         if (config == null || config.getId() == null || !strategyId.equals(config.getId())) {
@@ -111,7 +111,7 @@ public class StrategyConfigController {
      * @param config the new Strategy config.
      * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
      */
-    @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.POST)
     ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig config) {
 
         if (config == null || config.getId() == null || !strategyId.equals(config.getId())) {
@@ -138,7 +138,7 @@ public class StrategyConfigController {
      * @param strategyId the id of the Strategy configuration to delete.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
-    @RequestMapping(value = "/strategy/{strategyId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
         final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(strategyId);

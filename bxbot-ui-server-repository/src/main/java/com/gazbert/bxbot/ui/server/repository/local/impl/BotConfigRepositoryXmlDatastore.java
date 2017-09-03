@@ -195,7 +195,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
             botConfig.setId(item.getId());
             botConfig.setName(item.getName());
             botConfig.setStatus(item.getStatus());
-            botConfig.setUrl(item.getUrl());
+            botConfig.setBaseUrl(item.getBaseUrl());
             botConfig.setUsername(item.getUsername());
             botConfig.setPassword(item.getPassword());
             botConfigItems.add(botConfig);
@@ -214,7 +214,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
             botConfig.setId(internalBotConfig.getId());
             botConfig.setName(internalBotConfig.getName());
             botConfig.setStatus(internalBotConfig.getStatus());
-            botConfig.setUrl(internalBotConfig.getUrl());
+            botConfig.setBaseUrl(internalBotConfig.getBaseUrl());
             botConfig.setUsername(internalBotConfig.getUsername());
             botConfig.setPassword(internalBotConfig.getPassword());
         }
@@ -227,7 +227,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
         botType.setId(externalBotConfig.getId());
         botType.setName(externalBotConfig.getName());
         botType.setStatus(externalBotConfig.getStatus());
-        botType.setUrl(externalBotConfig.getUrl());
+        botType.setBaseUrl(externalBotConfig.getBaseUrl());
         botType.setUsername(externalBotConfig.getUsername());
         botType.setPassword(externalBotConfig.getPassword());
         return botType;

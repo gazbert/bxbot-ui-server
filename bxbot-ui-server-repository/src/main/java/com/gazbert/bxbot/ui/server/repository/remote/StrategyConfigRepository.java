@@ -29,7 +29,7 @@ import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import java.util.List;
 
 /**
- * The Strategy configuration repository.
+ * The remote Strategy configuration repository.
  *
  * @author gazbert
  */

@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Implementation of the Strategy config repository.
+ * Implementation of the remote Strategy config repository.
  *
  * @author gazbert
  */
@@ -78,10 +78,10 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 //            strategyConfig.setId(item.getId());
 //            strategyConfig.setLabel(item.getLabel());
 //            strategyConfig.setDescription(item.getDescription());
-//            strategyConfig.setClassName(item.getClassName());
+//            strategyConfig.setExchangeAdapter(item.getExchangeAdapter());
 //
 //            item.getConfiguration().getConfigItem().forEach(internalConfigItem ->
-//                    strategyConfig.getConfigItems().put(internalConfigItem.getName(), internalConfigItem.getValue()));
+//                    strategyConfig.getConfigItems().put(internalConfigItem.getExchangeName(), internalConfigItem.getValue()));
 //
 //            strategyConfigItems.add(strategyConfig);
 //        });
@@ -100,10 +100,10 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 //            strategyConfig.setId(internalStrategyConfig.getId());
 //            strategyConfig.setLabel(internalStrategyConfig.getLabel());
 //            strategyConfig.setDescription(internalStrategyConfig.getDescription());
-//            strategyConfig.setClassName(internalStrategyConfig.getClassName());
+//            strategyConfig.setExchangeAdapter(internalStrategyConfig.getExchangeAdapter());
 //
 //            internalStrategyConfig.getConfiguration().getConfigItem().forEach(internalConfigItem ->
-//                    strategyConfig.getConfigItems().put(internalConfigItem.getName(), internalConfigItem.getValue()));
+//                    strategyConfig.getConfigItems().put(internalConfigItem.getExchangeName(), internalConfigItem.getValue()));
 //        }
 //        return strategyConfig;
 //    }
@@ -114,7 +114,7 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 //        externalStrategyConfig.getConfigItems().entrySet()
 //                .forEach(item -> {
 //                    final ConfigItemType configItem = new ConfigItemType();
-//                    configItem.setName(item.getKey());
+//                    configItem.setExchangeName(item.getKey());
 //                    configItem.setValue(item.getValue());
 //                    configurationType.getConfigItem().add(configItem);
 //                });
@@ -123,7 +123,7 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 //        strategyType.setId(externalStrategyConfig.getId());
 //        strategyType.setLabel(externalStrategyConfig.getLabel());
 //        strategyType.setDescription(externalStrategyConfig.getDescription());
-//        strategyType.setClassName(externalStrategyConfig.getClassName());
+//        strategyType.setExchangeAdapter(externalStrategyConfig.getExchangeAdapter());
 //        strategyType.setConfiguration(configurationType);
 //        return strategyType;
 //    }

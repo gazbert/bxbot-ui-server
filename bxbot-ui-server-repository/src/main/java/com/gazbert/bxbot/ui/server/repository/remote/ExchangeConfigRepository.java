@@ -20,17 +20,19 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package com.gazbert.bxbot.ui.server.repository.remote;
 
-package com.gazbert.bxbot.ui.server.services;
-
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeAdapterConfig;
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
+import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 
 /**
- * The Exchange Adapter configuration service.
+ * The remote Exchange configuration repository.
  *
  * @author gazbert
  */
-public interface ExchangeAdapterConfigService {
+public interface ExchangeConfigRepository {
 
-    ExchangeAdapterConfig fetchExchangeAdapterConfigForBot(String id);
+    ExchangeConfig get(BotConfig botConfig);
+
+    ExchangeConfig save(ExchangeConfig config, BotConfig botConfig);
 }
