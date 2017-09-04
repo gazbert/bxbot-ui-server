@@ -31,6 +31,7 @@ import com.gazbert.bxbot.ui.server.repository.remote.ExchangeConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of the remote Exchange config repository.
+ * A REST client implementation of the remote Exchange config repository.
  *
  * @author gazbert
  */
@@ -49,11 +50,15 @@ import java.util.Map;
 public class ExchangeConfigRepositoryRestClient implements ExchangeConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REST_ENDPOINT_PATH = "/config/exchange";
 
     private RestTemplateBuilder restTemplateBuilder;
+    private RestTemplate restTemplate;
+
 
     public ExchangeConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplateBuilder = restTemplateBuilder;
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     @Override
@@ -63,12 +68,32 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
 
     @Override
     public ExchangeConfig save(ExchangeConfig config, BotConfig botConfig) {
-        throw new UnsupportedOperationException("save() not implemented");
+        throw new UnsupportedOperationException("save() not implemented yet!");
+    }
+
+    // ------------------------------------------------------------------------
+    // Private utils
+    // ------------------------------------------------------------------------
+
+    private ExchangeConfig getRemoteExchangeAdapterConfig(BotConfig botConfig) {
+
+//        restTemplate = restTemplateBuilder.basicAuthorization(
+//                botConfig.getUsername(), botConfig.getPassword()).build();
+
+        restTemplate.getInterceptors().add(
+                new BasicAuthorizationInterceptor(botConfig.getUsername(), botConfig.getPassword()));
+
+        //final ExchangeConfig config = restTemplate.exchange(botConfig.getBaseUrl() + REST_ENDPOINT_PATH, null, ExchangeConfig.class);
+
+       final ExchangeConfig config = restTemplate.getForObject(botConfig.getBaseUrl() + REST_ENDPOINT_PATH, ExchangeConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + config);
+        return config;
     }
 
     /*
-     * Stub for now.
-    */
+     * Stub for testing.
+     */
     private ExchangeConfig getExchangeConfig() {
 
         final Map<String, String> authItems = new HashMap<>();
@@ -90,19 +115,5 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
         exchangeConfig.setNetworkConfig(networkConfig);
 
         return exchangeConfig;
-    }
-
-    /*
-     * Query remote bot.
-     */
-    private ExchangeConfig getRemoteExchangeAdapterConfig(BotConfig botConfig) {
-
-        final RestTemplate restTemplate = restTemplateBuilder.basicAuthorization(
-                botConfig.getUsername(), botConfig.getPassword()).build();
-
-        final ExchangeConfig config = restTemplate.getForObject(botConfig.getBaseUrl() + "/config/exchange", ExchangeConfig.class);
-
-        LOG.info(() -> "Response received from remote Bot: " + config);
-        return config;
     }
 }

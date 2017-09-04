@@ -21,13 +21,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository;
+package com.gazbert.bxbot.ui.server.repository.local;
 
 import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotType;
 import com.gazbert.bxbot.ui.server.datastore.bots.generated.BotsType;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import com.gazbert.bxbot.ui.server.repository.local.impl.BotConfigRepositoryXmlDatastore;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +43,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 
 /**
- * Tests Bot configuration repository behaves as expected.
+ * Tests the Bot configuration repository behaves as expected.
  *
  * @author gazbert
  */

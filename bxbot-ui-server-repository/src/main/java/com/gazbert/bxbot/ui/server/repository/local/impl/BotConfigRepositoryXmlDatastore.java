@@ -41,7 +41,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of the Bot config repository.
+ * An XML datastore implementation of the Bot config repository.
  *
  * @author gazbert
  */
@@ -53,6 +53,8 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
 
     @Override
     public List<BotConfig> findAll() {
+
+        LOG.info(() -> "Fetching all Bot configs...");
 
         final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
                 FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
@@ -78,18 +80,18 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
     @Override
     public BotConfig save(BotConfig config) {
 
+        final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
+                FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
+
+        final List<BotType> botTypes = internalBotsConfig.getBots()
+                .stream()
+                .filter((item) -> item.getId().equals(config.getId()))
+                .distinct()
+                .collect(Collectors.toList());
+
         if (config.getId() == null || config.getId().isEmpty()) {
 
             LOG.info(() -> "About to create Bot config: " + config);
-
-            final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
-                    FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
-
-            final List<BotType> botTypes = internalBotsConfig.getBots()
-                    .stream()
-                    .filter((item) -> item.getId().equals(config.getId()))
-                    .distinct()
-                    .collect(Collectors.toList());
 
             if (botTypes.isEmpty()) {
 
@@ -118,15 +120,6 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
         } else {
 
             LOG.info(() -> "About to update Bot Config: " + config);
-
-            final BotsType internalBotsConfig = ConfigurationManager.loadConfig(BotsType.class,
-                    FileLocations.BOTS_CONFIG_XML_FILENAME, FileLocations.BOTS_CONFIG_XSD_FILENAME);
-
-            final List<BotType> botTypes = internalBotsConfig.getBots()
-                    .stream()
-                    .filter((item) -> item.getId().equals(config.getId()))
-                    .distinct()
-                    .collect(Collectors.toList());
 
             if (!botTypes.isEmpty()) {
 
