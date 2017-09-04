@@ -46,7 +46,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 @RunWith(SpringRunner.class)
 @RestClientTest(ExchangeConfigRepositoryRestClient.class)
-@SpringBootTest(classes=com.gazbert.bxbot.ui.server.repository.remote.impl.ExchangeConfigRepositoryRestClient.class)
+@SpringBootTest(classes=ExchangeConfigRepositoryRestClient.class)
 public class TestExchangeConfigRepository {
 
     @Autowired
