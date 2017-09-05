@@ -27,25 +27,22 @@ import com.google.common.base.MoreObjects;
 
 /**
  * Domain object representing the Exchange config.
- * <p>
- * For now, decision taken not to expose AuthenticationConfig (API key + secret) through REST API - changes have to be
- * made on the local bot node. Might revisit this in the future.
  *
  * @author gazbert
  */
 public class ExchangeConfig {
 
-    private long id;
+    private String id;
     private String exchangeName;
     private String exchangeAdapter;
     private NetworkConfig networkConfig;
     private OptionalConfig optionalConfig;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

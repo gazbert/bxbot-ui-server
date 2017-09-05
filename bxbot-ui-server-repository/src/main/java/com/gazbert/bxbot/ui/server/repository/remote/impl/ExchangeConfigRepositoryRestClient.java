@@ -24,21 +24,21 @@
 package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.exchange.AuthenticationConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
 import com.gazbert.bxbot.ui.server.repository.remote.ExchangeConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A REST client implementation of the remote Exchange config repository.
@@ -52,56 +52,58 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
     private static final Logger LOG = LogManager.getLogger();
     private static final String REST_ENDPOINT_PATH = "/config/exchange";
 
-    private RestTemplateBuilder restTemplateBuilder;
     private RestTemplate restTemplate;
 
 
     public ExchangeConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplateBuilder = restTemplateBuilder;
         this.restTemplate = restTemplateBuilder.build();
     }
 
     @Override
     public ExchangeConfig get(BotConfig botConfig) {
-        return getRemoteExchangeAdapterConfig(botConfig);
+
+        LOG.info(() -> "Fetching ExchangeConfig...");
+
+        restTemplate.getInterceptors().clear();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                botConfig.getUsername(), botConfig.getPassword()));
+
+        final ExchangeConfig config = restTemplate.getForObject(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, ExchangeConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + config);
+        return config;
     }
 
     @Override
     public ExchangeConfig save(ExchangeConfig config, BotConfig botConfig) {
-        throw new UnsupportedOperationException("save() not implemented yet!");
+
+        LOG.info(() -> "About to save ExchangeConfig: " + config);
+
+        restTemplate.getInterceptors().clear();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                botConfig.getUsername(), botConfig.getPassword()));
+
+        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(config);
+        final ResponseEntity<ExchangeConfig> savedConfig  = restTemplate.exchange(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + savedConfig);
+        return savedConfig.getBody();
     }
 
     // ------------------------------------------------------------------------
     // Private utils
     // ------------------------------------------------------------------------
 
-    private ExchangeConfig getRemoteExchangeAdapterConfig(BotConfig botConfig) {
-
-//        restTemplate = restTemplateBuilder.basicAuthorization(
-//                botConfig.getUsername(), botConfig.getPassword()).build();
-
-        restTemplate.getInterceptors().add(
-                new BasicAuthorizationInterceptor(botConfig.getUsername(), botConfig.getPassword()));
-
-        //final ExchangeConfig config = restTemplate.exchange(botConfig.getBaseUrl() + REST_ENDPOINT_PATH, null, ExchangeConfig.class);
-
-       final ExchangeConfig config = restTemplate.getForObject(botConfig.getBaseUrl() + REST_ENDPOINT_PATH, ExchangeConfig.class);
-
-        LOG.info(() -> "Response received from remote Bot: " + config);
-        return config;
-    }
-
     /*
-     * Stub for testing.
+     * Tmp stub for testing.
      */
     private ExchangeConfig getExchangeConfig() {
 
         final Map<String, String> authItems = new HashMap<>();
         authItems.put("key", "my-api-key");
         authItems.put("secret", "my-secret");
-
-        final AuthenticationConfig authenticationConfig = new AuthenticationConfig();
-        authenticationConfig.setItems(authItems);
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(30);

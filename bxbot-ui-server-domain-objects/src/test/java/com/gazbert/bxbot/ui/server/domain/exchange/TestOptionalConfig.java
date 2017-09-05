@@ -23,37 +23,33 @@
 
 package com.gazbert.bxbot.ui.server.domain.exchange;
 
-import com.google.common.base.MoreObjects;
+import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Domain object representing the Exchange Adapter Authentication config.
+ * Tests OptionalConfig domain object behaves as expected.
  *
  * @author gazbert
  */
-public class AuthenticationConfig {
+public class TestOptionalConfig {
 
-    private Map<String, String> items;
+    private static final String BUY_FEE_CONFIG_ITEM_KEY = "buy-fee";
+    private static final String BUY_FEE_CONFIG_ITEM_VALUE = "0.20";
 
-    public AuthenticationConfig() {
-        items = new HashMap<>();
-    }
+    private static final String SELL_FEE_CONFIG_ITEM_KEY = "sell-fee";
+    private static final String SELL_FEE_CONFIG_ITEM_VALUE = "0.25";
 
-    public Map<String, String> getItems() {
-        return items;
-    }
 
-    public void setItems(Map<String, String> items) {
-        this.items = items;
-    }
+    @Test
+    public void testAddingAndFetchingOptionalConfigItems() throws Exception {
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                // WARNING - careful showing this!
-                // .add("items", items)
-                .toString();
+        final OptionalConfig strategyConfig = new OptionalConfig();
+        strategyConfig.getItems().put(BUY_FEE_CONFIG_ITEM_KEY, BUY_FEE_CONFIG_ITEM_VALUE);
+        strategyConfig.getItems().put(SELL_FEE_CONFIG_ITEM_KEY, SELL_FEE_CONFIG_ITEM_VALUE);
+
+        assertEquals(2, strategyConfig.getItems().size());
+        assertEquals(BUY_FEE_CONFIG_ITEM_VALUE, strategyConfig.getItems().get(BUY_FEE_CONFIG_ITEM_KEY));
+        assertEquals(SELL_FEE_CONFIG_ITEM_VALUE, strategyConfig.getItems().get(SELL_FEE_CONFIG_ITEM_KEY));
     }
 }

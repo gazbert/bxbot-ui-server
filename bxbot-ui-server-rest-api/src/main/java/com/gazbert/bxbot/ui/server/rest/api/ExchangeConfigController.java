@@ -32,13 +32,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for directing Exchange config requests.
+ * <p>
+ * Exchange config can only be fetched and updated - it cannot be deleted or created.
+ * <p>
+ * There is only 1 Exchange Adapter per bot.
  *
  * @author gazbert
  * @since 1.0
@@ -57,12 +58,14 @@ public class ExchangeConfigController {
     }
 
     /**
-     * Returns the Exchange Adapter Details for a Exchange id. The Exchange id is the same as the Bot id, given the
-     * 1:1 relationship between an Exchange and a Bot: a Bot can only run 1 Exchange.
+     * Returns the Exchange Config for a Exchange id.
      *
-     * @param user the authenticated user.
-     * @param id   the id of the Exchange (Bot) to fetch the Exchange Adapter details for.
-     * @return the Exchange Adapter Details configuration.
+     * The Exchange id is the same as the Bot id, given the 1:1 relationship between an Exchange and a Bot:
+     * a Bot can only have 1 Exchange Adapter.
+     *
+     * @param user the authenticated user making the request.
+     * @param id   the id of the Exchange (Bot) to fetch the Exchange config for.
+     * @return the Exchange configuration.
      */
     @RequestMapping(value = "/exchanges/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String id) {
@@ -74,6 +77,24 @@ public class ExchangeConfigController {
         return exchangeConfig != null
                 ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Updates the Exchange configuration for a bot.
+     *
+     * @param user   the authenticated user making the request.
+     * @param config the Exchange config to update.
+     * @return 200 'OK' HTTP status code with updated Exchange config in the body if update successful, some other
+     *         HTTP status code otherwise.
+     */
+    @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig config) {
+
+        LOG.info("PUT /exchange - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + config);
+
+        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(config, config.getId());
+        return new ResponseEntity<>(updatedConfig, HttpStatus.OK);
     }
 }
 

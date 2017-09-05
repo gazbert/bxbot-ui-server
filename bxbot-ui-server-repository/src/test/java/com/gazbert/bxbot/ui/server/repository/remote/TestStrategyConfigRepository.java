@@ -57,6 +57,19 @@ public class TestStrategyConfigRepository {
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_VALUE = "0.5";
 
 
+
+
+//    @Test
+//    public void testGetMessage_404() {
+//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
+//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+//
+//        String result = simpleRestService.getMessage();
+//
+//        mockServer.verify();
+//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));
+
+
 //    @Before
 //    public void setup() throws Exception {
 //        PowerMock.mockStatic(ConfigurationManager.class);

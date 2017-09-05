@@ -77,9 +77,11 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
     @Override
     public ExchangeConfig updateExchangeConfig(ExchangeConfig config, String botId) {
 
-        throw new UnsupportedOperationException("updateExchangeConfig() not implemented yet!");
+        final BotConfig botConfig = botConfigRepository.findById(botId);
 
-//        LOG.info(() -> "About to update bot " + botId + " remote Exchange config: " + config);
-//        return exchangeConfigRepository.save(config, bot);
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangConfig
+
+        LOG.info(() -> "About to update bot " + botId + " remote Exchange config: " + config);
+        return exchangeConfigRepository.save(config, botConfig);
     }
 }
