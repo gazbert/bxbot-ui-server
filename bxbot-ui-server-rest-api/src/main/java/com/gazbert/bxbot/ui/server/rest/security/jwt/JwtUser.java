@@ -43,7 +43,7 @@ public class JwtUser implements UserDetails {
         this.password = password;
         this.authorities = authorities; // sets User Roles/Authorities
         this.enabled = enabled;
-        this.lastPasswordResetDate = lastPasswordResetDate;
+        this.lastPasswordResetDate = new Date(lastPasswordResetDate.getTime());
     }
 
     @JsonIgnore
@@ -104,6 +104,6 @@ public class JwtUser implements UserDetails {
 
     @JsonIgnore
     public Date getLastPasswordResetDate() {
-        return lastPasswordResetDate;
+        return new Date(lastPasswordResetDate.getTime());
     }
 }

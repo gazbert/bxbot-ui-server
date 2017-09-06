@@ -128,10 +128,10 @@ public class User {
     }
 
     public Date getLastPasswordResetDate() {
-        return lastPasswordResetDate;
+        return new Date(lastPasswordResetDate.getTime());
     }
 
     public void setLastPasswordResetDate(Date lastPasswordResetDate) {
-        this.lastPasswordResetDate = lastPasswordResetDate;
+        this.lastPasswordResetDate = new Date(lastPasswordResetDate.getTime());
     }
 }

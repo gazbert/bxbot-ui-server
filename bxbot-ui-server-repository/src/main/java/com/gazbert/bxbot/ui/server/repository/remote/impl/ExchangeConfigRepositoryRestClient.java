@@ -101,10 +101,6 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
      */
     private ExchangeConfig getExchangeConfig() {
 
-        final Map<String, String> authItems = new HashMap<>();
-        authItems.put("key", "my-api-key");
-        authItems.put("secret", "my-secret");
-
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(30);
         networkConfig.setNonFatalErrorCodes(Arrays.asList(522, 524, 525));
