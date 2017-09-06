@@ -23,12 +23,16 @@
 
 package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.repository.remote.StrategyConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -42,10 +46,30 @@ import java.util.List;
 public class StrategyConfigRepositoryRestClient implements StrategyConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REST_ENDPOINT_PATH = "/config/strategies";
+
+    private RestTemplate restTemplate;
+
+
+    public StrategyConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
+    }
 
     @Override
-    public List<StrategyConfig> findAll() {
-        throw new UnsupportedOperationException("findAll() not implemented");
+    public List<StrategyConfig> findAll(BotConfig botConfig) {
+
+        LOG.info(() -> "Fetching all StrategyConfig for botId: " + botConfig.getId());
+
+        restTemplate.getInterceptors().clear();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                botConfig.getUsername(), botConfig.getPassword()));
+
+        @SuppressWarnings("unchecked")
+        final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, List.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + allTheStrategyConfig);
+        return allTheStrategyConfig;
     }
 
     @Override
@@ -62,69 +86,4 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
     public StrategyConfig delete(String id) {
         throw new UnsupportedOperationException("delete() not implemented");
     }
-
-    // ------------------------------------------------------------------------------------------------
-    // Adapter methods
-    // ------------------------------------------------------------------------------------------------
-
-//    private static List<StrategyConfig> adaptAllInternalToAllExternalConfig(TradingStrategiesType internalStrategiesConfig) {
-//
-//        final List<StrategyConfig> strategyConfigItems = new ArrayList<>();
-//
-//        final List<StrategyType> internalStrategyConfigItems = internalStrategiesConfig.getStrategies();
-//        internalStrategyConfigItems.forEach((item) -> {
-//
-//            final StrategyConfig strategyConfig = new StrategyConfig();
-//            strategyConfig.setId(item.getId());
-//            strategyConfig.setLabel(item.getLabel());
-//            strategyConfig.setDescription(item.getDescription());
-//            strategyConfig.setExchangeAdapter(item.getExchangeAdapter());
-//
-//            item.getConfiguration().getConfigItem().forEach(internalConfigItem ->
-//                    strategyConfig.getConfigItems().put(internalConfigItem.getExchangeName(), internalConfigItem.getValue()));
-//
-//            strategyConfigItems.add(strategyConfig);
-//        });
-//
-//        return strategyConfigItems;
-//    }
-
-//    private static StrategyConfig adaptInternalToExternalConfig(List<StrategyType> internalStrategyConfigItems) {
-//
-//        final StrategyConfig strategyConfig = new StrategyConfig();
-//
-//        if (!internalStrategyConfigItems.isEmpty()) {
-//
-//            // Should only ever be 1 unique Strategy id
-//            final StrategyType internalStrategyConfig = internalStrategyConfigItems.get(0);
-//            strategyConfig.setId(internalStrategyConfig.getId());
-//            strategyConfig.setLabel(internalStrategyConfig.getLabel());
-//            strategyConfig.setDescription(internalStrategyConfig.getDescription());
-//            strategyConfig.setExchangeAdapter(internalStrategyConfig.getExchangeAdapter());
-//
-//            internalStrategyConfig.getConfiguration().getConfigItem().forEach(internalConfigItem ->
-//                    strategyConfig.getConfigItems().put(internalConfigItem.getExchangeName(), internalConfigItem.getValue()));
-//        }
-//        return strategyConfig;
-//    }
-
-//    private static StrategyType adaptExternalToInternalConfig(StrategyConfig externalStrategyConfig) {
-//
-//        final ConfigurationType configurationType = new ConfigurationType();
-//        externalStrategyConfig.getConfigItems().entrySet()
-//                .forEach(item -> {
-//                    final ConfigItemType configItem = new ConfigItemType();
-//                    configItem.setExchangeName(item.getKey());
-//                    configItem.setValue(item.getValue());
-//                    configurationType.getConfigItem().add(configItem);
-//                });
-//
-//        final StrategyType strategyType = new StrategyType();
-//        strategyType.setId(externalStrategyConfig.getId());
-//        strategyType.setLabel(externalStrategyConfig.getLabel());
-//        strategyType.setDescription(externalStrategyConfig.getDescription());
-//        strategyType.setExchangeAdapter(externalStrategyConfig.getExchangeAdapter());
-//        strategyType.setConfiguration(configurationType);
-//        return strategyType;
-//    }
 }

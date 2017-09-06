@@ -23,21 +23,50 @@
 
 package com.gazbert.bxbot.ui.server.repository.remote;
 
-import com.gazbert.bxbot.ui.server.datastore.ConfigurationManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
+import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
+import com.gazbert.bxbot.ui.server.repository.remote.impl.StrategyConfigRepositoryRestClient;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * Tests Strategy configuration repository behaves as expected.
  *
  * @author gazbert
  */
-//@RunWith(PowerMockRunner.class)
-//@PrepareForTest({ConfigurationManager.class})
+@RunWith(SpringRunner.class)
+@RestClientTest(StrategyConfigRepositoryRestClient.class)
+@SpringBootTest(classes = StrategyConfigRepositoryRestClient.class)
 public class TestStrategyConfigRepository {
+
+    private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
+    private static final String REST_ENDPOINT_PATH = "/config/strategies";
+
+    private static final String BOT_ID = "gdax-bot-1";
+    private static final String BOT_NAME = "GDAX";
+    private static final String BOT_STATUS = "Running";
+    private static final String BOT_BASE_URL = REST_ENDPOINT_BASE_URL;
+    private static final String BOT_USERNAME = "bxbot-ui-server-admin";
+    private static final String BOT_PASSWORD = "aintGonnaTellYa!";
 
     private static final String UNKNOWN_STRAT_ID = "unknown-or-new-strat-id";
 
@@ -56,24 +85,51 @@ public class TestStrategyConfigRepository {
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_KEY = "buy-amount";
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_VALUE = "0.5";
 
+    @Autowired
+    private MockRestServiceServer mockServer;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    StrategyConfigRepositoryRestClient restClient;
+
+    private BotConfig botConfig;
+    private StrategyConfig strategyConfig_1;
+    private StrategyConfig strategyConfig_2;
 
 
+    @Before
+    public void setUp() throws Exception {
 
-//    @Test
-//    public void testGetMessage_404() {
-//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        String result = simpleRestService.getMessage();
-//
-//        mockServer.verify();
-//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));
+        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
 
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
 
-//    @Before
-//    public void setup() throws Exception {
-//        PowerMock.mockStatic(ConfigurationManager.class);
-//    }
+        strategyConfig_1 = new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
+        strategyConfig_2 = new StrategyConfig(STRAT_ID_2, STRAT_LABEL_2, STRAT_DESCRIPTION_2, STRAT_CLASSNAME_2, configItems);
+    }
+
+    @Test
+    public void whenFindAllCalledThenExpectAllStrategyConfigToBeReturned() throws Exception {
+
+        final String allTheStrategiesConfigInJson = objectMapper.writeValueAsString(allTheStrategyConfig());
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(allTheStrategiesConfigInJson, MediaType.APPLICATION_JSON));
+
+        final List<StrategyConfig> allTheStrats = restClient.findAll(botConfig);
+
+        assertThat(allTheStrats.size()).isEqualTo(2);
+        assertThat(allTheStrats.contains(strategyConfig_1));
+        assertThat(allTheStrats.contains(strategyConfig_2));
+
+        mockServer.verify();
+    }
+
 
 //    @Test
 //    public void whenFindAllStrategiesCalledThenExpectServiceToReturnThemAll() throws Exception {
@@ -403,12 +459,19 @@ public class TestStrategyConfigRepository {
 //        return existingStatsPlusNewOne;
 //    }
 
-//    private static StrategyConfig someExternalStrategyConfig() {
-//        final Map<String, String> configItems = new HashMap<>();
-//        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-//        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
-//    }
+    private static StrategyConfig oneStrategyConfig() {
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
+    }
+
+    private List<StrategyConfig> allTheStrategyConfig() {
+        final List<StrategyConfig> allTheStrategyConfig = new ArrayList<>();
+        allTheStrategyConfig.add(strategyConfig_1);
+        allTheStrategyConfig.add(strategyConfig_2);
+        return allTheStrategyConfig;
+    }
 
 //    private static StrategyConfig someExternalStrategyConfigWithUnknownId() {
 //        final Map<String, String> configItems = new HashMap<>();
@@ -417,3 +480,13 @@ public class TestStrategyConfigRepository {
 //        return new StrategyConfig(UNKNOWN_STRAT_ID, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
 //    }
 }
+
+//    @Test
+//    public void testGetMessage_404() {
+//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
+//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+//
+//        String result = simpleRestService.getMessage();
+//
+//        mockServer.verify();
+//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));

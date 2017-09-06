@@ -24,6 +24,7 @@
 package com.gazbert.bxbot.ui.server.repository.remote;
 
 
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public interface StrategyConfigRepository {
 
-    List<StrategyConfig> findAll();
+    List<StrategyConfig> findAll(BotConfig botConfig);
 
     StrategyConfig findById(String id);
 
