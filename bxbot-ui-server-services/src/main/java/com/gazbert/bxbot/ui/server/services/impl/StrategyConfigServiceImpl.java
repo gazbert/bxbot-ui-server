@@ -41,6 +41,8 @@ import java.util.List;
 /**
  * Implementation of the Strategy config service.
  *
+ * TODO - add unit tests for unknown bot ids etc...
+ *
  * @author gazbert
  */
 @Service("strategyConfigService")

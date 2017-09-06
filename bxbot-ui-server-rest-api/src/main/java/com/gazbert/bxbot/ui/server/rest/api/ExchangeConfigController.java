@@ -59,7 +59,7 @@ public class ExchangeConfigController {
 
     /**
      * Returns the Exchange Config for a Exchange id.
-     *
+     * <p>
      * The Exchange id is the same as the Bot id, given the 1:1 relationship between an Exchange and a Bot:
      * a Bot can only have 1 Exchange Adapter.
      *
@@ -82,18 +82,18 @@ public class ExchangeConfigController {
     /**
      * Updates the Exchange configuration for a bot.
      *
-     * @param user   the authenticated user making the request.
-     * @param config the Exchange config to update.
+     * @param user           the authenticated user making the request.
+     * @param exchangeConfig the Exchange config to update.
      * @return 200 'OK' HTTP status code with updated Exchange config in the body if update successful, some other
-     *         HTTP status code otherwise.
+     * HTTP status code otherwise.
      */
     @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig config) {
+    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig) {
 
         LOG.info("PUT /exchange - updateExchange() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + config);
+        LOG.info("Request: " + exchangeConfig);
 
-        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(config, config.getId());
+        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(exchangeConfig.getId(), exchangeConfig);
         return new ResponseEntity<>(updatedConfig, HttpStatus.OK);
     }
 }

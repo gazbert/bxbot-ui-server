@@ -34,5 +34,5 @@ public interface ExchangeConfigService {
 
     ExchangeConfig getExchangeConfig(String botId);
 
-    ExchangeConfig updateExchangeConfig(ExchangeConfig config, String botId);
+    ExchangeConfig updateExchangeConfig(String botId, ExchangeConfig config);
 }

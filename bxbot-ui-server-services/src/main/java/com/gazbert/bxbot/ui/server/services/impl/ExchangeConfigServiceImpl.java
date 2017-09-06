@@ -39,6 +39,8 @@ import org.springframework.util.Assert;
 /**
  * Implementation of the Exchange config service.
  *
+ *  TODO - add unit tests for unknown bot ids etc...
+ *
  * @author gazbert
  */
 @Service("exchangeConfigService")
@@ -75,13 +77,13 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
     }
 
     @Override
-    public ExchangeConfig updateExchangeConfig(ExchangeConfig config, String botId) {
+    public ExchangeConfig updateExchangeConfig(String botId, ExchangeConfig exchangeConfig) {
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
 
         // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangeConfig
 
-        LOG.info(() -> "About to update bot " + botId + " Exchange config: " + config);
-        return exchangeConfigRepository.save(config, botConfig);
+        LOG.info(() -> "About to update bot " + botId + " Exchange config: " + exchangeConfig);
+        return exchangeConfigRepository.save(botConfig, exchangeConfig);
     }
 }

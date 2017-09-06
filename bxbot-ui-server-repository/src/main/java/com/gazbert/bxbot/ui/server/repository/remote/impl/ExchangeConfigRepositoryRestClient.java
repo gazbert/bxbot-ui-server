@@ -76,15 +76,15 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
     }
 
     @Override
-    public ExchangeConfig save(ExchangeConfig config, BotConfig botConfig) {
+    public ExchangeConfig save(BotConfig botConfig, ExchangeConfig exchangeConfig) {
 
-        LOG.info(() -> "About to save ExchangeConfig: " + config);
+        LOG.info(() -> "About to save ExchangeConfig: " + exchangeConfig);
 
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
-        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(config);
+        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(exchangeConfig);
         final ResponseEntity<ExchangeConfig> savedConfig  = restTemplate.exchange(
                 botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
 

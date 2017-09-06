@@ -34,5 +34,5 @@ public interface ExchangeConfigRepository {
 
     ExchangeConfig get(BotConfig botConfig);
 
-    ExchangeConfig save(ExchangeConfig config, BotConfig botConfig);
+    ExchangeConfig save(BotConfig botConfig, ExchangeConfig config);
 }

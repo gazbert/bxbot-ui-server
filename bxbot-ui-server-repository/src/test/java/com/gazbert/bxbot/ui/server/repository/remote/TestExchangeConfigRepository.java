@@ -128,7 +128,7 @@ public class TestExchangeConfigRepository {
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(exchangeConfigInJson, MediaType.APPLICATION_JSON));
 
-        final ExchangeConfig exchangeConfig = restClient.save(someExchangeConfig(), botConfig);
+        final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig());
 
         assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
         assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);
