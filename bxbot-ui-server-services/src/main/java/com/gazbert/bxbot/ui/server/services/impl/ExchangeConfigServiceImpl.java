@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of the Exchange Adapter config service.
+ * Implementation of the Exchange config service.
  *
  * @author gazbert
  */
@@ -58,18 +58,18 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
         Assert.notNull(exchangeConfigRepository, "exchangeConfigRepository dependency cannot be null!");
         this.exchangeConfigRepository = exchangeConfigRepository;
 
-        Assert.notNull(exchangeConfigRepository, "botConfigRepository dependency cannot be null!");
+        Assert.notNull(botConfigRepository, "botConfigRepository dependency cannot be null!");
         this.botConfigRepository = botConfigRepository;
     }
 
     @Override
     public ExchangeConfig getExchangeConfig(String botId) {
 
-        LOG.info(() -> "About to fetch remote Exchange config for botId: " + botId);
+        LOG.info(() -> "About to fetch Exchange config for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
 
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangConfig
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangeConfig
 
         return exchangeConfigRepository.get(botConfig);
     }
@@ -79,9 +79,9 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
 
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangConfig
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangeConfig
 
-        LOG.info(() -> "About to update bot " + botId + " remote Exchange config: " + config);
+        LOG.info(() -> "About to update bot " + botId + " Exchange config: " + config);
         return exchangeConfigRepository.save(config, botConfig);
     }
 }

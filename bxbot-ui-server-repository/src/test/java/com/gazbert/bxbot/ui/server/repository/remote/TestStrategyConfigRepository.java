@@ -391,73 +391,20 @@ public class TestStrategyConfigRepository {
 //        PowerMock.verifyAll();
 //    }
 
+    //    @Test
+//    public void testGetMessage_404() {
+//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
+//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+//
+//        String result = simpleRestService.getMessage();
+//
+//        mockServer.verify();
+//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));
+
+
     // ------------------------------------------------------------------------------------------------
     // Private utils
     // ------------------------------------------------------------------------------------------------
-
-//    /*
-//     * Very, very painful... muh.
-//     */
-//    private static TradingStrategiesType allTheInternalStrategiesConfig() {
-//
-//        final ConfigItemType buyPriceConfigItem = new ConfigItemType();
-//        buyPriceConfigItem.setExchangeName(BUY_PRICE_CONFIG_ITEM_KEY);
-//        buyPriceConfigItem.setValue(BUY_PRICE_CONFIG_ITEM_VALUE);
-//
-//        final ConfigItemType amountToBuyConfigItem = new ConfigItemType();
-//        amountToBuyConfigItem.setExchangeName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
-//        amountToBuyConfigItem.setValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//
-//        final ConfigurationType configurationType = new ConfigurationType();
-//        configurationType.getConfigItem().add(buyPriceConfigItem);
-//        configurationType.getConfigItem().add(amountToBuyConfigItem);
-//
-//        final StrategyType strategyType1 = new StrategyType();
-//        strategyType1.setId(STRAT_ID_1);
-//        strategyType1.setLabel(STRAT_LABEL_1);
-//        strategyType1.setDescription(STRAT_DESCRIPTION_1);
-//        strategyType1.setExchangeAdapter(STRAT_CLASSNAME_1);
-//        strategyType1.setConfiguration(configurationType);
-//
-//        final StrategyType strategyType2 = new StrategyType();
-//        strategyType2.setId(STRAT_ID_2);
-//        strategyType2.setLabel(STRAT_LABEL_2);
-//        strategyType2.setDescription(STRAT_DESCRIPTION_2);
-//        strategyType2.setExchangeAdapter(STRAT_CLASSNAME_2);
-//        strategyType2.setConfiguration(configurationType);
-//
-//        final TradingStrategiesType tradingStrategiesType = new TradingStrategiesType();
-//        tradingStrategiesType.getStrategies().add(strategyType1);
-//        tradingStrategiesType.getStrategies().add(strategyType2);
-//
-//        return tradingStrategiesType;
-//    }
-
-//    private static TradingStrategiesType allTheInternalStrategiesConfigPlusNewOne() {
-//
-//        final ConfigItemType buyPriceConfigItem = new ConfigItemType();
-//        buyPriceConfigItem.setExchangeName(BUY_PRICE_CONFIG_ITEM_KEY);
-//        buyPriceConfigItem.setValue(BUY_PRICE_CONFIG_ITEM_VALUE);
-//
-//        final ConfigItemType amountToBuyConfigItem = new ConfigItemType();
-//        amountToBuyConfigItem.setExchangeName(AMOUNT_TO_BUY_CONFIG_ITEM_KEY);
-//        amountToBuyConfigItem.setValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//
-//        final ConfigurationType configurationType = new ConfigurationType();
-//        configurationType.getConfigItem().add(buyPriceConfigItem);
-//        configurationType.getConfigItem().add(amountToBuyConfigItem);
-//
-//        final StrategyType newStrat = new StrategyType();
-//        newStrat.setId(UNKNOWN_STRAT_ID);
-//        newStrat.setLabel(STRAT_LABEL_1);
-//        newStrat.setDescription(STRAT_DESCRIPTION_1);
-//        newStrat.setExchangeAdapter(STRAT_CLASSNAME_1);
-//        newStrat.setConfiguration(configurationType);
-//
-//        final TradingStrategiesType existingStatsPlusNewOne = allTheInternalStrategiesConfig();
-//        existingStatsPlusNewOne.getStrategies().add(newStrat);
-//        return existingStatsPlusNewOne;
-//    }
 
     private static StrategyConfig oneStrategyConfig() {
         final Map<String, String> configItems = new HashMap<>();
@@ -480,13 +427,3 @@ public class TestStrategyConfigRepository {
 //        return new StrategyConfig(UNKNOWN_STRAT_ID, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
 //    }
 }
-
-//    @Test
-//    public void testGetMessage_404() {
-//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        String result = simpleRestService.getMessage();
-//
-//        mockServer.verify();
-//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));

@@ -23,7 +23,9 @@
 
 package com.gazbert.bxbot.ui.server.services.impl;
 
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
+import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import com.gazbert.bxbot.ui.server.repository.remote.StrategyConfigRepository;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
 import org.apache.logging.log4j.LogManager;
@@ -39,8 +41,6 @@ import java.util.List;
 /**
  * Implementation of the Strategy config service.
  *
- * TODO - Service should use BotConfigRepository to lookup Bot URL + cred and then pass them to the remote StrategyConfigRepository
- *
  * @author gazbert
  */
 @Service("strategyConfigService")
@@ -51,16 +51,29 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
     private static final Logger LOG = LogManager.getLogger();
 
     private final StrategyConfigRepository strategyConfigRepository;
+    private final BotConfigRepository botConfigRepository;
 
     @Autowired
-    public StrategyConfigServiceImpl(StrategyConfigRepository strategyConfigRepository) {
+    public StrategyConfigServiceImpl(StrategyConfigRepository strategyConfigRepository,
+                                     BotConfigRepository botConfigRepository) {
+
         Assert.notNull(strategyConfigRepository, "strategyConfigRepository dependency cannot be null!");
         this.strategyConfigRepository = strategyConfigRepository;
+
+        Assert.notNull(botConfigRepository, "botConfigRepository dependency cannot be null!");
+        this.botConfigRepository = botConfigRepository;
     }
 
     @Override
-    public List<StrategyConfig> getAllStrategyConfig() {
-        return strategyConfigRepository.findAll();
+    public List<StrategyConfig> getAllStrategyConfig(String botId) {
+
+        LOG.info(() -> "About to fetch all Strategies for botId: " + botId);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
+
+        return strategyConfigRepository.findAll(botConfig);
     }
 
     @Override

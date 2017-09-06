@@ -35,7 +35,7 @@ import java.util.List;
  */
 public interface StrategyConfigService {
 
-    List<StrategyConfig> getAllStrategyConfig();
+    List<StrategyConfig> getAllStrategyConfig(String botId);
 
     StrategyConfig getStrategyConfig(String id);
 

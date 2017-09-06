@@ -103,7 +103,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void testGetAllStrategyConfig() throws Exception {
 
-        given(strategyConfigService.getAllStrategyConfig()).willReturn(allTheStrategiesConfig());
+        given(strategyConfigService.getAllStrategyConfig("todo")).willReturn(allTheStrategiesConfig());
 //        tradingEngine.start();
 
         mockMvc.perform(get("/api/config/strategy/")

@@ -63,7 +63,8 @@ public class StrategyConfigController {
      */
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)
     public List<StrategyConfig> getAllStrategies(@AuthenticationPrincipal User user) {
-        return strategyConfigService.getAllStrategyConfig();
+        String id = "todo";
+        return strategyConfigService.getAllStrategyConfig(id);
     }
 
     /**
