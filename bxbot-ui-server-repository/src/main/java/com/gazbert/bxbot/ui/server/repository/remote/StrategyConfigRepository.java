@@ -38,9 +38,9 @@ public interface StrategyConfigRepository {
 
     List<StrategyConfig> findAll(BotConfig botConfig);
 
-    StrategyConfig findById(String id);
+    StrategyConfig findById(BotConfig botConfig, String strategyId);
 
-    StrategyConfig save(StrategyConfig config);
+    StrategyConfig save(BotConfig botConfig, StrategyConfig config);
 
     StrategyConfig delete(String id);
 }

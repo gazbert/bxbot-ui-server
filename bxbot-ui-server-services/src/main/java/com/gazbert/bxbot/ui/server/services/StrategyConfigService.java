@@ -37,7 +37,7 @@ public interface StrategyConfigService {
 
     List<StrategyConfig> getAllStrategyConfig(String botId);
 
-    StrategyConfig getStrategyConfig(String id);
+    StrategyConfig getStrategyConfig(String botId, String strategyId);
 
     StrategyConfig updateStrategyConfig(StrategyConfig config);
 

@@ -63,8 +63,8 @@ public class StrategyConfigController {
      */
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)
     public List<StrategyConfig> getAllStrategies(@AuthenticationPrincipal User user) {
-        String id = "todo";
-        return strategyConfigService.getAllStrategyConfig(id);
+        String botId = "todo";
+        return strategyConfigService.getAllStrategyConfig(botId);
     }
 
     /**
@@ -77,7 +77,8 @@ public class StrategyConfigController {
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
-        final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(strategyId);
+        String botId = "todo";
+        final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(botId, strategyId);
         return strategyConfig.getId() != null
                 ? new ResponseEntity<>(strategyConfig, null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -29,6 +29,9 @@ import com.gazbert.bxbot.ui.server.repository.remote.StrategyConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +67,7 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
-        @SuppressWarnings("unchecked")
-        final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(
+        @SuppressWarnings("unchecked") final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(
                 botConfig.getBaseUrl() + REST_ENDPOINT_PATH, List.class);
 
         LOG.info(() -> "Response received from remote Bot: " + allTheStrategyConfig);
@@ -73,13 +75,36 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
     }
 
     @Override
-    public StrategyConfig findById(String id) {
-        throw new UnsupportedOperationException("findById() not implemented");
+    public StrategyConfig findById(BotConfig botConfig, String strategyId) {
+
+        LOG.info(() -> "Fetching StrategyConfig for strategyId: " + strategyId + " for botId: " + botConfig.getId());
+
+        restTemplate.getInterceptors().clear();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                botConfig.getUsername(), botConfig.getPassword()));
+
+        @SuppressWarnings("unchecked") final StrategyConfig strategyConfig = restTemplate.getForObject(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH + '/' + strategyId, StrategyConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + strategyConfig);
+        return strategyConfig;
     }
 
     @Override
-    public StrategyConfig save(StrategyConfig config) {
-        throw new UnsupportedOperationException("save() not implemented");
+    public StrategyConfig save(BotConfig botConfig, StrategyConfig strategyConfig) {
+
+        LOG.info(() -> "Saving StrategyConfig: " + strategyConfig + " for botId: " + botConfig.getId());
+
+        restTemplate.getInterceptors().clear();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                botConfig.getUsername(), botConfig.getPassword()));
+
+        final HttpEntity<StrategyConfig> requestUpdate = new HttpEntity<>(strategyConfig);
+        final ResponseEntity<StrategyConfig> savedConfig = restTemplate.exchange(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, StrategyConfig.class);
+
+        LOG.info(() -> "Response received from remote Bot: " + savedConfig.getBody());
+        return savedConfig.getBody();
     }
 
     @Override

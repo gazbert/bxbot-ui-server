@@ -79,9 +79,15 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
     }
 
     @Override
-    public StrategyConfig getStrategyConfig(String id) {
-        LOG.info(() -> "Fetching Strategy config for id: " + id);
-        return strategyConfigRepository.findById(id);
+    public StrategyConfig getStrategyConfig(String botId, String strategyId) {
+
+        LOG.info(() -> "Fetching Strategy config for strategyId: " + strategyId + " for botId: " + botId);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
+
+        return strategyConfigRepository.findById(botConfig, strategyId);
     }
 
     @Override
