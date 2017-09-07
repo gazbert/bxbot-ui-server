@@ -234,7 +234,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void testDeleteStrategyConfig() throws Exception {
 
-        given(strategyConfigService.deleteStrategyConfig(STRAT_1_ID)).willReturn(someStrategyConfig());
+        given(strategyConfigService.deleteStrategyConfig("botId", STRAT_1_ID)).willReturn(someStrategyConfig());
 
         mockMvc.perform(delete("/api/config/strategy/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getAccessToken(VALID_USER_LOGINID, VALID_USER_PASSWORD)))
@@ -255,7 +255,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void testDeleteStrategyConfigWhenIdNotRecognized() throws Exception {
 
-        given(strategyConfigService.deleteStrategyConfig(UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
+        given(strategyConfigService.deleteStrategyConfig("botId", UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
 
         mockMvc.perform(delete("/api/config/strategy/" + UNKNOWN_STRAT_ID)
                 .header("Authorization", "Bearer " + getAccessToken(VALID_USER_LOGINID, VALID_USER_PASSWORD))
