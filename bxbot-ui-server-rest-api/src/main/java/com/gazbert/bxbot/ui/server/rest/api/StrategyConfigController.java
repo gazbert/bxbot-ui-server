@@ -89,17 +89,18 @@ public class StrategyConfigController {
      *
      * @param user the authenticated user.
      * @param strategyId id of the Strategy config to update.
-     * @param config the updated Strategy config.
+     * @param strategyConfig the updated Strategy config.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig config) {
+    ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig strategyConfig) {
 
-        if (config == null || config.getId() == null || !strategyId.equals(config.getId())) {
+        if (strategyConfig == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(config);
+        String botId = "todo";
+        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(botId, strategyConfig);
         return updatedConfig.getId() != null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -110,17 +111,18 @@ public class StrategyConfigController {
      *
      * @param user the authenticated user.
      * @param strategyId id of the Strategy config to create.
-     * @param config the new Strategy config.
+     * @param strategyConfig the new Strategy config.
      * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.POST)
-    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig config) {
+    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig strategyConfig) {
 
-        if (config == null || config.getId() == null || !strategyId.equals(config.getId())) {
+        if (strategyConfig == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(config);
+        String botId = "todo";
+        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(botId, strategyConfig);
         if (createdConfig.getId() != null) {
             final HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setLocation(ServletUriComponentsBuilder
@@ -143,7 +145,8 @@ public class StrategyConfigController {
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
 
-        final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(strategyId);
+        String botId = "todo";
+        final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(botId, strategyId);
         return deletedConfig.getId() != null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

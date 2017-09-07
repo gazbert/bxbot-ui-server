@@ -108,7 +108,7 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
     }
 
     @Override
-    public StrategyConfig delete(String id) {
+    public StrategyConfig delete(BotConfig botConfig, String strategyId) {
         throw new UnsupportedOperationException("delete() not implemented");
     }
 }

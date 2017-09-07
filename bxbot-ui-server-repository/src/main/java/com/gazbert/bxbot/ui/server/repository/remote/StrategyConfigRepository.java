@@ -42,5 +42,5 @@ public interface StrategyConfigRepository {
 
     StrategyConfig save(BotConfig botConfig, StrategyConfig config);
 
-    StrategyConfig delete(String id);
+    StrategyConfig delete(BotConfig botConfig, String strategyId);
 }

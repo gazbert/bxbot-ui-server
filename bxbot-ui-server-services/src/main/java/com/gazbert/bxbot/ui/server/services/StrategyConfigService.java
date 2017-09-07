@@ -39,9 +39,9 @@ public interface StrategyConfigService {
 
     StrategyConfig getStrategyConfig(String botId, String strategyId);
 
-    StrategyConfig updateStrategyConfig(StrategyConfig config);
+    StrategyConfig updateStrategyConfig(String botId, StrategyConfig config);
 
-    StrategyConfig createStrategyConfig(StrategyConfig config);
+    StrategyConfig createStrategyConfig(String botId, StrategyConfig config);
 
-    StrategyConfig deleteStrategyConfig(String id);
+    StrategyConfig deleteStrategyConfig(String botId, String strategyId);
 }

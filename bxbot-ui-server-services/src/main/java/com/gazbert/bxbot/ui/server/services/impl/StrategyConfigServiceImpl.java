@@ -91,20 +91,38 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
     }
 
     @Override
-    public StrategyConfig updateStrategyConfig(StrategyConfig config) {
-        LOG.info(() -> "About to update Strategy config: " + config);
-        return strategyConfigRepository.save(config);
+    public StrategyConfig updateStrategyConfig(String botId, StrategyConfig strategyConfig) {
+
+        LOG.info(() -> "About to update Strategy config: " + strategyConfig + " for botId: " + botId);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
+
+        return strategyConfigRepository.save(botConfig, strategyConfig);
     }
 
     @Override
-    public StrategyConfig createStrategyConfig(StrategyConfig config) {
-        LOG.info(() -> "About to create Strategy config: " + config);
-        return strategyConfigRepository.save(config);
+    public StrategyConfig createStrategyConfig(String botId, StrategyConfig strategyConfig) {
+
+        LOG.info(() -> "About to create Strategy config: " + strategyConfig + " for botId: " + botId);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
+
+        return strategyConfigRepository.save(botConfig, strategyConfig);
     }
 
     @Override
-    public StrategyConfig deleteStrategyConfig(String id) {
-        LOG.info(() -> "About to delete Strategy config for id: " + id);
-        return strategyConfigRepository.delete(id);
+    public StrategyConfig deleteStrategyConfig(String botId, String strategyId) {
+
+        LOG.info(() -> "About to delete Strategy config for strategyId: " + strategyId + " for botId: " + botId);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+
+        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
+
+        return strategyConfigRepository.delete(botConfig, strategyId);
     }
 }
