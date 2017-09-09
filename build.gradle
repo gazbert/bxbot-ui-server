@@ -69,7 +69,8 @@ ext.libraries = [
         },
         objenesis: dependencies.create("org.objenesis:objenesis:2.6"),
         cglib_nodep: dependencies.create("cglib:cglib-nodep:3.2.5"),
-        spring_boot_starter_test: dependencies.create("org.springframework.boot:spring-boot-starter-test:" + ext.versions.springBootVersion)
+        spring_boot_starter_test: dependencies.create("org.springframework.boot:spring-boot-starter-test:" + ext.versions.springBootVersion),
+        spring_security_test: dependencies.create("org.springframework.security:spring-security-test:4.2.3.RELEASE")
 ]
 
 allprojects {
