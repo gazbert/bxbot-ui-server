@@ -94,7 +94,7 @@
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.4</version>
                         <configuration>
-                            <excludeFilterFile>etc/findbugs-exclude-filter.xml</excludeFilterFile>
+                            <!--<excludeFilterFile>etc/findbugs-exclude-filter.xml</excludeFilterFile>-->
                             <xmlOutput>true</xmlOutput>
                             <!-- Optional directory to put findbugs xdoc xml report -->
                             <xmlOutputDirectory>target/site</xmlOutputDirectory>
@@ -168,16 +168,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
                 <version>${spring-tx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>

@@ -30,14 +30,6 @@ ext.libraries = [
             force = true
         },
         spring_boot_starter_log4j2: dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:" + ext.versions.springBootVersion),
-        spring_boot_starter_web: dependencies.create("org.springframework.boot:spring-boot-starter-web:" + ext.versions.springBootVersion) {
-            exclude module: "logback-classic"
-            force = true
-        },
-        spring_boot_starter_actuator: dependencies.create("org.springframework.boot:spring-boot-starter-actuator:" + ext.versions.springBootVersion) {
-            exclude module: "logback-classic"
-            force = true
-        },
         spring_boot_starter_security: dependencies.create("org.springframework.boot:spring-boot-starter-security:" + ext.versions.springBootVersion) {
             exclude module: "logback-classic"
             force = true
