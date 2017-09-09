@@ -23,6 +23,7 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,19 +32,19 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Base class for controller test classes.
+ * Base class for all Controller tests.
  *
  * @author gazbert
  */
@@ -54,9 +55,6 @@ abstract class AbstractConfigControllerTest {
      */
     static final MediaType CONTENT_TYPE = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
-    private static final String OAUTH_CLIENT_ID = "bxbot-ui";
-    private static final String OAUTH_CLIENT_SECRET = "S3cr3t";
 
     /**
      * Used to convert Java objects into JSON - roll on Java 9... ;-)
@@ -80,8 +78,7 @@ abstract class AbstractConfigControllerTest {
                         .findAny()
                         .get();
 
-        Assert.assertNotNull("The JSON message converter must not be null",
-                mappingJackson2HttpMessageConverter);
+        Assert.assertNotNull("The JSON message converter must not be null", mappingJackson2HttpMessageConverter);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -89,40 +86,79 @@ abstract class AbstractConfigControllerTest {
     // ------------------------------------------------------------------------------------------------
 
     /*
-     * Builds an OAuth2 access token.
-     * Kudos to royclarkson - https://github.com/royclarkson/spring-rest-service-oauth
+     * Builds a JWT response.
+     * Kudos to @royclarkson for his OAuth2 version: https://github.com/royclarkson/spring-rest-service-oauth
      */
-    String getAccessToken(String username, String password) throws Exception {
+    String getJwt(String username, String password) throws Exception {
 
-        final String authorization = "Basic " + new String(Base64Utils.encode((OAUTH_CLIENT_ID + ":" + OAUTH_CLIENT_SECRET).getBytes()));
-        final String contentType = MediaType.APPLICATION_JSON + ";charset=UTF-8";
-
-        final String content = mockMvc.perform(post("/oauth/token").header("Authorization", authorization)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("username", username)
-                .param("password", password)
-                .param("grant_type", "password")
-                .param("scope", "read write")
-                .param("client_id", OAUTH_CLIENT_ID)
-                .param("client_secret", OAUTH_CLIENT_SECRET))
+        final String content = mockMvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonify(new UsernameAndPassword(username, password))))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$.access_token", is(notNullValue())))
-                .andExpect(jsonPath("$.token_type", is(equalTo("bearer"))))
-                .andExpect(jsonPath("$.refresh_token", is(notNullValue())))
-                .andExpect(jsonPath("$.expires_in", is(greaterThan(4000))))
-                .andExpect(jsonPath("$.scope", is(equalTo("read write"))))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.token", is(notNullValue())))
                 .andReturn().getResponse().getContentAsString();
 
-        return content.substring(17, 53);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JwtResponse jwtResponse = objectMapper.readValue(content, JwtResponse.class);
+        return jwtResponse.getToken();
     }
 
     /*
      * Converts an object into its JSON string representation.
      */
+    @SuppressWarnings("unchecked")
     String jsonify(Object objectToJsonify) throws IOException {
         final MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         mappingJackson2HttpMessageConverter.write(objectToJsonify, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Private helper classes
+    // ------------------------------------------------------------------------------------------------
+
+    private static class UsernameAndPassword {
+
+        private String username;
+        private String password;
+
+        UsernameAndPassword(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    private static class JwtResponse {
+
+        private String token;
+
+        // empty constructor needed by Jackson
+        public JwtResponse() {
+        }
+
+        String getToken() {
+            return token;
+        }
+
+        void setToken(String token) {
+            this.token = token;
+        }
     }
 }
