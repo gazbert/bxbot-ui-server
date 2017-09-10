@@ -29,8 +29,8 @@ import com.gazbert.bxbot.ui.server.services.BotConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,7 +53,6 @@ public class BotsConfigController {
 
     @Autowired
     public BotsConfigController(BotConfigService botConfigService) {
-        Assert.notNull(botConfigService, "botConfigService dependency cannot be null!");
         this.botConfigService = botConfigService;
     }
 
@@ -62,6 +61,7 @@ public class BotsConfigController {
      *
      * @return the BotConfig configuration.
      */
+    @PreAuthorize("hasRole('USER')") // Spring Security maps USER to ROLE_USER in database - ROLE_ prefix must be used.
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
     public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
         return new ResponseDataWrapper(botConfigService.getAllBotConfig());

@@ -59,10 +59,7 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
     public StrategyConfigServiceImpl(StrategyConfigRepository strategyConfigRepository,
                                      BotConfigRepository botConfigRepository) {
 
-        Assert.notNull(strategyConfigRepository, "strategyConfigRepository dependency cannot be null!");
         this.strategyConfigRepository = strategyConfigRepository;
-
-        Assert.notNull(botConfigRepository, "botConfigRepository dependency cannot be null!");
         this.botConfigRepository = botConfigRepository;
     }
 

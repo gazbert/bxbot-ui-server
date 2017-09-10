@@ -1,8 +1,3 @@
 jwt:
-  header: Authorization
   secret: Ch@ng3Me!
   expiration: 86400
-  route:
-    authentication:
-      path: auth
-      refresh: refresh

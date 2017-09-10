@@ -51,7 +51,6 @@ public class StrategyConfigController {
 
     @Autowired
     public StrategyConfigController(StrategyConfigService strategyConfigService) {
-        Assert.notNull(strategyConfigService, "strategyConfigService dependency cannot be null!");
         this.strategyConfigService = strategyConfigService;
     }
 

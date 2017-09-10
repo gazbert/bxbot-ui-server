@@ -32,6 +32,8 @@ import java.util.List;
 /**
  * The remote Strategy configuration repository.
  *
+ * It provides access to data stored on the remote BX-bot nodes.
+ *
  * @author gazbert
  */
 public interface StrategyConfigRepository {

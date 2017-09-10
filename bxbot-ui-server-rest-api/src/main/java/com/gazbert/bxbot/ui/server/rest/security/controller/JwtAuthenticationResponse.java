@@ -1,6 +1,7 @@
 /*
  * The MIT License (MIT)
  *
+ * Copyright (c) 2016 Stephan Zerhusen
  * Copyright (c) 2017 Gareth Jon Lynch
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,27 +22,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.repository.local;
-
-import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-
-import java.util.List;
+package com.gazbert.bxbot.ui.server.rest.security.controller;
 
 /**
- * The Bot configuration repository.
- *
- * It provides access to the datastore on the local BX-bot UI Server node.
+ * Represents a JWT Authentication response. It wraps the JWT.
+ * <p>
+ * Code originated from the excellent JWT and Spring Boot example by Stephan Zerhusen:
+ * https://github.com/szerhusenBC/jwt-spring-security-demo
  *
  * @author gazbert
  */
-public interface BotConfigRepository {
+public class JwtAuthenticationResponse {
 
-    List<BotConfig> findAll();
+    private final String token;
 
-    BotConfig findById(String id);
+    JwtAuthenticationResponse(String token) {
+        this.token = token;
+    }
 
-    BotConfig save(BotConfig config);
-
-    BotConfig delete(String id);
+    public String getToken() {
+        return this.token;
+    }
 }
-

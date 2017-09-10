@@ -57,10 +57,7 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
     public ExchangeConfigServiceImpl(ExchangeConfigRepository exchangeConfigRepository,
                                      BotConfigRepository botConfigRepository) {
 
-        Assert.notNull(exchangeConfigRepository, "exchangeConfigRepository dependency cannot be null!");
         this.exchangeConfigRepository = exchangeConfigRepository;
-
-        Assert.notNull(botConfigRepository, "botConfigRepository dependency cannot be null!");
         this.botConfigRepository = botConfigRepository;
     }
 

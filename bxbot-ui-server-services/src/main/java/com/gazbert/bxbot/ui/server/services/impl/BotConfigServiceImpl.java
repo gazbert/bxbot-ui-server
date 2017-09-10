@@ -51,7 +51,6 @@ public class BotConfigServiceImpl implements BotConfigService {
 
     @Autowired
     public BotConfigServiceImpl(BotConfigRepository botConfigRepository) {
-        Assert.notNull(botConfigRepository, "botConfigRepository dependency cannot be null!");
         this.botConfigRepository = botConfigRepository;
     }
 

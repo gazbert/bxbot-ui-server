@@ -22,59 +22,43 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.security.model;
+package com.gazbert.bxbot.ui.server.rest.security.service;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUserFactory;
+import com.gazbert.bxbot.ui.server.rest.security.model.User;
+import com.gazbert.bxbot.ui.server.rest.security.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 /**
- * Represents a Role for a User of the app.
+ * User Details Service for loading user details from the repository.
  * <p>
  * Code originated from the excellent JWT and Spring Boot example by Stephan Zerhusen:
  * https://github.com/szerhusenBC/jwt-spring-security-demo
  *
  * @author gazbert
  */
-@Entity
-@Table(name = "ROLE")
-public class Role {
+@Service
+public class JwtUserDetailsService implements UserDetailsService {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_seq")
-    @SequenceGenerator(name = "role_seq", sequenceName = "role_seq", allocationSize = 1)
-    private Long id;
+    private final UserRepository userRepository;
 
-    @Column(name = "NAME", length = 50)
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private RoleName name;
-
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private List<User> users;
-
-    public Long getId() {
-        return id;
+    @Autowired
+    public JwtUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-    public RoleName getName() {
-        return name;
-    }
-
-    public void setName(RoleName name) {
-        this.name = name;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+        final User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+        } else {
+            return JwtUserFactory.create(user);
+        }
     }
 }
