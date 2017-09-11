@@ -49,7 +49,7 @@ import java.io.IOException;
  *
  * @author gazbert
  */
-public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LogManager.getLogger();
 

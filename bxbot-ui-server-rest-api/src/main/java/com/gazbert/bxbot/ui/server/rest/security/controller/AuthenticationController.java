@@ -54,15 +54,15 @@ import java.util.Date;
  * @author gazbert
  */
 @RestController
-public class AuthenticationRestController {
+public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public AuthenticationRestController(AuthenticationManager authenticationManager,
-                                        UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
 
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -78,8 +78,8 @@ public class AuthenticationRestController {
      * @throws AuthenticationException if the the client was not authenticated successfully.
      */
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
-                                                       Device device) throws AuthenticationException {
+    public ResponseEntity<?> getAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
+                                                    Device device) throws AuthenticationException {
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -103,7 +103,7 @@ public class AuthenticationRestController {
      * @return the JWT with an extended expiry time if the client was authenticated, a 400 Bad Request otherwise.
      */
     @RequestMapping(value = "/refresh", method = RequestMethod.GET)
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
+    public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
 
         final String authorizationHeader = request.getHeader("Authorization");
         final String username = jwtTokenUtil.getUsernameFromToken(authorizationHeader);
