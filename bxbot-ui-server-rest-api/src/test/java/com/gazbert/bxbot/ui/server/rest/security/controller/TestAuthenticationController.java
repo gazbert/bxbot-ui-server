@@ -40,6 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -65,8 +66,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>
  * Code originated from the excellent JWT and Spring Boot example by Stephan Zerhusen:
  * https://github.com/szerhusenBC/jwt-spring-security-demo
- *
- * TODO - add tests for checking username/password when /auth called...
  *
  * @author gazbert
  */
@@ -107,6 +106,21 @@ public class TestAuthenticationController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(jwtAuthenticationRequest)))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void whenCreateTokenCalledWithBadCredentialsThenExpectUnauthorizedResponse() throws Exception {
+
+        final JwtAuthenticationRequest jwtAuthenticationRequest =
+                new JwtAuthenticationRequest("user", "bad-password");
+
+        when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("invalid password!"));
+
+        mockMvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(jwtAuthenticationRequest)))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
