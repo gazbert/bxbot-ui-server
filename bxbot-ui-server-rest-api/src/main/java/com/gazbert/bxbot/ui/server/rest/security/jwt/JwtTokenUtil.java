@@ -43,12 +43,6 @@ import java.util.*;
  * <p>
  * Properties are loaded from the resources/application.yml file.
  * <p>
- *
- * TODO - throw new JWTValidationException if anything fails when extracting from token
- * Should be trapped by new AuthenticationFailureHandler, logged, and a 400 Bad Request sent back to client...
- *
- * c.f. an invalid token should return 401
- *
  * Code originated from the excellent JWT and Spring Boot example by Stephan Zerhusen:
  * https://github.com/szerhusenBC/jwt-spring-security-demo
  *
@@ -83,7 +77,7 @@ public class JwtTokenUtil {
      * @param token the JWT.
      * @return true if JWT is valid, false otherwise.
      */
-    public Boolean validateToken(String token) {
+    public boolean validateToken(String token) {
         final Date created = getCreatedDateFromToken(token);
         return !isTokenExpired(token) &&
                 !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
@@ -96,7 +90,7 @@ public class JwtTokenUtil {
      * @param userDetails the user details looked up from the repository.
      * @return true if JWT is valid, false otherwise.
      */
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails userDetails) throws JwtAuthenticationException {
 
         final JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
@@ -107,13 +101,15 @@ public class JwtTokenUtil {
     }
 
     public String getUsernameFromToken(String token) {
-        String username;
+        String username = null;
         try {
             final Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
+            if (claims != null) {
+                username = claims.getSubject();
+            }
         } catch (Exception e) {
-            LOG.error("Failed to extract username claim from token!", e);
-            username = null;
+            LOG.warn("Failed to extract username claim from token!", e);
+            // we don't throw exception here, because this is valid case. Client might not have obtained token yet.
         }
         return username;
     }
@@ -133,41 +129,38 @@ public class JwtTokenUtil {
                 && (!isTokenExpired(token) || ignoreTokenExpiration(token));
     }
 
-    public String refreshToken(String token) {
-        String refreshedToken;
+    public String refreshToken(String token) throws JwtAuthenticationException {
         try {
             final Claims claims = getClaimsFromToken(token);
             claims.put(CLAIM_KEY_CREATED, new Date());
-            refreshedToken = generateToken(claims);
+            return generateToken(claims);
         } catch (Exception e) {
-            LOG.error("Failed to refresh token!", e);
-            refreshedToken = null;
+            final String errorMsg = "Failed to refresh token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return refreshedToken;
     }
 
-    public Date getCreatedDateFromToken(String token) {
-        Date created;
+    public Date getCreatedDateFromToken(String token) throws JwtAuthenticationException {
         try {
             final Claims claims = getClaimsFromToken(token);
-            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
+            return new Date((Long) claims.get(CLAIM_KEY_CREATED));
         } catch (Exception e) {
-            LOG.error("Failed to extract created date claim from token!", e);
-            created = null;
+            final String errorMsg = "Failed to extract created date claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return created;
     }
 
-    public Date getExpirationDateFromToken(String token) {
-        Date expiration;
+    public Date getExpirationDateFromToken(String token) throws JwtAuthenticationException {
         try {
             final Claims claims = getClaimsFromToken(token);
-            expiration = claims.getExpiration();
+            return claims.getExpiration();
         } catch (Exception e) {
-            LOG.error("Failed to extract expiration claim from token!", e);
-            expiration = null;
+            final String errorMsg = "Failed to extract expiration claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return expiration;
     }
 
     public Date getLastPasswordResetDateFromToken(String token) {
@@ -182,19 +175,18 @@ public class JwtTokenUtil {
         return lastPasswordResetDate;
     }
 
-    public String getAudienceFromToken(String token) {
-        String audience;
+    public String getAudienceFromToken(String token) throws JwtAuthenticationException {
         try {
             final Claims claims = getClaimsFromToken(token);
-            audience = (String) claims.get(CLAIM_KEY_AUDIENCE);
+            return (String) claims.get(CLAIM_KEY_AUDIENCE);
         } catch (Exception e) {
-            LOG.error("Failed to extract audience claim from token!", e);
-            audience = null;
+            final String errorMsg = "Failed to extract audience claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return audience;
     }
 
-    public List<GrantedAuthority> getRolesFromToken(String token) {
+    public List<GrantedAuthority> getRolesFromToken(String token) throws JwtAuthenticationException {
         final List<GrantedAuthority> roles = new ArrayList<>();
         try {
             final Claims claims = getClaimsFromToken(token);
@@ -205,10 +197,12 @@ public class JwtTokenUtil {
             for (final String roleFromClaim : rolesFromClaim) {
                 roles.add(new SimpleGrantedAuthority(roleFromClaim));
             }
+            return roles;
         } catch (Exception e) {
-            LOG.error("Failed to extract roles claim from token!", e);
+            final String errorMsg = "Failed to extract roles claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return roles;
     }
 
     // ------------------------------------------------------------------------
@@ -231,8 +225,9 @@ public class JwtTokenUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            LOG.error("Failed to extract claims from token!", e);
+            LOG.warn("Failed to extract claims from token!", e);
             claims = null;
+            // we don't throw exception here, because this is valid case. Client might not have obtained token yet!
         }
         return claims;
     }
