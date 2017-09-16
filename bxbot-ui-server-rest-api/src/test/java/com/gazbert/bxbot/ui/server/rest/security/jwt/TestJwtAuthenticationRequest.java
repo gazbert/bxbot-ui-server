@@ -23,16 +23,33 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- * This runtime exception is thrown if JWT authentication fails.
+ * Tests JwtAuthenticationRequest behaves as expected.
  *
- * @author glynch
+ * @author gazbert
  */
-class JwtAuthenticationException extends RuntimeException {
+public class TestJwtAuthenticationRequest {
 
-    private static final long serialVersionUID = -5066890753686004758L;
+    private static final String USERNAME = "bxbot-ui-server-admin";
+    private static final String PASSWORD = "aintGonnaTellYa!";
 
-    JwtAuthenticationException(String msg, Throwable e) {
-        super(msg, e);
+    @Test
+    public void testInitialisationWorksAsExpected() {
+        final JwtAuthenticationRequest jwtAuthenticationRequest = new JwtAuthenticationRequest();
+        assertEquals(null, jwtAuthenticationRequest.getUsername());
+        assertEquals(null, jwtAuthenticationRequest.getPassword());
+    }
+
+    @Test
+    public void testSettersWorkAsExpected() {
+        final JwtAuthenticationRequest jwtAuthenticationRequest = new JwtAuthenticationRequest();
+        jwtAuthenticationRequest.setUsername(USERNAME);
+        assertEquals(USERNAME, jwtAuthenticationRequest.getUsername());
+        jwtAuthenticationRequest.setPassword(PASSWORD);
+        assertEquals(PASSWORD, jwtAuthenticationRequest.getPassword());
     }
 }

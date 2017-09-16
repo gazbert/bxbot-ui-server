@@ -52,6 +52,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
     private JwtTokenUtil jwtTokenUtil;
 //    private UserDetailsService userDetailsService;
@@ -62,9 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // Extract token after Bearer prefix if present
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            authorizationHeader = authorizationHeader.substring(7);
+        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            authorizationHeader = authorizationHeader.substring(BEARER_PREFIX_LENGTH);
         }
 
         final String username = jwtTokenUtil.getUsernameFromToken(authorizationHeader);

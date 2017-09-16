@@ -23,16 +23,25 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- * This runtime exception is thrown if JWT authentication fails.
+ * Tests JWT Authentication Exception is created as expected.
  *
- * @author glynch
+ * @author gazbert
  */
-class JwtAuthenticationException extends RuntimeException {
+public class TestJwtAuthenticationException {
 
-    private static final long serialVersionUID = -5066890753686004758L;
+    private static final String ERROR_MSG = "Failed to extract expiration claim from token!";
+    private static final RuntimeException CAUSE = new RuntimeException("The cause of the exception");
 
-    JwtAuthenticationException(String msg, Throwable e) {
-        super(msg, e);
+    @Test
+    public void testCreationOfExceptionWithCauseIsAsExpected() {
+
+        final JwtAuthenticationException exception = new JwtAuthenticationException(ERROR_MSG, CAUSE);
+        assertEquals(ERROR_MSG, exception.getMessage());
+        assertEquals(CAUSE, exception.getCause());
     }
 }

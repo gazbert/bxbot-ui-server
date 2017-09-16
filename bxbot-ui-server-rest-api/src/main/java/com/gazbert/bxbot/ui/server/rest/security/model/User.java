@@ -24,6 +24,8 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.model;
 
+import org.springframework.util.Assert;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -154,10 +156,15 @@ public class User {
     }
 
     public Date getLastPasswordResetDate() {
-        return new Date(lastPasswordResetDate.getTime());
+        if (lastPasswordResetDate != null) {
+            return new Date(lastPasswordResetDate.getTime());
+        } else {
+            return null;
+        }
     }
 
     public void setLastPasswordResetDate(Date lastPasswordResetDate) {
+        Assert.notNull(lastPasswordResetDate, "lastPasswordResetDate cannot be null!");
         this.lastPasswordResetDate = new Date(lastPasswordResetDate.getTime());
     }
 }
