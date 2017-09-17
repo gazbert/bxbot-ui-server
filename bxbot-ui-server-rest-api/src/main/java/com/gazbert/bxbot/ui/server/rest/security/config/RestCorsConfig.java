@@ -30,12 +30,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * CORS config for the app's REST API.
+ * CORS config for BX-bot UI Server's REST API.
+ * <p>
+ * Needed so that the browser will allow the REST API to be accessed on a different machine to the one hosting
+ * the BX-bot UI Angular app.
  *
  * @author gazbert
  */
 @Configuration
 public class RestCorsConfig {
+
     @Bean
     public CorsFilter corsFilter() {
 

@@ -51,13 +51,11 @@ public class TestUser {
     private static final boolean USER_1_ENABLED = true;
     private static final Date USER_1_LAST_PASSWORD_RESET_DATE = new Date();
 
-    private User user;
-
 
     @Test
     public void testInitialisationWorksAsExpected() {
 
-        user = new User();
+        final User user = new User();
         assertEquals(null, user.getId());
         assertEquals(null, user.getUsername());
         assertEquals(null, user.getPassword());
@@ -72,7 +70,7 @@ public class TestUser {
     @Test
     public void testSettersWorkAsExpected() {
 
-        user = new User();
+        final User user = new User();
 
         user.setId(USER_1_ID);
         assertEquals(USER_1_ID, user.getId());
@@ -98,7 +96,7 @@ public class TestUser {
         user.setLastPasswordResetDate(USER_1_LAST_PASSWORD_RESET_DATE);
         assertEquals(USER_1_LAST_PASSWORD_RESET_DATE, user.getLastPasswordResetDate());
 
-        final List<Role> roles = createRoles();
+        final List<Role> roles = createRoles(user);
         user.setRoles(roles);
         assertEquals(roles, user.getRoles());
     }
@@ -107,7 +105,7 @@ public class TestUser {
     // Private utils
     // ------------------------------------------------------------------------
 
-    private List<Role> createRoles() {
+    private List<Role> createRoles(User user) {
 
         final List<User> users = Collections.singletonList(user);
         final List<Role> roles = new ArrayList<>();

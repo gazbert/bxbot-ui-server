@@ -51,11 +51,11 @@ public final class JwtUserFactory {
                 user.getUsername(),
                 user.getFirstname(),
                 user.getLastname(),
-                user.getEmail(),
                 user.getPassword(),
-                mapUserRolesToGrantedAuthorities(user.getRoles()),
+                user.getEmail(),
                 user.getEnabled(),
                 user.getLastPasswordResetDate().getTime(),
+                mapUserRolesToGrantedAuthorities(user.getRoles()),
                 user.getRoles()
         );
     }

@@ -54,19 +54,18 @@ public class JwtUser implements UserDetails {
     private final long lastPasswordResetDate;
     private final List<String> roles;
 
-    JwtUser(Long id, String username, String firstname, String lastname, String email, String password,
-            Collection<? extends GrantedAuthority> authorities, boolean enabled, long lastPasswordResetDate,
-            List<Role> roles) {
+    JwtUser(Long id, String username, String firstname, String lastname, String password, String email, boolean enabled,
+            long lastPasswordResetDate, Collection<? extends GrantedAuthority> authorities, List<Role> roles) {
 
         this.id = id;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email = email;
         this.password = password;
-        this.authorities = authorities;
+        this.email = email;
         this.enabled = enabled;
         this.lastPasswordResetDate = lastPasswordResetDate;
+        this.authorities = authorities;
 
         this.roles = new ArrayList<>();
         for (final Role role : roles) {
