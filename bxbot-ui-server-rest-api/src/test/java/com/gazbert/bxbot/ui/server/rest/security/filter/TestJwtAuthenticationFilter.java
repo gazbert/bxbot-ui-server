@@ -68,7 +68,7 @@ public class TestJwtAuthenticationFilter {
     }
 
     @Test
-    public void whenDoFilterInternalCalledWithoutAuthorisationHeaderThenCallNextInFilterChain() throws Exception {
+    public void whenDoFilterInternalCalledWithoutAuthorisationHeaderThenCallNextFilterInChain() throws Exception {
         when(jwtTokenUtils.getUsernameFromToken(null)).thenReturn(null);
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
         verify(filterChain, times(1)).doFilter(request, response);
