@@ -39,7 +39,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestUser {
 
-    private static final Long ROLE_ID = new Long("213443242342");
+    private static final Long ADMIN_ROLE_ID = new Long("213443242342");
+    private static final Long USER_ROLE_ID = new Long("21344565442342");
 
     private static final Long USER_1_ID = new Long("2323267789789");
     private static final String USER_1_USERNAME = "hansolo";
@@ -112,13 +113,13 @@ public class TestUser {
         final List<Role> roles = new ArrayList<>();
 
         final Role role1 = new Role();
-        role1.setId(ROLE_ID);
+        role1.setId(ADMIN_ROLE_ID);
         role1.setName(RoleName.ROLE_ADMIN);
         role1.setUsers(users);
 
         final Role role2 = new Role();
-        role2.setId(ROLE_ID);
-        role2.setName(RoleName.ROLE_ADMIN);
+        role2.setId(USER_ROLE_ID);
+        role2.setName(RoleName.ROLE_USER);
         role2.setUsers(users);
 
         roles.add(role1);
