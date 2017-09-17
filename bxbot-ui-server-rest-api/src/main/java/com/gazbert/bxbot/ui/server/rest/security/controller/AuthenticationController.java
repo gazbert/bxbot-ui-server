@@ -25,7 +25,7 @@
 package com.gazbert.bxbot.ui.server.rest.security.controller;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtAuthenticationRequest;
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtil;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -58,15 +58,15 @@ public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
-                                    UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
+                                    UserDetailsService userDetailsService, JwtTokenUtils jwtTokenUtils) {
 
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtTokenUtils = jwtTokenUtils;
     }
 
     /**
@@ -91,7 +91,7 @@ public class AuthenticationController {
 
         // Reload password post-security check, so we can generate the token...
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails, device);
+        final String token = jwtTokenUtils.generateToken(userDetails, device);
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
@@ -106,11 +106,11 @@ public class AuthenticationController {
     public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
 
         final String authorizationHeader = request.getHeader("Authorization");
-        final String username = jwtTokenUtil.getUsernameFromToken(authorizationHeader);
+        final String username = jwtTokenUtils.getUsernameFromToken(authorizationHeader);
         final JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
-        if (jwtTokenUtil.canTokenBeRefreshed(authorizationHeader, new Date(user.getLastPasswordResetDate()))) {
-            final String refreshedToken = jwtTokenUtil.refreshToken(authorizationHeader);
+        if (jwtTokenUtils.canTokenBeRefreshed(authorizationHeader, new Date(user.getLastPasswordResetDate()))) {
+            final String refreshedToken = jwtTokenUtils.refreshToken(authorizationHeader);
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         } else {
             return ResponseEntity.badRequest().body(null);

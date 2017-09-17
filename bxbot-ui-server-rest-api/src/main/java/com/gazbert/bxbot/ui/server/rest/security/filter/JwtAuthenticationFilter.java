@@ -24,13 +24,12 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.filter;
 
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtil;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -56,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenUtils jwtTokenUtils;
 //    private UserDetailsService userDetailsService;
 
 
@@ -70,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authorizationHeader = authorizationHeader.substring(BEARER_PREFIX_LENGTH);
         }
 
-        final String username = jwtTokenUtil.getUsernameFromToken(authorizationHeader);
+        final String username = jwtTokenUtils.getUsernameFromToken(authorizationHeader);
         LOG.info(() -> "Username in JWT: " + username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -80,15 +79,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //
             // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             // if (jwtTokenUtil.validateToken(authorizationHeader, userDetails)) {
-            if (jwtTokenUtil.validateToken(authorizationHeader)) {
+            if (jwtTokenUtils.validateToken(authorizationHeader)) {
 
                 LOG.info(() -> "JWT is valid");
 
                 // final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 //       userDetails, null, userDetails.getAuthorities());
                 final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        jwtTokenUtil.getUsernameFromToken(authorizationHeader), null,
-                        jwtTokenUtil.getRolesFromToken(authorizationHeader));
+                        jwtTokenUtils.getUsernameFromToken(authorizationHeader), null,
+                        jwtTokenUtils.getRolesFromToken(authorizationHeader));
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -104,8 +103,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
+    public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
+        this.jwtTokenUtils = jwtTokenUtils;
     }
 
 //    @Autowired

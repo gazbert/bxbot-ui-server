@@ -49,7 +49,7 @@ import java.util.*;
  * @author gazbert
  */
 @Component
-public class JwtTokenUtil {
+public class JwtTokenUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 

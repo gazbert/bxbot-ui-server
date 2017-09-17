@@ -49,20 +49,20 @@ public class TestJwtUtils {
     private static final long EXPIRATION_PERIOD = 3600L;
 
     @InjectMocks
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenUtils jwtTokenUtils;
 
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(jwtTokenUtil, "expiration", EXPIRATION_PERIOD);
-        ReflectionTestUtils.setField(jwtTokenUtil, "secret", SECRET_KEY);
+        ReflectionTestUtils.setField(jwtTokenUtils, "expiration", EXPIRATION_PERIOD);
+        ReflectionTestUtils.setField(jwtTokenUtils, "secret", SECRET_KEY);
     }
 
     @Test
     public void testUsernameCanBeExtractedFromToken() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtil.getUsernameFromToken(token)).isEqualTo(USERNAME);
+        assertThat(jwtTokenUtils.getUsernameFromToken(token)).isEqualTo(USERNAME);
     }
 
     // ------------------------------------------------------------------------
@@ -72,7 +72,7 @@ public class TestJwtUtils {
     private String createToken() {
         final DeviceStub device = new DeviceStub();
         device.setNormal(true);
-        return jwtTokenUtil.generateToken(new UserDetailsStub(USERNAME), device);
+        return jwtTokenUtils.generateToken(new UserDetailsStub(USERNAME), device);
     }
 }
 
