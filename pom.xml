@@ -111,7 +111,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>jacoco</id>
             <build>
