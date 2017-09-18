@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -56,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
     private JwtTokenUtils jwtTokenUtils;
-//    private UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
 
     @Override
@@ -75,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             // It is not compulsory to load the User details from the database.
-            // We could just use the information in the token claims - this saves a database lookup.
+            // We can just use the information in the token claims - this saves a repo lookup.
             //
             // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             // if (jwtTokenUtil.validateToken(authorizationHeader, userDetails)) {
@@ -107,8 +108,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
-//    @Autowired
-//    public void setUserDetailsService(UserDetailsService userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
+    @Autowired
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 }

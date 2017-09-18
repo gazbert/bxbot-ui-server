@@ -1,5 +1,15 @@
 <?xml version="1.0"?>
+<!--
+  Bug codes can be found here: http://findbugs.sourceforge.net/bugDescriptions.html
+ -->
 <FindBugsFilter>
+
+    <!-- Leave this in for illustration/teaching purposes -->
+    <Match>
+        <Class name="com.gazbert.bxbot.ui.server.rest.security.filter.JwtAuthenticationFilter"/>
+        <Field name="userDetailsService"/>
+        <Bug pattern="URF_UNREAD_FIELD"/>
+    </Match>
 
     <!-- Don't bother with unused fields in Exchange Adapter GSON classes. -->
     <!--<Match>-->

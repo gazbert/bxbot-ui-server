@@ -79,33 +79,66 @@ public class TestJwtAuthenticationFilter {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
+        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
     @Test
-    public void whenFilterCalledWithAuthorizationHeaderAndInvalidBearerTokenThenCallNextFilterInChain() throws Exception {
+    public void whenFilterCalledWithBearerTokenWithMissingUsernameThenCallNextFilterInChain() throws Exception {
 
-        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(BEARER_PREFIX + "junk token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(BEARER_PREFIX + "dummy-token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
+        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
 
     @Test
-    public void whenFilterCalledWithAuthorizationHeaderAndInvalidTokenThenCallNextFilterInChain() throws Exception {
+    public void whenFilterCalledWithTokenWithMissingUsernameThenCallNextFilterInChain() throws Exception {
 
-        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("junk token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
+        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
+    @Test
+    public void whenFilterCalledWithInvalidTokenThenCallNextFilterInChain() throws Exception {
 
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+        when(jwtTokenUtils.validateToken((any()))).thenReturn(false);
 
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
+        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
+        verify(jwtTokenUtils, times(1)).validateToken(any());
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    public void whenFilterCalledWithValidTokenThenExpectSuccessfulAuthenticationAndCallNextFilterInChain() throws Exception {
+
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+        when(jwtTokenUtils.validateToken((any()))).thenReturn(true);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
+        verify(jwtTokenUtils, times(2)).getUsernameFromToken(any());
+        verify(jwtTokenUtils, times(1)).validateToken(any());
+        verify(jwtTokenUtils, times(1)).getRolesFromToken(any());
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
 }
