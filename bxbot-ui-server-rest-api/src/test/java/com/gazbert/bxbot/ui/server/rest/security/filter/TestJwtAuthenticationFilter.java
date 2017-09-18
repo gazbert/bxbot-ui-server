@@ -46,6 +46,10 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class TestJwtAuthenticationFilter {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String USERNAME = "bobafett";
+
     @MockBean
     private HttpServletRequest request;
 
@@ -68,9 +72,40 @@ public class TestJwtAuthenticationFilter {
     }
 
     @Test
-    public void whenDoFilterInternalCalledWithoutAuthorisationHeaderThenCallNextFilterInChain() throws Exception {
+    public void whenFilterCalledWithoutAuthorizationHeaderThenCallNextFilterInChain() throws Exception {
+
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(null);
         when(jwtTokenUtils.getUsernameFromToken(null)).thenReturn(null);
+
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
         verify(filterChain, times(1)).doFilter(request, response);
     }
+
+    @Test
+    public void whenFilterCalledWithAuthorizationHeaderAndInvalidBearerTokenThenCallNextFilterInChain() throws Exception {
+
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(BEARER_PREFIX + "junk token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+
+    @Test
+    public void whenFilterCalledWithAuthorizationHeaderAndInvalidTokenThenCallNextFilterInChain() throws Exception {
+
+        when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("junk token");
+        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+
+
+
 }
