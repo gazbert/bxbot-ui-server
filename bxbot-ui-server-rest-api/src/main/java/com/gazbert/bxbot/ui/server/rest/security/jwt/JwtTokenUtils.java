@@ -53,13 +53,14 @@ public class JwtTokenUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
+    public static final String AUDIENCE_WEB = "web";
+
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_AUDIENCE = "audience";
     private static final String CLAIM_KEY_CREATED = "created";
     private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "lastPasswordChangeDate";
     private static final String CLAIM_KEY_ROLES = "roles";
     private static final String AUDIENCE_UNKNOWN = "unknown";
-    private static final String AUDIENCE_WEB = "web";
     private static final String AUDIENCE_MOBILE = "mobile";
     private static final String AUDIENCE_TABLET = "tablet";
 

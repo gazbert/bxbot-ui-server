@@ -41,15 +41,17 @@ import java.util.Collections;
  */
 public class UserDetailsStub implements UserDetails {
 
+    private final String authority;
     private final String username;
 
-    public UserDetailsStub(String username) {
+    public UserDetailsStub(String username, String authority) {
         this.username = username;
+        this.authority = authority;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("USER"));
+        return Collections.singletonList(new SimpleGrantedAuthority(authority));
     }
 
     @Override

@@ -26,12 +26,19 @@ package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.stubs.DeviceStub;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.stubs.UserDetailsStub;
+import org.assertj.core.util.DateUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Date;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
@@ -45,6 +52,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class TestJwtUtils {
 
     private static final String USERNAME = "boba.fett";
+    private static final String AUTHORITY = "USER";
     private static final String SECRET_KEY = "mkultra";
     private static final long EXPIRATION_PERIOD = 3600L;
 
@@ -65,6 +73,47 @@ public class TestJwtUtils {
         assertThat(jwtTokenUtils.getUsernameFromToken(token)).isEqualTo(USERNAME);
     }
 
+    @Test
+    public void testAudienceCanBeExtractedFromToken() throws Exception {
+        final String token = createToken();
+        assertThat(jwtTokenUtils.getAudienceFromToken(token)).isEqualTo(JwtTokenUtils.AUDIENCE_WEB);
+    }
+
+    @Test
+    public void testCreatedDateCanBeExtractedFromToken() throws Exception {
+        final Date now = DateUtil.now();
+        final String token = createToken();
+        assertThat(jwtTokenUtils.getCreatedDateFromToken(token)).isCloseTo(now, 1000);
+    }
+
+    @Test
+    public void testExpirationDateCanBeExtractedFromToken() throws Exception {
+        final Date now = DateUtil.now();
+        final String token = createToken();
+        final Date expirationDate = jwtTokenUtils.getExpirationDateFromToken(token);
+        assertThat(DateUtil.timeDifference(expirationDate, now)).isCloseTo(EXPIRATION_PERIOD * 1000, within(1000L));
+    }
+
+    @Test
+    public void testRolesCanBeExtractedFromToken() throws Exception {
+        final String token = createToken();
+        final List<GrantedAuthority> roles = jwtTokenUtils.getRolesFromToken(token);
+        assertThat(roles.size()).isEqualTo(1);
+        assertThat(roles.get(0).getAuthority()).isEqualTo(AUTHORITY);
+    }
+
+    @Ignore("FIXME!")
+    @Test
+    public void testLastPasswordResetDateCanBeExtractedFromToken() throws Exception {
+
+        final Date now = DateUtil.now();
+        final String token = createToken();
+        jwtTokenUtils.getLastPasswordResetDateFromToken(token);
+
+        final Date lastPasswordResetDate = jwtTokenUtils.getLastPasswordResetDateFromToken(token);
+        assertThat(DateUtil.timeDifference(lastPasswordResetDate, now)).isCloseTo(3600000L, within(1000L));
+    }
+
     // ------------------------------------------------------------------------
     // Util methods
     // ------------------------------------------------------------------------
@@ -72,7 +121,7 @@ public class TestJwtUtils {
     private String createToken() {
         final DeviceStub device = new DeviceStub();
         device.setNormal(true);
-        return jwtTokenUtils.generateToken(new UserDetailsStub(USERNAME), device);
+        return jwtTokenUtils.generateToken(new UserDetailsStub(USERNAME, AUTHORITY), device);
     }
 }
 
