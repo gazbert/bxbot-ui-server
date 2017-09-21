@@ -101,20 +101,6 @@ public class JwtTokenUtils {
                 && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
     }
 
-    public String getUsernameFromToken(String token) {
-        String username = null;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            if (claims != null) {
-                username = claims.getSubject();
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to extract username claim from token!", e);
-            // we don't throw exception here, because this is valid case. Client might not have obtained token yet.
-        }
-        return username;
-    }
-
     public String generateToken(UserDetails userDetails, Device device) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
@@ -140,6 +126,20 @@ public class JwtTokenUtils {
             LOG.error(errorMsg, e);
             throw new JwtAuthenticationException(errorMsg, e);
         }
+    }
+
+    public String getUsernameFromToken(String token) {
+        String username = null;
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            if (claims != null) {
+                username = claims.getSubject();
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to extract username claim from token!", e);
+            // we don't throw exception here, because this is valid case. Client might not have obtained token yet.
+        }
+        return username;
     }
 
     public Date getCreatedDateFromToken(String token) throws JwtAuthenticationException {
