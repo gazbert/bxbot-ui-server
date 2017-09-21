@@ -94,11 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 LOG.info(() -> "Authenticated User: " + username + " has been set in Spring SecurityContext.");
-
-            } else {
-                LOG.warn(() -> "JWT is invalid!");
             }
-
         }
         chain.doFilter(request, response);
     }

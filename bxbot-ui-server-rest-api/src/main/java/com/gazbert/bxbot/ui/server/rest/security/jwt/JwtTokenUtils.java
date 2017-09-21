@@ -79,9 +79,17 @@ public class JwtTokenUtils {
      * @return true if JWT is valid, false otherwise.
      */
     public boolean validateToken(String token) {
-        final Date created = getCreatedDateFromToken(token);
-        return !isTokenExpired(token) &&
-                !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
+
+        boolean isValid = false;
+
+        try {
+            final Date created = getCreatedDateFromToken(token);
+            isValid = !isTokenExpired(token) &&
+                    !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
+        } catch (Exception e) {
+            LOG.error("Invalid token! Details: " + e.getMessage(), e);
+        }
+        return isValid;
     }
 
     /**
@@ -93,12 +101,20 @@ public class JwtTokenUtils {
      */
     public boolean validateToken(String token, UserDetails userDetails) throws JwtAuthenticationException {
 
-        final JwtUser user = (JwtUser) userDetails;
-        final String username = getUsernameFromToken(token);
-        final Date created = getCreatedDateFromToken(token);
-        return (username.equals(user.getUsername()) // no need for this as we put it in there!
-                && !isTokenExpired(token)
-                && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
+        boolean isValid = false;
+
+        try {
+            final JwtUser user = (JwtUser) userDetails;
+            final String username = getUsernameFromToken(token);
+            final Date created = getCreatedDateFromToken(token);
+
+            isValid = (username.equals(user.getUsername()) // no need for this as we put it in there!
+                    && !isTokenExpired(token)
+                    && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
+        } catch (Exception e) {
+            LOG.error("Invalid token! Details: " + e.getMessage(), e);
+        }
+        return isValid;
     }
 
     public String generateToken(JwtUser userDetails, Device device) {
@@ -130,15 +146,19 @@ public class JwtTokenUtils {
     }
 
     public String getUsernameFromToken(String token) {
+
         String username = null;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            if (claims != null) {
-                username = claims.getSubject();
+
+        // token can be validly null if user is logging in for first time to ask for a token
+        if (token != null) {
+            try {
+                final Claims claims = getClaimsFromToken(token);
+                if (claims != null) {
+                    username = claims.getSubject();
+                }
+            } catch (Exception e) {
+                LOG.warn("Failed to extract username claim from token!", e);
             }
-        } catch (Exception e) {
-            LOG.warn("Failed to extract username claim from token!", e);
-            // we don't throw exception here, because this is valid case. Client might not have obtained token yet.
         }
         return username;
     }
@@ -193,8 +213,7 @@ public class JwtTokenUtils {
         try {
             final Claims claims = getClaimsFromToken(token);
 
-            @SuppressWarnings("unchecked")
-            final List<String> rolesFromClaim = (List<String>) claims.get(CLAIM_KEY_ROLES);
+            @SuppressWarnings("unchecked") final List<String> rolesFromClaim = (List<String>) claims.get(CLAIM_KEY_ROLES);
 
             for (final String roleFromClaim : rolesFromClaim) {
                 roles.add(new SimpleGrantedAuthority(roleFromClaim));
@@ -220,18 +239,10 @@ public class JwtTokenUtils {
     }
 
     private Claims getClaimsFromToken(String token) {
-        Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            LOG.warn("Failed to extract claims from token!", e);
-            claims = null;
-            // we don't throw exception here, because this is valid case. Client might not have obtained token yet!
-        }
-        return claims;
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Date generateExpirationDate() {

@@ -121,6 +121,25 @@ public class TestJwtUtils {
         assertThat(jwtTokenUtils.getLastPasswordResetDateFromToken(token)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
     }
 
+    @Test
+    public void whenValidateTokenCalledWithNonExpiredTokenThenExpectSuccess() throws Exception {
+        final String token = createToken();
+        assertThat(jwtTokenUtils.validateToken(token)).isTrue();
+    }
+
+    @Test
+    public void whenValidateTokenCalledWithExpiredTokenThenExpectFailure() throws Exception {
+        ReflectionTestUtils.setField(jwtTokenUtils, "expiration", 0L); // will expire fast!
+        final String token = createToken();
+        assertThat(jwtTokenUtils.validateToken(token)).isFalse();
+    }
+
+    @Test
+    public void whenValidateTokenCalledWithCreatedDateEarlierThanLastPasswordResetDateThenExpectFailure() throws Exception {
+        final String token = createTokenWithInvalidCreationDate();
+        assertThat(jwtTokenUtils.validateToken(token)).isFalse();
+    }
+
     // ------------------------------------------------------------------------
     // Util methods
     // ------------------------------------------------------------------------
@@ -128,10 +147,16 @@ public class TestJwtUtils {
     private String createToken() {
         final DeviceStub device = new DeviceStub();
         device.setNormal(true);
-        return jwtTokenUtils.generateToken(createUserDetails(), device);
+        return jwtTokenUtils.generateToken(createUserDetails(LAST_PASSWORD_RESET_DATE), device);
     }
 
-    private JwtUser createUserDetails() {
+    private String createTokenWithInvalidCreationDate() {
+        final DeviceStub device = new DeviceStub();
+        device.setNormal(true);
+        return jwtTokenUtils.generateToken(createUserDetails(DateUtil.tomorrow()), device);
+    }
+
+    private JwtUser createUserDetails(Date lastPasswordResetDate) {
 
         final User user = new User();
         user.setId(USER_ID);
@@ -141,7 +166,7 @@ public class TestJwtUtils {
         user.setLastname(LASTNAME);
         user.setEmail(EMAIL);
         user.setEnabled(USER_ENABLED);
-        user.setLastPasswordResetDate(LAST_PASSWORD_RESET_DATE);
+        user.setLastPasswordResetDate(lastPasswordResetDate);
 
         final List<Role> roles = createRoles(user);
         user.setRoles(roles);
