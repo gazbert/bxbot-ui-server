@@ -54,8 +54,10 @@ public class JwtUser implements UserDetails {
     private final long lastPasswordResetDate;
     private final List<String> roles;
 
-    JwtUser(Long id, String username, String firstname, String lastname, String password, String email, boolean enabled,
-            long lastPasswordResetDate, Collection<? extends GrantedAuthority> authorities, List<Role> roles) {
+
+    public JwtUser(Long id, String username, String firstname, String lastname, String password, String email,
+                   boolean enabled, long lastPasswordResetDate, Collection<? extends GrantedAuthority> authorities,
+                   List<Role> roles) {
 
         this.id = id;
         this.username = username;

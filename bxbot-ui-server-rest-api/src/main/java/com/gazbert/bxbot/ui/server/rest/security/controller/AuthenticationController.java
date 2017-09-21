@@ -90,7 +90,7 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Reload password post-security check, so we can generate the token...
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtils.generateToken(userDetails, device);
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));

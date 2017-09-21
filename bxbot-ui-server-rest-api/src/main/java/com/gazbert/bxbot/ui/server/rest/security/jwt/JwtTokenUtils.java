@@ -101,12 +101,13 @@ public class JwtTokenUtils {
                 && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
     }
 
-    public String generateToken(UserDetails userDetails, Device device) {
+    public String generateToken(JwtUser userDetails, Device device) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_AUDIENCE, generateAudience(device));
         claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_ROLES, mapRolesFromGrantedAuthorities(userDetails.getAuthorities()));
+        claims.put(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE, userDetails.getLastPasswordResetDate());
         return generateToken(claims);
     }
 

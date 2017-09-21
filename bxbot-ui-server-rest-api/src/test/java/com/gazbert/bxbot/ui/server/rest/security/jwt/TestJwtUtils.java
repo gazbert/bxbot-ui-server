@@ -25,21 +25,25 @@
 package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.stubs.DeviceStub;
-import com.gazbert.bxbot.ui.server.rest.security.jwt.stubs.UserDetailsStub;
+import com.gazbert.bxbot.ui.server.rest.security.model.Role;
+import com.gazbert.bxbot.ui.server.rest.security.model.RoleName;
+import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import org.assertj.core.util.DateUtil;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the JWT utils.
@@ -51,10 +55,19 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
  */
 public class TestJwtUtils {
 
-    private static final String USERNAME = "boba.fett";
-    private static final String AUTHORITY = "USER";
     private static final String SECRET_KEY = "mkultra";
     private static final long EXPIRATION_PERIOD = 3600L;
+
+    private static final Long USER_ROLE_ID = new Long("21344565442342");
+
+    private static final Long USER_ID = new Long("2323267789789");
+    private static final String USERNAME = "hansolo";
+    private static final String PASSWORD = "password";
+    private static final String FIRSTNAME = "Han";
+    private static final String LASTNAME = "Solo";
+    private static final String EMAIL = "han@falcon";
+    private static final boolean USER_ENABLED = true;
+    private static final Date LAST_PASSWORD_RESET_DATE = new Date();
 
     @InjectMocks
     private JwtTokenUtils jwtTokenUtils;
@@ -99,19 +112,13 @@ public class TestJwtUtils {
         final String token = createToken();
         final List<GrantedAuthority> roles = jwtTokenUtils.getRolesFromToken(token);
         assertThat(roles.size()).isEqualTo(1);
-        assertThat(roles.get(0).getAuthority()).isEqualTo(AUTHORITY);
+        assertThat(roles.get(0).getAuthority()).isEqualTo(RoleName.ROLE_USER.name());
     }
 
-    @Ignore("FIXME!")
     @Test
     public void testLastPasswordResetDateCanBeExtractedFromToken() throws Exception {
-
-        final Date now = DateUtil.now();
         final String token = createToken();
-        jwtTokenUtils.getLastPasswordResetDateFromToken(token);
-
-        final Date lastPasswordResetDate = jwtTokenUtils.getLastPasswordResetDateFromToken(token);
-        assertThat(DateUtil.timeDifference(lastPasswordResetDate, now)).isCloseTo(3600000L, within(1000L));
+        assertThat(jwtTokenUtils.getLastPasswordResetDateFromToken(token)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
     }
 
     // ------------------------------------------------------------------------
@@ -121,7 +128,40 @@ public class TestJwtUtils {
     private String createToken() {
         final DeviceStub device = new DeviceStub();
         device.setNormal(true);
-        return jwtTokenUtils.generateToken(new UserDetailsStub(USERNAME, AUTHORITY), device);
+        return jwtTokenUtils.generateToken(createUserDetails(), device);
+    }
+
+    private JwtUser createUserDetails() {
+
+        final User user = new User();
+        user.setId(USER_ID);
+        user.setUsername(USERNAME);
+        user.setPassword(PASSWORD);
+        user.setFirstname(FIRSTNAME);
+        user.setLastname(LASTNAME);
+        user.setEmail(EMAIL);
+        user.setEnabled(USER_ENABLED);
+        user.setLastPasswordResetDate(LAST_PASSWORD_RESET_DATE);
+
+        final List<Role> roles = createRoles(user);
+        user.setRoles(roles);
+        assertEquals(roles, user.getRoles());
+
+        return JwtUserFactory.create(user);
+    }
+
+    private List<Role> createRoles(User user) {
+
+        final List<User> users = Collections.singletonList(user);
+
+        final Role role1 = new Role();
+        role1.setId(USER_ROLE_ID);
+        role1.setName(RoleName.ROLE_USER);
+        role1.setUsers(users);
+
+        final List<Role> roles = new ArrayList<>();
+        roles.add(role1);
+        return roles;
     }
 }
 
