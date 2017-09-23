@@ -1,4 +1,6 @@
 jwt:
-  secret: Ch@ng3Me!
+  secret: ChangeMeAndKeepMeSecret!
   expiration: 3600
   allowed_clock_skew: 300
+  issuer: bxbot-ui-server
+  audience: bxbot-ui

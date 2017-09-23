@@ -110,11 +110,11 @@ public class TestJwtUtils {
     // TODO - got to here with mocking out Claims...
 
     @Test
-    public void testCreatedDateCanBeExtractedFromTokenClaims() throws Exception {
+    public void testIssuedAtDateCanBeExtractedFromTokenClaims() throws Exception {
         final Date now = DateUtil.now();
         final String token = createToken();
         final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
-        assertThat(jwtTokenUtils.getCreatedDateFromTokenClaims(claims)).isCloseTo(now, 1000);
+        assertThat(jwtTokenUtils.getIssuedAtDateFromTokenClaims(claims)).isCloseTo(now, 1000);
     }
 
     @Test

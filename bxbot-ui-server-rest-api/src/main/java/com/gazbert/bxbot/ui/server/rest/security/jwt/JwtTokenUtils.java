@@ -51,15 +51,12 @@ public class JwtTokenUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final String ISSUER_BXBOT_UI_SERVER = "bxbot-ui-server";
-    private static final String AUDIENCE_BXBOT_UI = "bxbot-ui";
-
     private static final String CLAIM_KEY_USERNAME = "sub";
-    private static final String CLAIM_KEY_ISSUER = "bxbot-ui-server";
+    private static final String CLAIM_KEY_ISSUER = "iss";
+    private static final String CLAIM_KEY_ISSUED_AT = "iat";
     private static final String CLAIM_KEY_AUDIENCE = "aud";
-    private static final String CLAIM_KEY_CREATED = "created";
-    private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "lastPasswordChangeDate";
-    private static final String CLAIM_KEY_ROLES = "roles";
+    private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "bxbot:lastPasswordChangeDate";
+    private static final String CLAIM_KEY_ROLES = "bxbot:roles";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -69,6 +66,12 @@ public class JwtTokenUtils {
 
     @Value("${jwt.allowed_clock_skew}")
     private long allowedClockSkewInSecs;
+
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    @Value("${jwt.audience}")
+    private String audience;
 
 
     /**
@@ -83,7 +86,7 @@ public class JwtTokenUtils {
 
         try {
             final Claims claims = getClaimsFromToken(token);
-            final Date created = getCreatedDateFromTokenClaims(claims);
+            final Date created = getIssuedAtDateFromTokenClaims(claims);
             final Date lastPasswordResetDate = getLastPasswordResetDateFromTokenClaims(claims);
             if (isCreatedBeforeLastPasswordReset(created, lastPasswordResetDate)) {
                 final String errorMsg = "Invalid token! Created date claim is before last password reset date." +
@@ -101,24 +104,24 @@ public class JwtTokenUtils {
 
     public String generateToken(JwtUser userDetails) {
         final Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI_SERVER);
-        claims.put(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI);
+        claims.put(CLAIM_KEY_ISSUER, issuer);
+        claims.put(CLAIM_KEY_ISSUED_AT, new Date());
+        claims.put(CLAIM_KEY_AUDIENCE, audience);
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
-        claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_ROLES, mapRolesFromGrantedAuthorities(userDetails.getAuthorities()));
         claims.put(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE, userDetails.getLastPasswordResetDate());
         return generateToken(claims);
     }
 
     public boolean canTokenBeRefreshed(Claims claims, Date lastPasswordReset) {
-        final Date created = getCreatedDateFromTokenClaims(claims);
+        final Date created = getIssuedAtDateFromTokenClaims(claims);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset);
     }
 
     public String refreshToken(String token) throws JwtAuthenticationException {
         try {
             final Claims claims = getClaimsFromToken(token);
-            claims.put(CLAIM_KEY_CREATED, new Date());
+            claims.put(CLAIM_KEY_ISSUED_AT, new Date());
             return generateToken(claims);
         } catch (Exception e) {
             final String errorMsg = "Failed to refresh token!";
@@ -158,11 +161,11 @@ public class JwtTokenUtils {
         }
     }
 
-    Date getCreatedDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
+    Date getIssuedAtDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         try {
-            return new Date((Long) claims.get(CLAIM_KEY_CREATED));
+            return claims.getIssuedAt();
         } catch (Exception e) {
-            final String errorMsg = "Failed to extract created date claim from token!";
+            final String errorMsg = "Failed to extract iat claim from token!";
             LOG.error(errorMsg, e);
             throw new JwtAuthenticationException(errorMsg, e);
         }
@@ -194,9 +197,14 @@ public class JwtTokenUtils {
     // ------------------------------------------------------------------------
 
     private String generateToken(Map<String, Object> claims) {
+
+        final Date issuedAtDate = (Date) claims.get(CLAIM_KEY_ISSUED_AT);
+        final Date expirationDate = new Date(issuedAtDate.getTime() + (expirationInSecs * 1000));
+
         return Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(generateExpirationDate())
+                .setExpiration(expirationDate)
+                .setIssuedAt(issuedAtDate) // TODO Possible bug in jjwt - if this not set to override claims value, date is WAY in the future...
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
@@ -205,14 +213,10 @@ public class JwtTokenUtils {
         return Jwts.parser()
                 .setAllowedClockSkewSeconds(allowedClockSkewInSecs)
                 .setSigningKey(secret)
-                .require(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI_SERVER)
-                .require(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI)
+                .requireIssuer(issuer)
+                .requireAudience(audience)
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + (expirationInSecs * 1000));
     }
 
     private boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
