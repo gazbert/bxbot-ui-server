@@ -23,16 +23,22 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
+import org.springframework.security.core.AuthenticationException;
+
 /**
  * This runtime exception is thrown if JWT authentication fails.
  *
  * @author glynch
  */
-class JwtAuthenticationException extends RuntimeException {
+public class JwtAuthenticationException extends AuthenticationException {
 
     private static final long serialVersionUID = -5066890753686004758L;
 
-    JwtAuthenticationException(String msg, Throwable e) {
+    public JwtAuthenticationException(String msg, Throwable e) {
         super(msg, e);
+    }
+
+    public JwtAuthenticationException(String msg) {
+        super(msg);
     }
 }

@@ -27,6 +27,7 @@ package com.gazbert.bxbot.ui.server.rest.security.jwt;
 import com.gazbert.bxbot.ui.server.rest.security.model.Role;
 import com.gazbert.bxbot.ui.server.rest.security.model.RoleName;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
+import io.jsonwebtoken.Claims;
 import org.assertj.core.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,64 +83,71 @@ public class TestJwtUtils {
     }
 
     @Test
-    public void testUsernameCanBeExtractedFromToken() throws Exception {
+    public void testUsernameCanBeExtractedFromTokenClaims() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtils.getUsernameFromToken(token)).isEqualTo(USERNAME);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+        assertThat(jwtTokenUtils.getUsernameFromTokenClaims(claims)).isEqualTo(USERNAME);
     }
 
     @Test
-    public void testAudienceCanBeExtractedFromToken() throws Exception {
+    public void testAudienceCanBeExtractedFromTokenClaims() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtils.getAudienceFromToken(token)).isEqualTo(JwtTokenUtils.AUDIENCE_BXBOT_UI);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+        assertThat(jwtTokenUtils.getAudienceFromTokenClaims(claims)).isEqualTo(JwtTokenUtils.AUDIENCE_BXBOT_UI);
     }
 
     @Test
-    public void testCreatedDateCanBeExtractedFromToken() throws Exception {
+    public void testCreatedDateCanBeExtractedFromTokenClaims() throws Exception {
         final Date now = DateUtil.now();
         final String token = createToken();
-        assertThat(jwtTokenUtils.getCreatedDateFromToken(token)).isCloseTo(now, 1000);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+        assertThat(jwtTokenUtils.getCreatedDateFromTokenClaims(claims)).isCloseTo(now, 1000);
     }
 
     @Test
-    public void testExpirationDateCanBeExtractedFromToken() throws Exception {
+    public void testExpirationDateCanBeExtractedFromTokenClaims() throws Exception {
         final Date now = DateUtil.now();
         final String token = createToken();
-        final Date expirationDate = jwtTokenUtils.getExpirationDateFromToken(token);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+        final Date expirationDate = jwtTokenUtils.getExpirationDateFromTokenClaims(claims);
         assertThat(DateUtil.timeDifference(expirationDate, now)).isCloseTo(EXPIRATION_PERIOD * 1000, within(1000L));
     }
 
     @Test
-    public void testRolesCanBeExtractedFromToken() throws Exception {
+    public void testRolesCanBeExtractedFromTokenClaims() throws Exception {
         final String token = createToken();
-        final List<GrantedAuthority> roles = jwtTokenUtils.getRolesFromToken(token);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+
+        final List<GrantedAuthority> roles = jwtTokenUtils.getRolesFromTokenClaims(claims);
         assertThat(roles.size()).isEqualTo(1);
         assertThat(roles.get(0).getAuthority()).isEqualTo(RoleName.ROLE_USER.name());
     }
 
     @Test
-    public void testLastPasswordResetDateCanBeExtractedFromToken() throws Exception {
+    public void testLastPasswordResetDateCanBeExtractedFromTokenClaims() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtils.getLastPasswordResetDateFromToken(token)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
+        assertThat(jwtTokenUtils.getLastPasswordResetDateFromTokenClaims(claims)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
     }
 
     @Test
     public void whenValidateTokenCalledWithNonExpiredTokenThenExpectSuccess() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtils.validateToken(token)).isTrue();
+        assertThat(jwtTokenUtils.validateTokenAndGetClaims(token)).isNotNull();
     }
 
-    @Test
+    @Test (expected = JwtAuthenticationException.class)
     public void whenValidateTokenCalledWithExpiredTokenThenExpectFailure() throws Exception {
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", 0L);
         ReflectionTestUtils.setField(jwtTokenUtils, "expiration", 0L); // will expire fast!
         final String token = createToken();
-        assertThat(jwtTokenUtils.validateToken(token)).isFalse();
+        jwtTokenUtils.validateTokenAndGetClaims(token);
     }
 
-    @Test
+    @Test (expected = JwtAuthenticationException.class)
     public void whenValidateTokenCalledWithCreatedDateEarlierThanLastPasswordResetDateThenExpectFailure() throws Exception {
         final String token = createTokenWithInvalidCreationDate();
-        assertThat(jwtTokenUtils.validateToken(token)).isFalse();
+        jwtTokenUtils.validateTokenAndGetClaims(token);
     }
 
     // ------------------------------------------------------------------------

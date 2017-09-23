@@ -32,7 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -54,7 +53,9 @@ public class JwtTokenUtils {
 
     static final String AUDIENCE_BXBOT_UI = "bxbot-ui";
 
+    private static final String ISSUER_BXBOT_UI = "bxbot-ui-server";
     private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_ISSUER = "bxbot-ui-server";
     private static final String CLAIM_KEY_AUDIENCE = "audience";
     private static final String CLAIM_KEY_CREATED = "created";
     private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "lastPasswordChangeDate";
@@ -75,57 +76,42 @@ public class JwtTokenUtils {
      * We don't have to call the database for an additional User lookup/check for every request.
      *
      * @param token the JWT.
-     * @return true if JWT is valid, false otherwise.
+     * @return the token claims if the JWT was valid.
+     * @throws JwtAuthenticationException if the JWT was invalid.
      */
-    public boolean validateToken(String token) {
-
-        boolean isValid = false;
+    public Claims validateTokenAndGetClaims(String token) {
 
         try {
-            final Date created = getCreatedDateFromToken(token);
-            isValid = !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
+            final Claims claims = getClaimsFromToken(token);
+            final Date created = getCreatedDateFromTokenClaims(claims);
+            final Date lastPasswordResetDate = getLastPasswordResetDateFromTokenClaims(claims);
+            if (isCreatedBeforeLastPasswordReset(created, lastPasswordResetDate)) {
+                final String errorMsg = "Invalid token! Created date claim is before last password reset date." +
+                        " Created date: " + created + " Password reset date: " + lastPasswordResetDate;
+                LOG.error(errorMsg);
+                throw new JwtAuthenticationException(errorMsg);
+            }
+            return claims;
         } catch (Exception e) {
-            LOG.error("Invalid token! Details: " + e.getMessage(), e);
+            final String errorMsg = "Invalid token! Details: " + e.getMessage();
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return isValid;
-    }
-
-    /**
-     * Validates the JWT and cross-checks the JWT User details with the repository User details.
-     *
-     * @param token       the JWT.
-     * @param userDetails the user details looked up from the repository.
-     * @return true if JWT is valid, false otherwise.
-     */
-    public boolean validateToken(String token, UserDetails userDetails) throws JwtAuthenticationException {
-
-        boolean isValid = false;
-
-        try {
-            final JwtUser user = (JwtUser) userDetails;
-            final String username = getUsernameFromToken(token);
-            final Date created = getCreatedDateFromToken(token);
-
-            isValid = (username.equals(user.getUsername()) // no need for this as we put it in there!
-                    && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
-        } catch (Exception e) {
-            LOG.error("Invalid token! Details: " + e.getMessage(), e);
-        }
-        return isValid;
     }
 
     public String generateToken(JwtUser userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        final Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI);
         claims.put(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI);
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_ROLES, mapRolesFromGrantedAuthorities(userDetails.getAuthorities()));
         claims.put(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE, userDetails.getLastPasswordResetDate());
         return generateToken(claims);
     }
 
-    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
-        final Date created = getCreatedDateFromToken(token);
+    public Boolean canTokenBeRefreshed(Claims claims, Date lastPasswordReset) {
+        final Date created = getCreatedDateFromTokenClaims(claims);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset);
     }
 
@@ -141,27 +127,24 @@ public class JwtTokenUtils {
         }
     }
 
-    public String getUsernameFromToken(String token) {
-
-        String username = null;
-
-        // token can be validly null if user is logging in for first time to ask for a token
-        if (token != null) {
-            try {
-                final Claims claims = getClaimsFromToken(token);
-                if (claims != null) {
-                    username = claims.getSubject();
-                }
-            } catch (Exception e) {
-                LOG.warn("Failed to extract username claim from token!", e);
+    public String getUsernameFromTokenClaims(Claims claims) {
+        try {
+            final String username = claims.getSubject();
+            if (username == null) {
+                final String errorMsg = "Failed to extract username claim from token!";
+                LOG.error(errorMsg);
+                throw new JwtAuthenticationException(errorMsg);
             }
+            return username;
+        } catch (Exception e) {
+            final String errorMsg = "Failed to extract username claim from token!";
+            LOG.error(errorMsg);
+            throw new JwtAuthenticationException(errorMsg, e);
         }
-        return username;
     }
 
-    public Date getCreatedDateFromToken(String token) throws JwtAuthenticationException {
+    public Date getCreatedDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         try {
-            final Claims claims = getClaimsFromToken(token);
             return new Date((Long) claims.get(CLAIM_KEY_CREATED));
         } catch (Exception e) {
             final String errorMsg = "Failed to extract created date claim from token!";
@@ -170,9 +153,8 @@ public class JwtTokenUtils {
         }
     }
 
-    public Date getExpirationDateFromToken(String token) throws JwtAuthenticationException {
+    public Date getExpirationDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         try {
-            final Claims claims = getClaimsFromToken(token);
             return claims.getExpiration();
         } catch (Exception e) {
             final String errorMsg = "Failed to extract expiration claim from token!";
@@ -181,10 +163,9 @@ public class JwtTokenUtils {
         }
     }
 
-    public Date getLastPasswordResetDateFromToken(String token) {
+    public Date getLastPasswordResetDateFromTokenClaims(Claims claims) {
         Date lastPasswordResetDate;
         try {
-            final Claims claims = getClaimsFromToken(token);
             lastPasswordResetDate = new Date((Long) claims.get(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE));
         } catch (Exception e) {
             LOG.error("Failed to extract lastPasswordResetDate claim from token!", e);
@@ -193,9 +174,8 @@ public class JwtTokenUtils {
         return lastPasswordResetDate;
     }
 
-    public String getAudienceFromToken(String token) throws JwtAuthenticationException {
+    public String getAudienceFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         try {
-            final Claims claims = getClaimsFromToken(token);
             return (String) claims.get(CLAIM_KEY_AUDIENCE);
         } catch (Exception e) {
             final String errorMsg = "Failed to extract audience claim from token!";
@@ -204,13 +184,10 @@ public class JwtTokenUtils {
         }
     }
 
-    public List<GrantedAuthority> getRolesFromToken(String token) throws JwtAuthenticationException {
+    public List<GrantedAuthority> getRolesFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         final List<GrantedAuthority> roles = new ArrayList<>();
         try {
-            final Claims claims = getClaimsFromToken(token);
-
             @SuppressWarnings("unchecked") final List<String> rolesFromClaim = (List<String>) claims.get(CLAIM_KEY_ROLES);
-
             for (final String roleFromClaim : rolesFromClaim) {
                 roles.add(new SimpleGrantedAuthority(roleFromClaim));
             }
@@ -238,6 +215,8 @@ public class JwtTokenUtils {
         return Jwts.parser()
                 .setAllowedClockSkewSeconds(allowedClockSkewInSecs * 1000)
                 .setSigningKey(secret)
+                .require(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI)
+                .require(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI)
                 .parseClaimsJws(token)
                 .getBody();
     }

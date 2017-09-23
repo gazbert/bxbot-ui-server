@@ -140,7 +140,7 @@ public class TestAuthenticationController {
 
         final JwtUser jwtUser = JwtUserFactory.create(user);
 
-        when(jwtTokenUtils.getUsernameFromToken(any())).thenReturn(user.getUsername());
+        when(jwtTokenUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
         when(userDetailsService.loadUserByUsername(eq(user.getUsername()))).thenReturn(jwtUser);
         when(jwtTokenUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
 
@@ -164,7 +164,7 @@ public class TestAuthenticationController {
 
         final JwtUser jwtUser = JwtUserFactory.create(user);
 
-        when(jwtTokenUtils.getUsernameFromToken(any())).thenReturn(user.getUsername());
+        when(jwtTokenUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
         when(userDetailsService.loadUserByUsername(eq(user.getUsername()))).thenReturn(jwtUser);
         when(jwtTokenUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
 

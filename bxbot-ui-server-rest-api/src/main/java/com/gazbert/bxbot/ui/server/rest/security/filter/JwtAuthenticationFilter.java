@@ -25,6 +25,7 @@
 package com.gazbert.bxbot.ui.server.rest.security.filter;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * The JWT Authentication filter extracts the token from the Authorization header and it validates it. If not JWT is
- * present, the next (Spring Security) filter in the chain is invoked.
+ * The JWT Authentication filter extracts the token from the Authorization header and it validates it. If no JWT is
+ * present, the next filter in the Spring Security filter chain is invoked.
  * <p>
  * Code originated from the excellent JWT and Spring Boot example by Stephan Zerhusen:
  * https://github.com/szerhusenBC/jwt-spring-security-demo
@@ -70,25 +71,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authorizationHeader = authorizationHeader.substring(BEARER_PREFIX_LENGTH);
         }
 
-        final String username = jwtTokenUtils.getUsernameFromToken(authorizationHeader);
-        LOG.info(() -> "Username in JWT: " + username);
+        // Might be null if client does not have a token yet
+        if (authorizationHeader != null) {
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(authorizationHeader);
+            final String username = jwtTokenUtils.getUsernameFromTokenClaims(claims);
+            LOG.info(() -> "Username in JWT: " + username);
 
-            // It is not compulsory to load the User details from the database.
-            // We can just use the information in the token claims - this saves a repo lookup.
-            //
-            // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            // if (jwtTokenUtil.validateToken(authorizationHeader, userDetails)) {
-            if (jwtTokenUtils.validateToken(authorizationHeader)) {
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                // It is not compulsory to load the User details from the database.
+                // We can just use the information in the token claims - this saves a repo lookup.
+                //
+                // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // if (userDetails != null && !(userDetails.getUsername().equals(username))) {
+                //    final String errorMsg = "Username is token not found in User repository! Token username: " + username;
+                //    throw new JwtAuthenticationException(errorMsg);
+                // }
 
                 LOG.info(() -> "JWT is valid");
 
                 // final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                //       userDetails, null, userDetails.getAuthorities());
+                //        userDetails, null, userDetails.getAuthorities());
                 final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        jwtTokenUtils.getUsernameFromToken(authorizationHeader), null,
-                        jwtTokenUtils.getRolesFromToken(authorizationHeader));
+                        username, null, jwtTokenUtils.getRolesFromTokenClaims(claims));
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -96,6 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 LOG.info(() -> "Authenticated User: " + username + " has been set in Spring SecurityContext.");
             }
         }
+
         chain.doFilter(request, response);
     }
 

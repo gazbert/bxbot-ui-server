@@ -38,8 +38,13 @@ public class TestJwtAuthenticationException {
     private static final RuntimeException CAUSE = new RuntimeException("The cause of the exception");
 
     @Test
-    public void testCreationOfExceptionWithCauseIsAsExpected() {
+    public void testCreationOfExceptionIsAsExpected() {
+        final JwtAuthenticationException exception = new JwtAuthenticationException(ERROR_MSG);
+        assertEquals(ERROR_MSG, exception.getMessage());
+    }
 
+    @Test
+    public void testCreationOfExceptionWithCauseIsAsExpected() {
         final JwtAuthenticationException exception = new JwtAuthenticationException(ERROR_MSG, CAUSE);
         assertEquals(ERROR_MSG, exception.getMessage());
         assertEquals(CAUSE, exception.getCause());

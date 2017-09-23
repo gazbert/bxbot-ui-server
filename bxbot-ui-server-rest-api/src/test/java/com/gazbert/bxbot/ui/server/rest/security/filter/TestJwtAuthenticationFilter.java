@@ -24,6 +24,7 @@
 package com.gazbert.bxbot.ui.server.rest.security.filter;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import io.jsonwebtoken.Claims;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,6 +63,9 @@ public class TestJwtAuthenticationFilter {
     @MockBean
     private JwtTokenUtils jwtTokenUtils;
 
+    @MockBean
+    private Claims claims;
+
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
@@ -75,12 +79,10 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithoutAuthorizationHeaderThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(null);
-        when(jwtTokenUtils.getUsernameFromToken(null)).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -88,12 +90,11 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithBearerTokenWithMissingUsernameThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn(BEARER_PREFIX + "dummy-token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
+        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -102,12 +103,12 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithTokenWithMissingUsernameThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(null);
+        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
+        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -115,14 +116,14 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithInvalidTokenThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
-        when(jwtTokenUtils.validateToken((any()))).thenReturn(false);
+        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
+        when(jwtTokenUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromToken(any());
-        verify(jwtTokenUtils, times(1)).validateToken(any());
+        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtTokenUtils, times(1)).validateTokenAndGetClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -130,15 +131,15 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithValidTokenThenExpectSuccessfulAuthenticationAndCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromToken((any()))).thenReturn(USERNAME);
-        when(jwtTokenUtils.validateToken((any()))).thenReturn(true);
+        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
+        when(jwtTokenUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(2)).getUsernameFromToken(any());
-        verify(jwtTokenUtils, times(1)).validateToken(any());
-        verify(jwtTokenUtils, times(1)).getRolesFromToken(any());
+        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtTokenUtils, times(1)).validateTokenAndGetClaims(any());
+        verify(jwtTokenUtils, times(1)).getRolesFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 }

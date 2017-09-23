@@ -27,6 +27,7 @@ package com.gazbert.bxbot.ui.server.rest.security.controller;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtAuthenticationRequest;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUser;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -103,10 +104,11 @@ public class AuthenticationController {
     public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
 
         final String authorizationHeader = request.getHeader("Authorization");
-        final String username = jwtTokenUtils.getUsernameFromToken(authorizationHeader);
+        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(authorizationHeader);
+        final String username = jwtTokenUtils.getUsernameFromTokenClaims(claims);
         final JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
-        if (jwtTokenUtils.canTokenBeRefreshed(authorizationHeader, new Date(user.getLastPasswordResetDate()))) {
+        if (jwtTokenUtils.canTokenBeRefreshed(claims, new Date(user.getLastPasswordResetDate()))) {
             final String refreshedToken = jwtTokenUtils.refreshToken(authorizationHeader);
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         } else {
