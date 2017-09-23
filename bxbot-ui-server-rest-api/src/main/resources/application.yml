@@ -1,3 +1,4 @@
 jwt:
   secret: Ch@ng3Me!
   expiration: 3600
+  allowed_clock_skew: 300

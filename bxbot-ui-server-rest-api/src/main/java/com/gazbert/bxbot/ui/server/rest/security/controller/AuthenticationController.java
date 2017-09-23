@@ -29,13 +29,11 @@ import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,13 +71,12 @@ public class AuthenticationController {
      * Clients initially call this with their username/password in order to receive a JWT for use in future requests.
      *
      * @param authenticationRequest the authentication request containing the client's username/password.
-     * @param device the device the user is making the request from.
      * @return the JWT if the client was authenticated.
      * @throws AuthenticationException if the the client was not authenticated successfully.
      */
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public ResponseEntity<?> getAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
-                                                    Device device) throws AuthenticationException {
+    public ResponseEntity<?> getAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
+            throws AuthenticationException {
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -91,7 +88,7 @@ public class AuthenticationController {
 
         // Reload password post-security check, so we can generate the token...
         final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtils.generateToken(userDetails, device);
+        final String token = jwtTokenUtils.generateToken(userDetails);
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }

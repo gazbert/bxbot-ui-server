@@ -30,7 +30,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mobile.device.Device;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,22 +52,22 @@ public class JwtTokenUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    public static final String AUDIENCE_WEB = "web";
+    static final String AUDIENCE_BXBOT_UI = "bxbot-ui";
 
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_AUDIENCE = "audience";
     private static final String CLAIM_KEY_CREATED = "created";
     private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "lastPasswordChangeDate";
     private static final String CLAIM_KEY_ROLES = "roles";
-    private static final String AUDIENCE_UNKNOWN = "unknown";
-    private static final String AUDIENCE_MOBILE = "mobile";
-    private static final String AUDIENCE_TABLET = "tablet";
 
     @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.expiration}")
-    private Long expiration;
+    private long expiration;
+
+    @Value("${jwt.allowed_clock_skew}")
+    private long allowedClockSkewInSecs;
 
 
     /**
@@ -84,8 +83,7 @@ public class JwtTokenUtils {
 
         try {
             final Date created = getCreatedDateFromToken(token);
-            isValid = !isTokenExpired(token) &&
-                    !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
+            isValid = !isCreatedBeforeLastPasswordReset(created, getLastPasswordResetDateFromToken(token));
         } catch (Exception e) {
             LOG.error("Invalid token! Details: " + e.getMessage(), e);
         }
@@ -109,7 +107,6 @@ public class JwtTokenUtils {
             final Date created = getCreatedDateFromToken(token);
 
             isValid = (username.equals(user.getUsername()) // no need for this as we put it in there!
-                    && !isTokenExpired(token)
                     && !isCreatedBeforeLastPasswordReset(created, new Date(user.getLastPasswordResetDate())));
         } catch (Exception e) {
             LOG.error("Invalid token! Details: " + e.getMessage(), e);
@@ -117,10 +114,10 @@ public class JwtTokenUtils {
         return isValid;
     }
 
-    public String generateToken(JwtUser userDetails, Device device) {
+    public String generateToken(JwtUser userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
-        claims.put(CLAIM_KEY_AUDIENCE, generateAudience(device));
+        claims.put(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI);
         claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_ROLES, mapRolesFromGrantedAuthorities(userDetails.getAuthorities()));
         claims.put(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE, userDetails.getLastPasswordResetDate());
@@ -129,8 +126,7 @@ public class JwtTokenUtils {
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
         final Date created = getCreatedDateFromToken(token);
-        return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
-                && (!isTokenExpired(token) || ignoreTokenExpiration(token));
+        return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset);
     }
 
     public String refreshToken(String token) throws JwtAuthenticationException {
@@ -240,6 +236,7 @@ public class JwtTokenUtils {
 
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
+                .setAllowedClockSkewSeconds(allowedClockSkewInSecs * 1000)
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
@@ -249,30 +246,9 @@ public class JwtTokenUtils {
         return new Date(System.currentTimeMillis() + expiration * 1000);
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
-    }
-
-    private String generateAudience(Device device) {
-        String audience = AUDIENCE_UNKNOWN;
-        if (device.isNormal()) {
-            audience = AUDIENCE_WEB;
-        } else if (device.isTablet()) {
-            audience = AUDIENCE_TABLET;
-        } else if (device.isMobile()) {
-            audience = AUDIENCE_MOBILE;
-        }
-        return audience;
-    }
-
-    private Boolean ignoreTokenExpiration(String token) {
-        final String audience = getAudienceFromToken(token);
-        return (AUDIENCE_TABLET.equals(audience) || AUDIENCE_MOBILE.equals(audience));
     }
 
     private List<String> mapRolesFromGrantedAuthorities(Collection<? extends GrantedAuthority> grantedAuthorities) {

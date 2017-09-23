@@ -24,7 +24,6 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.jwt;
 
-import com.gazbert.bxbot.ui.server.rest.security.jwt.stubs.DeviceStub;
 import com.gazbert.bxbot.ui.server.rest.security.model.Role;
 import com.gazbert.bxbot.ui.server.rest.security.model.RoleName;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
@@ -57,6 +56,7 @@ public class TestJwtUtils {
 
     private static final String SECRET_KEY = "mkultra";
     private static final long EXPIRATION_PERIOD = 3600L;
+    private static final long ALLOWED_CLOCK_SKEW_IN_SECS = 5 * 60 + 1000; // 5 mins
 
     private static final Long USER_ROLE_ID = new Long("21344565442342");
 
@@ -78,6 +78,7 @@ public class TestJwtUtils {
         MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(jwtTokenUtils, "expiration", EXPIRATION_PERIOD);
         ReflectionTestUtils.setField(jwtTokenUtils, "secret", SECRET_KEY);
+        ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", ALLOWED_CLOCK_SKEW_IN_SECS);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class TestJwtUtils {
     @Test
     public void testAudienceCanBeExtractedFromToken() throws Exception {
         final String token = createToken();
-        assertThat(jwtTokenUtils.getAudienceFromToken(token)).isEqualTo(JwtTokenUtils.AUDIENCE_WEB);
+        assertThat(jwtTokenUtils.getAudienceFromToken(token)).isEqualTo(JwtTokenUtils.AUDIENCE_BXBOT_UI);
     }
 
     @Test
@@ -129,6 +130,7 @@ public class TestJwtUtils {
 
     @Test
     public void whenValidateTokenCalledWithExpiredTokenThenExpectFailure() throws Exception {
+        ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", 0L);
         ReflectionTestUtils.setField(jwtTokenUtils, "expiration", 0L); // will expire fast!
         final String token = createToken();
         assertThat(jwtTokenUtils.validateToken(token)).isFalse();
@@ -145,15 +147,11 @@ public class TestJwtUtils {
     // ------------------------------------------------------------------------
 
     private String createToken() {
-        final DeviceStub device = new DeviceStub();
-        device.setNormal(true);
-        return jwtTokenUtils.generateToken(createUserDetails(LAST_PASSWORD_RESET_DATE), device);
+        return jwtTokenUtils.generateToken(createUserDetails(LAST_PASSWORD_RESET_DATE));
     }
 
     private String createTokenWithInvalidCreationDate() {
-        final DeviceStub device = new DeviceStub();
-        device.setNormal(true);
-        return jwtTokenUtils.generateToken(createUserDetails(DateUtil.tomorrow()), device);
+        return jwtTokenUtils.generateToken(createUserDetails(DateUtil.tomorrow()));
     }
 
     private JwtUser createUserDetails(Date lastPasswordResetDate) {
