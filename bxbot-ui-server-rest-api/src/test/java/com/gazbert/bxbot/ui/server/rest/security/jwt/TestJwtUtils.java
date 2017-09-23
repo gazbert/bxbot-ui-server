@@ -59,6 +59,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 public class TestJwtUtils {
 
+    private static final long GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS = 10000L;
+
     private static final String SECRET_KEY = "mkultra";
     private static final long EXPIRATION_PERIOD = 3600L;
     private static final long ALLOWED_CLOCK_SKEW_IN_SECS = 5 * 60 + 1000; // 5 mins
@@ -118,7 +120,8 @@ public class TestJwtUtils {
         final Date now = DateUtil.now();
         final String token = createToken();
         final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
-        assertThat(jwtTokenUtils.getIssuedAtDateFromTokenClaims(claims)).isCloseTo(now, 1000);
+        assertThat(jwtTokenUtils.getIssuedAtDateFromTokenClaims(claims))
+                .isCloseTo(now, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
     }
 
     @Test
@@ -127,7 +130,8 @@ public class TestJwtUtils {
         final String token = createToken();
         final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
         final Date expirationDate = jwtTokenUtils.getExpirationDateFromTokenClaims(claims);
-        assertThat(DateUtil.timeDifference(expirationDate, now)).isCloseTo(EXPIRATION_PERIOD * 1000, within(1000L));
+        assertThat(DateUtil.timeDifference(expirationDate, now))
+                .isCloseTo(EXPIRATION_PERIOD * 1000, within(GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS));
     }
 
     @Test
@@ -144,7 +148,8 @@ public class TestJwtUtils {
     public void testLastPasswordResetDateCanBeExtractedFromTokenClaims() throws Exception {
         final String token = createToken();
         final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
-        assertThat(jwtTokenUtils.getLastPasswordResetDateFromTokenClaims(claims)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
+        assertThat(jwtTokenUtils.getLastPasswordResetDateFromTokenClaims(claims))
+                .isCloseTo(LAST_PASSWORD_RESET_DATE, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
     }
 
     // ------------------------------------------------------------------------
