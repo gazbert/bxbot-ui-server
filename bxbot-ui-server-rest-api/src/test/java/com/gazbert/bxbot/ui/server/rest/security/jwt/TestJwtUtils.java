@@ -31,9 +31,12 @@ import io.jsonwebtoken.Claims;
 import org.assertj.core.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the JWT utils.
@@ -53,6 +56,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author gazbert
  */
+@RunWith(SpringRunner.class)
 public class TestJwtUtils {
 
     private static final String SECRET_KEY = "mkultra";
@@ -73,6 +77,9 @@ public class TestJwtUtils {
     @InjectMocks
     private JwtTokenUtils jwtTokenUtils;
 
+    @MockBean
+    private Claims claims;
+
 
     @Before
     public void init() {
@@ -82,19 +89,25 @@ public class TestJwtUtils {
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", ALLOWED_CLOCK_SKEW_IN_SECS);
     }
 
-    @Test
-    public void testUsernameCanBeExtractedFromTokenClaims() throws Exception {
-        final String token = createToken();
-        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
-        assertThat(jwtTokenUtils.getUsernameFromTokenClaims(claims)).isEqualTo(USERNAME);
-    }
+    // ------------------------------------------------------------------------
+    // Get claims tests
+    // ------------------------------------------------------------------------
 
     @Test
-    public void testAudienceCanBeExtractedFromTokenClaims() throws Exception {
-        final String token = createToken();
-        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(token);
-        assertThat(jwtTokenUtils.getAudienceFromTokenClaims(claims)).isEqualTo(JwtTokenUtils.AUDIENCE_BXBOT_UI);
+    public void testUsernameCanBeExtractedFromTokenClaims() throws Exception {
+        when(claims.getSubject()).thenReturn(USERNAME);
+        assertThat(jwtTokenUtils.getUsernameFromTokenClaims(claims)).isEqualTo(USERNAME);
+        verify(claims, times(1)).getSubject();
     }
+
+    @Test(expected = JwtAuthenticationException.class)
+    public void testExceptionThrownIfUsernameCannotBeExtractedFromTokenClaims() throws Exception {
+        when(claims.getSubject()).thenReturn(null);
+        jwtTokenUtils.getUsernameFromTokenClaims(claims);
+        verify(claims, times(1)).getSubject();
+    }
+
+    // TODO - got to here with mocking out Claims...
 
     @Test
     public void testCreatedDateCanBeExtractedFromTokenClaims() throws Exception {
@@ -130,13 +143,17 @@ public class TestJwtUtils {
         assertThat(jwtTokenUtils.getLastPasswordResetDateFromTokenClaims(claims)).isCloseTo(LAST_PASSWORD_RESET_DATE, 1000);
     }
 
+    // ------------------------------------------------------------------------
+    // Validation tests
+    // ------------------------------------------------------------------------
+
     @Test
     public void whenValidateTokenCalledWithNonExpiredTokenThenExpectSuccess() throws Exception {
         final String token = createToken();
         assertThat(jwtTokenUtils.validateTokenAndGetClaims(token)).isNotNull();
     }
 
-    @Test (expected = JwtAuthenticationException.class)
+    @Test(expected = JwtAuthenticationException.class)
     public void whenValidateTokenCalledWithExpiredTokenThenExpectFailure() throws Exception {
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", 0L);
         ReflectionTestUtils.setField(jwtTokenUtils, "expiration", 0L); // will expire fast!
@@ -144,7 +161,7 @@ public class TestJwtUtils {
         jwtTokenUtils.validateTokenAndGetClaims(token);
     }
 
-    @Test (expected = JwtAuthenticationException.class)
+    @Test(expected = JwtAuthenticationException.class)
     public void whenValidateTokenCalledWithCreatedDateEarlierThanLastPasswordResetDateThenExpectFailure() throws Exception {
         final String token = createTokenWithInvalidCreationDate();
         jwtTokenUtils.validateTokenAndGetClaims(token);
@@ -155,14 +172,19 @@ public class TestJwtUtils {
     // ------------------------------------------------------------------------
 
     private String createToken() {
-        return jwtTokenUtils.generateToken(createUserDetails(LAST_PASSWORD_RESET_DATE));
+        return jwtTokenUtils.generateToken(createJwtUser(LAST_PASSWORD_RESET_DATE));
     }
 
     private String createTokenWithInvalidCreationDate() {
-        return jwtTokenUtils.generateToken(createUserDetails(DateUtil.tomorrow()));
+        return jwtTokenUtils.generateToken(createJwtUser(DateUtil.tomorrow()));
     }
 
-    private JwtUser createUserDetails(Date lastPasswordResetDate) {
+    private JwtUser createJwtUser(Date lastPasswordResetDate) {
+        final User user = createUser(lastPasswordResetDate);
+        return JwtUserFactory.create(user);
+    }
+
+    private User createUser(Date lastPasswordResetDate) {
 
         final User user = new User();
         user.setId(USER_ID);
@@ -176,9 +198,8 @@ public class TestJwtUtils {
 
         final List<Role> roles = createRoles(user);
         user.setRoles(roles);
-        assertEquals(roles, user.getRoles());
 
-        return JwtUserFactory.create(user);
+        return user;
     }
 
     private List<Role> createRoles(User user) {

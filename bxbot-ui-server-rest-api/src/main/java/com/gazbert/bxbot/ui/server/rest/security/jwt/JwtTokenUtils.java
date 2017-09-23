@@ -51,12 +51,12 @@ public class JwtTokenUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    static final String AUDIENCE_BXBOT_UI = "bxbot-ui";
+    private static final String ISSUER_BXBOT_UI_SERVER = "bxbot-ui-server";
+    private static final String AUDIENCE_BXBOT_UI = "bxbot-ui";
 
-    private static final String ISSUER_BXBOT_UI = "bxbot-ui-server";
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_ISSUER = "bxbot-ui-server";
-    private static final String CLAIM_KEY_AUDIENCE = "audience";
+    private static final String CLAIM_KEY_AUDIENCE = "aud";
     private static final String CLAIM_KEY_CREATED = "created";
     private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "lastPasswordChangeDate";
     private static final String CLAIM_KEY_ROLES = "roles";
@@ -101,7 +101,7 @@ public class JwtTokenUtils {
 
     public String generateToken(JwtUser userDetails) {
         final Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI);
+        claims.put(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI_SERVER);
         claims.put(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI);
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
@@ -110,7 +110,7 @@ public class JwtTokenUtils {
         return generateToken(claims);
     }
 
-    public Boolean canTokenBeRefreshed(Claims claims, Date lastPasswordReset) {
+    public boolean canTokenBeRefreshed(Claims claims, Date lastPasswordReset) {
         final Date created = getCreatedDateFromTokenClaims(claims);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset);
     }
@@ -143,47 +143,6 @@ public class JwtTokenUtils {
         }
     }
 
-    public Date getCreatedDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
-        try {
-            return new Date((Long) claims.get(CLAIM_KEY_CREATED));
-        } catch (Exception e) {
-            final String errorMsg = "Failed to extract created date claim from token!";
-            LOG.error(errorMsg, e);
-            throw new JwtAuthenticationException(errorMsg, e);
-        }
-    }
-
-    public Date getExpirationDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
-        try {
-            return claims.getExpiration();
-        } catch (Exception e) {
-            final String errorMsg = "Failed to extract expiration claim from token!";
-            LOG.error(errorMsg, e);
-            throw new JwtAuthenticationException(errorMsg, e);
-        }
-    }
-
-    public Date getLastPasswordResetDateFromTokenClaims(Claims claims) {
-        Date lastPasswordResetDate;
-        try {
-            lastPasswordResetDate = new Date((Long) claims.get(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE));
-        } catch (Exception e) {
-            LOG.error("Failed to extract lastPasswordResetDate claim from token!", e);
-            lastPasswordResetDate = null;
-        }
-        return lastPasswordResetDate;
-    }
-
-    public String getAudienceFromTokenClaims(Claims claims) throws JwtAuthenticationException {
-        try {
-            return (String) claims.get(CLAIM_KEY_AUDIENCE);
-        } catch (Exception e) {
-            final String errorMsg = "Failed to extract audience claim from token!";
-            LOG.error(errorMsg, e);
-            throw new JwtAuthenticationException(errorMsg, e);
-        }
-    }
-
     public List<GrantedAuthority> getRolesFromTokenClaims(Claims claims) throws JwtAuthenticationException {
         final List<GrantedAuthority> roles = new ArrayList<>();
         try {
@@ -197,6 +156,37 @@ public class JwtTokenUtils {
             LOG.error(errorMsg, e);
             throw new JwtAuthenticationException(errorMsg, e);
         }
+    }
+
+    Date getCreatedDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
+        try {
+            return new Date((Long) claims.get(CLAIM_KEY_CREATED));
+        } catch (Exception e) {
+            final String errorMsg = "Failed to extract created date claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
+        }
+    }
+
+    Date getExpirationDateFromTokenClaims(Claims claims) throws JwtAuthenticationException {
+        try {
+            return claims.getExpiration();
+        } catch (Exception e) {
+            final String errorMsg = "Failed to extract expiration claim from token!";
+            LOG.error(errorMsg, e);
+            throw new JwtAuthenticationException(errorMsg, e);
+        }
+    }
+
+    Date getLastPasswordResetDateFromTokenClaims(Claims claims) {
+        Date lastPasswordResetDate;
+        try {
+            lastPasswordResetDate = new Date((Long) claims.get(CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE));
+        } catch (Exception e) {
+            LOG.error("Failed to extract lastPasswordResetDate claim from token!", e);
+            lastPasswordResetDate = null;
+        }
+        return lastPasswordResetDate;
     }
 
     // ------------------------------------------------------------------------
@@ -215,7 +205,7 @@ public class JwtTokenUtils {
         return Jwts.parser()
                 .setAllowedClockSkewSeconds(allowedClockSkewInSecs * 1000)
                 .setSigningKey(secret)
-                .require(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI)
+                .require(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI_SERVER)
                 .require(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI)
                 .parseClaimsJws(token)
                 .getBody();
@@ -225,8 +215,7 @@ public class JwtTokenUtils {
         return new Date(System.currentTimeMillis() + expiration * 1000);
     }
 
-
-    private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
+    private boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
