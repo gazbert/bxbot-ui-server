@@ -1,6 +1,6 @@
 jwt:
   secret: ChangeMeAndKeepMeSecret!
   expiration: 3600
-  allowed_clock_skew: 300
+  allowed_clock_skew: 60
   issuer: bxbot-ui-server
   audience: bxbot-ui
