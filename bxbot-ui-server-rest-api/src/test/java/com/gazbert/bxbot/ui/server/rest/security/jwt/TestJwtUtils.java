@@ -84,7 +84,7 @@ public class TestJwtUtils {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(jwtTokenUtils, "expiration", EXPIRATION_PERIOD);
+        ReflectionTestUtils.setField(jwtTokenUtils, "expirationInSecs", EXPIRATION_PERIOD);
         ReflectionTestUtils.setField(jwtTokenUtils, "secret", SECRET_KEY);
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", ALLOWED_CLOCK_SKEW_IN_SECS);
     }
@@ -156,7 +156,7 @@ public class TestJwtUtils {
     @Test(expected = JwtAuthenticationException.class)
     public void whenValidateTokenCalledWithExpiredTokenThenExpectFailure() throws Exception {
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", 0L);
-        ReflectionTestUtils.setField(jwtTokenUtils, "expiration", 0L); // will expire fast!
+        ReflectionTestUtils.setField(jwtTokenUtils, "expirationInSecs", 0L); // will expire fast!
         final String token = createToken();
         jwtTokenUtils.validateTokenAndGetClaims(token);
     }

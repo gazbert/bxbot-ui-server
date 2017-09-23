@@ -65,7 +65,7 @@ public class JwtTokenUtils {
     private String secret;
 
     @Value("${jwt.expiration}")
-    private long expiration;
+    private long expirationInSecs;
 
     @Value("${jwt.allowed_clock_skew}")
     private long allowedClockSkewInSecs;
@@ -203,7 +203,7 @@ public class JwtTokenUtils {
 
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .setAllowedClockSkewSeconds(allowedClockSkewInSecs * 1000)
+                .setAllowedClockSkewSeconds(allowedClockSkewInSecs)
                 .setSigningKey(secret)
                 .require(CLAIM_KEY_ISSUER, ISSUER_BXBOT_UI_SERVER)
                 .require(CLAIM_KEY_AUDIENCE, AUDIENCE_BXBOT_UI)
@@ -212,7 +212,7 @@ public class JwtTokenUtils {
     }
 
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
+        return new Date(System.currentTimeMillis() + (expirationInSecs * 1000));
     }
 
     private boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
