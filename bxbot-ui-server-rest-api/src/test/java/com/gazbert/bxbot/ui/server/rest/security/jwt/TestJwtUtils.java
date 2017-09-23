@@ -62,6 +62,8 @@ public class TestJwtUtils {
     private static final String SECRET_KEY = "mkultra";
     private static final long EXPIRATION_PERIOD = 3600L;
     private static final long ALLOWED_CLOCK_SKEW_IN_SECS = 5 * 60 + 1000; // 5 mins
+    private static final String ISSUER = "Rey";
+    private static final String AUDIENCE = "R2-D2";
 
     private static final Long USER_ROLE_ID = new Long("21344565442342");
 
@@ -87,6 +89,8 @@ public class TestJwtUtils {
         ReflectionTestUtils.setField(jwtTokenUtils, "expirationInSecs", EXPIRATION_PERIOD);
         ReflectionTestUtils.setField(jwtTokenUtils, "secret", SECRET_KEY);
         ReflectionTestUtils.setField(jwtTokenUtils, "allowedClockSkewInSecs", ALLOWED_CLOCK_SKEW_IN_SECS);
+        ReflectionTestUtils.setField(jwtTokenUtils, "issuer", ISSUER);
+        ReflectionTestUtils.setField(jwtTokenUtils, "audience", AUDIENCE);
     }
 
     // ------------------------------------------------------------------------
