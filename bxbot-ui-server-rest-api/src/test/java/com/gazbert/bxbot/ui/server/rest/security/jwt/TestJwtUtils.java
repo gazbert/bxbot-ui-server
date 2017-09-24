@@ -74,7 +74,7 @@ public class TestJwtUtils {
     private static final String LASTNAME = "Solo";
     private static final String EMAIL = "han@falcon";
     private static final boolean USER_ENABLED = true;
-    private static final Date LAST_PASSWORD_RESET_DATE = new Date();
+    private static final Date LAST_PASSWORD_RESET_DATE = DateUtil.yesterday();
     private static final List<String> ROLES = Arrays.asList("ROLE_ADMIN", "ROLE_USER");
 
     @InjectMocks
