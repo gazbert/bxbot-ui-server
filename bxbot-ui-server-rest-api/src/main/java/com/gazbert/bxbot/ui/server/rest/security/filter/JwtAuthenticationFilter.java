@@ -24,7 +24,7 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.filter;
 
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
-    private JwtTokenUtils jwtTokenUtils;
+    private JwtUtils jwtUtils;
     private UserDetailsService userDetailsService;
 
 
@@ -74,8 +74,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Might be null if client does not have a token yet
         if (authorizationHeader != null) {
 
-            final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(authorizationHeader);
-            final String username = jwtTokenUtils.getUsernameFromTokenClaims(claims);
+            final Claims claims = jwtUtils.validateTokenAndGetClaims(authorizationHeader);
+            final String username = jwtUtils.getUsernameFromTokenClaims(claims);
             LOG.info(() -> "Username in JWT: " + username);
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -94,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 //        userDetails, null, userDetails.getAuthorities());
                 final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, jwtTokenUtils.getRolesFromTokenClaims(claims));
+                        username, null, jwtUtils.getRolesFromTokenClaims(claims));
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -107,8 +107,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
-        this.jwtTokenUtils = jwtTokenUtils;
+    public void setJwtUtils(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
     }
 
     @Autowired

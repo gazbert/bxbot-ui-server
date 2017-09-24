@@ -23,7 +23,7 @@
 
 package com.gazbert.bxbot.ui.server.rest.security.filter;
 
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class TestJwtAuthenticationFilter {
     private FilterChain filterChain;
 
     @MockBean
-    private JwtTokenUtils jwtTokenUtils;
+    private JwtUtils jwtUtils;
 
     @MockBean
     private Claims claims;
@@ -72,7 +72,7 @@ public class TestJwtAuthenticationFilter {
     @Before
     public void setup() throws Exception {
         jwtAuthenticationFilter = new JwtAuthenticationFilter();
-        jwtAuthenticationFilter.setJwtTokenUtils(jwtTokenUtils);
+        jwtAuthenticationFilter.setJwtUtils(jwtUtils);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class TestJwtAuthenticationFilter {
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtUtils, times(1)).getUsernameFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -103,12 +103,12 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithTokenWithMissingUsernameThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(null);
+        when(jwtUtils.getUsernameFromTokenClaims((any()))).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtUtils, times(1)).getUsernameFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -116,14 +116,14 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithInvalidTokenThenCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
-        when(jwtTokenUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
+        when(jwtUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
+        when(jwtUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
-        verify(jwtTokenUtils, times(1)).validateTokenAndGetClaims(any());
+        verify(jwtUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtUtils, times(1)).validateTokenAndGetClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
@@ -131,15 +131,15 @@ public class TestJwtAuthenticationFilter {
     public void whenFilterCalledWithValidTokenThenExpectSuccessfulAuthenticationAndCallNextFilterInChain() throws Exception {
 
         when(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("dummy-token");
-        when(jwtTokenUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
-        when(jwtTokenUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
+        when(jwtUtils.getUsernameFromTokenClaims((any()))).thenReturn(USERNAME);
+        when(jwtUtils.validateTokenAndGetClaims((any()))).thenReturn(claims);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(request, times(1)).getHeader(AUTHORIZATION_HEADER);
-        verify(jwtTokenUtils, times(1)).getUsernameFromTokenClaims(any());
-        verify(jwtTokenUtils, times(1)).validateTokenAndGetClaims(any());
-        verify(jwtTokenUtils, times(1)).getRolesFromTokenClaims(any());
+        verify(jwtUtils, times(1)).getUsernameFromTokenClaims(any());
+        verify(jwtUtils, times(1)).validateTokenAndGetClaims(any());
+        verify(jwtUtils, times(1)).getRolesFromTokenClaims(any());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 }

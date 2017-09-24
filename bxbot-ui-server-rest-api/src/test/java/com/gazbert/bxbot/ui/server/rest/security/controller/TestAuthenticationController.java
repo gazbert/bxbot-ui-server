@@ -26,7 +26,7 @@ package com.gazbert.bxbot.ui.server.rest.security.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtAuthenticationRequest;
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUtils;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUser;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUserFactory;
 import com.gazbert.bxbot.ui.server.rest.security.model.Role;
@@ -82,7 +82,7 @@ public class TestAuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @MockBean
-    private JwtTokenUtils jwtTokenUtils;
+    private JwtUtils jwtUtils;
 
     @MockBean
     private UserDetailsService userDetailsService;
@@ -140,9 +140,9 @@ public class TestAuthenticationController {
 
         final JwtUser jwtUser = JwtUserFactory.create(user);
 
-        when(jwtTokenUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
+        when(jwtUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
         when(userDetailsService.loadUserByUsername(eq(user.getUsername()))).thenReturn(jwtUser);
-        when(jwtTokenUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
+        when(jwtUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
 
         mockMvc.perform(get("/refresh")).andExpect(status().is2xxSuccessful());
     }
@@ -164,9 +164,9 @@ public class TestAuthenticationController {
 
         final JwtUser jwtUser = JwtUserFactory.create(user);
 
-        when(jwtTokenUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
+        when(jwtUtils.getUsernameFromTokenClaims(any())).thenReturn(user.getUsername());
         when(userDetailsService.loadUserByUsername(eq(user.getUsername()))).thenReturn(jwtUser);
-        when(jwtTokenUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
+        when(jwtUtils.canTokenBeRefreshed(any(), any())).thenReturn(true);
 
         mockMvc.perform(get("/refresh")).andExpect(status().is2xxSuccessful());
     }

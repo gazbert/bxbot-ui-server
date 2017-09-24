@@ -25,7 +25,7 @@
 package com.gazbert.bxbot.ui.server.rest.security.controller;
 
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtAuthenticationRequest;
-import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtTokenUtils;
+import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUtils;
 import com.gazbert.bxbot.ui.server.rest.security.jwt.JwtUser;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +57,15 @@ public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final JwtUtils jwtUtils;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
-                                    UserDetailsService userDetailsService, JwtTokenUtils jwtTokenUtils) {
+                                    UserDetailsService userDetailsService, JwtUtils jwtUtils) {
 
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
-        this.jwtTokenUtils = jwtTokenUtils;
+        this.jwtUtils = jwtUtils;
     }
 
     /**
@@ -89,7 +89,7 @@ public class AuthenticationController {
 
         // Reload password post-security check, so we can generate the token...
         final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtils.generateToken(userDetails);
+        final String token = jwtUtils.generateToken(userDetails);
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
@@ -104,12 +104,12 @@ public class AuthenticationController {
     public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
 
         final String authorizationHeader = request.getHeader("Authorization");
-        final Claims claims = jwtTokenUtils.validateTokenAndGetClaims(authorizationHeader);
-        final String username = jwtTokenUtils.getUsernameFromTokenClaims(claims);
+        final Claims claims = jwtUtils.validateTokenAndGetClaims(authorizationHeader);
+        final String username = jwtUtils.getUsernameFromTokenClaims(claims);
         final JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
-        if (jwtTokenUtils.canTokenBeRefreshed(claims, new Date(user.getLastPasswordResetDate()))) {
-            final String refreshedToken = jwtTokenUtils.refreshToken(authorizationHeader);
+        if (jwtUtils.canTokenBeRefreshed(claims, new Date(user.getLastPasswordResetDate()))) {
+            final String refreshedToken = jwtUtils.refreshToken(authorizationHeader);
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         } else {
             return ResponseEntity.badRequest().body(null);
