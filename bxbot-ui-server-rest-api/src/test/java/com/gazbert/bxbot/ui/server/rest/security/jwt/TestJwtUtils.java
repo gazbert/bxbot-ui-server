@@ -39,12 +39,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -66,6 +62,8 @@ public class TestJwtUtils {
     private static final long ALLOWED_CLOCK_SKEW_IN_SECS = 5 * 60 + 1000; // 5 mins
     private static final String ISSUER = "Rey";
     private static final String AUDIENCE = "R2-D2";
+    private static final Date ISSUED_AT_DATE = new Date();
+    private static final Date EXPIRATION_DATE = new Date(ISSUED_AT_DATE.getTime() + (EXPIRATION_PERIOD * 1000));
 
     private static final Long USER_ROLE_ID = new Long("21344565442342");
 
@@ -77,6 +75,7 @@ public class TestJwtUtils {
     private static final String EMAIL = "han@falcon";
     private static final boolean USER_ENABLED = true;
     private static final Date LAST_PASSWORD_RESET_DATE = new Date();
+    private static final List<String> ROLES = Arrays.asList("ROLE_ADMIN", "ROLE_USER");
 
     @InjectMocks
     private JwtUtils jwtUtils;
@@ -115,37 +114,34 @@ public class TestJwtUtils {
 
     @Test
     public void testIssuedAtDateCanBeExtractedFromTokenClaims() throws Exception {
-        final Date now = DateUtil.now();
-        final String token = createToken();
-        final Claims claims = jwtUtils.validateTokenAndGetClaims(token);
+        when(claims.getIssuedAt()).thenReturn(ISSUED_AT_DATE);
         assertThat(jwtUtils.getIssuedAtDateFromTokenClaims(claims))
-                .isCloseTo(now, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
+                .isCloseTo(ISSUED_AT_DATE, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
+        verify(claims, times(1)).getIssuedAt();
     }
 
     @Test
     public void testExpirationDateCanBeExtractedFromTokenClaims() throws Exception {
-        final Date now = DateUtil.now();
-        final String token = createToken();
-        final Claims claims = jwtUtils.validateTokenAndGetClaims(token);
-        final Date expirationDate = jwtUtils.getExpirationDateFromTokenClaims(claims);
-        assertThat(DateUtil.timeDifference(expirationDate, now))
-                .isCloseTo(EXPIRATION_PERIOD * 1000, within(GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS));
+        when(claims.getExpiration()).thenReturn(EXPIRATION_DATE);
+        assertThat(jwtUtils.getExpirationDateFromTokenClaims(claims))
+                .isCloseTo(EXPIRATION_DATE, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
+        verify(claims, times(1)).getExpiration();
     }
 
     @Test
     public void testRolesCanBeExtractedFromTokenClaims() throws Exception {
-        final String token = createToken();
-        final Claims claims = jwtUtils.validateTokenAndGetClaims(token);
-
+        when(claims.get(JwtUtils.CLAIM_KEY_ROLES)).thenReturn(ROLES);
         final List<GrantedAuthority> roles = jwtUtils.getRolesFromTokenClaims(claims);
-        assertThat(roles.size()).isEqualTo(1);
-        assertThat(roles.get(0).getAuthority()).isEqualTo(RoleName.ROLE_USER.name());
+        assertThat(roles.size()).isEqualTo(2);
+        assertThat(roles.get(0).getAuthority()).isEqualTo(RoleName.ROLE_ADMIN.name());
+        assertThat(roles.get(1).getAuthority()).isEqualTo(RoleName.ROLE_USER.name());
+        verify(claims, times(1)).get(JwtUtils.CLAIM_KEY_ROLES);
     }
 
     @Test
     public void testLastPasswordResetDateCanBeExtractedFromTokenClaims() throws Exception {
-        final String token = createToken();
-        final Claims claims = jwtUtils.validateTokenAndGetClaims(token);
+        when(claims.get(JwtUtils.CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE))
+                .thenReturn(LAST_PASSWORD_RESET_DATE.getTime());
         assertThat(jwtUtils.getLastPasswordResetDateFromTokenClaims(claims))
                 .isCloseTo(LAST_PASSWORD_RESET_DATE, GRADLE_FRIENDLY_TIME_TOLERANCE_IN_MILLIS);
     }

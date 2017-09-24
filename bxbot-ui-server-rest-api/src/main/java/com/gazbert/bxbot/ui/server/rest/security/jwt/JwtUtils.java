@@ -51,12 +51,13 @@ public class JwtUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
+    static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "bxbot:lastPasswordChangeDate";
+    static final String CLAIM_KEY_ROLES = "bxbot:roles";
+
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_ISSUER = "iss";
     private static final String CLAIM_KEY_ISSUED_AT = "iat";
     private static final String CLAIM_KEY_AUDIENCE = "aud";
-    private static final String CLAIM_KEY_LAST_PASSWORD_CHANGE_DATE = "bxbot:lastPasswordChangeDate";
-    private static final String CLAIM_KEY_ROLES = "bxbot:roles";
 
     @Value("${jwt.secret}")
     private String secret;
