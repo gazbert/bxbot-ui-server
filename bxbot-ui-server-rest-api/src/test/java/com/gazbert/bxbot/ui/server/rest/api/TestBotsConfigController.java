@@ -97,6 +97,31 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.[1].password").value(BOT_2_PASSWORD));
     }
 
+    @Test
+    public void whenGetBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+        mockMvc.perform(get("/api/bots/" + BOT_1_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void whenGetBotConfigCalledWhenUserIsAuthenticatedThenExpectBotConfigToBeReturned() throws Exception {
+
+        given(botConfigService.getBotConfig(BOT_1_ID)).willReturn(someBotConfig());
+
+        mockMvc.perform(get("/api/bots/" + BOT_1_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
+                .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
+                .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
+                .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
+    }
+
+
     // ------------------------------------------------------------------------------------------------
     // Private utils
     // ------------------------------------------------------------------------------------------------
@@ -110,6 +135,10 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
         allTheBots.add(bot1);
         allTheBots.add(bot2);
         return allTheBots;
+    }
+
+    private static BotConfig someBotConfig() {
+        return new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
     }
 }
 

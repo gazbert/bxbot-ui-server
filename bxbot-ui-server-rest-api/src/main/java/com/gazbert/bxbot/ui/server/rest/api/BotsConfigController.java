@@ -75,93 +75,12 @@ public class BotsConfigController {
      * @return the Bot Details configuration.
      */
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String botId) {
+    public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        final BotConfig botConfig = getBot(botId);
+        final BotConfig botConfig = botConfigService.getBotConfig(botId);
         return botConfig.getId() != null
                 ? new ResponseEntity<>(new ResponseDataWrapper(botConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    // ------------------------------------------------------------------------
-    // Private utils
-    // ------------------------------------------------------------------------
-
-    /*
-     * Stub for now.
-     */
-    private List<BotConfig> getBots() {
-
-        final BotConfig bitstamp = new BotConfig();
-        bitstamp.setId("bitstamp");
-        bitstamp.setName("Bitstamp");
-        bitstamp.setStatus("Running");
-
-        final BotConfig btce = new BotConfig();
-        btce.setId("btce");
-        btce.setName("BTC-e");
-        btce.setStatus("Running");
-
-        final BotConfig gdax = new BotConfig();
-        gdax.setId("gdax");
-        gdax.setName("GDAX");
-        gdax.setStatus("Stopped");
-
-        final BotConfig gemini = new BotConfig();
-        gemini.setId("gemini");
-        gemini.setName("Gemini");
-        gemini.setStatus("Running");
-
-        final BotConfig okcoin = new BotConfig();
-        okcoin.setId("okcoin");
-        okcoin.setName("OK Coin");
-        okcoin.setStatus("Stopped");
-
-        final BotConfig huobi = new BotConfig();
-        huobi.setId("huobi");
-        huobi.setName("Huobi");
-        huobi.setStatus("Stopped");
-
-        final BotConfig itbit = new BotConfig();
-        itbit.setId("itbit");
-        itbit.setName("itBit");
-        itbit.setStatus("Running");
-
-        final BotConfig kraken = new BotConfig();
-        kraken.setId("kraken");
-        kraken.setName("Kraken");
-        kraken.setStatus("Stopped");
-
-        final BotConfig bitfinex = new BotConfig();
-        bitfinex.setId("bitfinex");
-        bitfinex.setName("Bitfinex");
-        bitfinex.setStatus("Stopped");
-
-        final List<BotConfig> cannedBotDetails = new ArrayList<>();
-        cannedBotDetails.add(btce);
-        cannedBotDetails.add(bitstamp);
-        cannedBotDetails.add(gdax);
-        cannedBotDetails.add(gemini);
-        cannedBotDetails.add(okcoin);
-        cannedBotDetails.add(huobi);
-        cannedBotDetails.add(itbit);
-        cannedBotDetails.add(kraken);
-        cannedBotDetails.add(bitfinex);
-
-        return cannedBotDetails;
-    }
-
-    /*
-     * Stub for now.
-     */
-    private BotConfig getBot(String botId) {
-
-        final BotConfig btce = new BotConfig();
-        btce.setId(botId);
-        btce.setName("Bitstamp");
-        btce.setStatus("Running");
-
-        return btce;
     }
 }
 
