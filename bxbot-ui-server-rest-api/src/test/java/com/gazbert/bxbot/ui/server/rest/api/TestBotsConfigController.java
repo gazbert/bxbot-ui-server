@@ -10,13 +10,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -121,6 +127,35 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
     }
 
+    @Test
+    public void whenUpdateBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+
+        mockMvc.perform(put("/api/bots/" + BOT_1_ID)
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someBotConfig())))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+    @Ignore("FIXME!")
+    @Test
+    public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectUpdatedBotConfigToBeReturned() throws Exception {
+
+        final BotConfig updatedConfig = someBotConfig();
+
+        given(botConfigService.updateBotConfig(updatedConfig)).willReturn(updatedConfig);
+
+        final MvcResult result = mockMvc.perform(put("/api/bots/" + BOT_1_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(updatedConfig)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(jsonify(new ResponseDataWrapper(updatedConfig)), result.getResponse().getContentAsString());
+
+        verify(botConfigService, times(1)).updateBotConfig(updatedConfig);
+    }
 
     // ------------------------------------------------------------------------------------------------
     // Private utils
