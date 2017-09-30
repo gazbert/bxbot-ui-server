@@ -43,6 +43,7 @@ import java.util.List;
  * Controller for directing Strategy config requests.
  * <p>
  * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
+ * TODO - need to add this for all ops! @param botId the id of the Bot to fetch the Strategies config for.
  *
  * @author gazbert
  * @since 1.0
@@ -63,7 +64,8 @@ public class StrategyConfigController {
     /**
      * Returns all of the Strategy configuration for the bot.
      *
-     * @param user the authenticated user.
+     * @param user  the authenticated user.
+     * @param botId the id of the Bot to fetch the Strategies config for.
      * @return a list of Strategy configurations.
      */
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)

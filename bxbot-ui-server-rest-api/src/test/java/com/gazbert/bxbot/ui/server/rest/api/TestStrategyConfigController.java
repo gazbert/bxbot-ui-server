@@ -54,6 +54,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests the Strategy config controller behaviour.
  *
+ * TODO - 404 not found tests!
+ *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
@@ -61,7 +63,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
-    // Canned data
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 

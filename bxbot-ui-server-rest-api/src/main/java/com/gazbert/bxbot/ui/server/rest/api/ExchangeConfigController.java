@@ -28,6 +28,7 @@ import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import com.gazbert.bxbot.ui.server.services.ExchangeConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,6 +41,8 @@ import org.springframework.web.bind.annotation.*;
  * Exchange config can only be fetched and updated - it cannot be deleted or created.
  * <p>
  * There is only 1 Exchange Adapter per bot.
+ *
+ * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
  *
  * @author gazbert
  * @since 1.0
@@ -57,22 +60,21 @@ public class ExchangeConfigController {
     }
 
     /**
-     * Returns the Exchange Config for a Exchange id.
+     * Returns the Exchange Config for a Bot id.
      * <p>
      * The Exchange id is the same as the Bot id, given the 1:1 relationship between an Exchange and a Bot:
      * a Bot can only have 1 Exchange Adapter.
      *
      * @param user the authenticated user making the request.
-     * @param id   the id of the Exchange (Bot) to fetch the Exchange config for.
+     * @param botId   the id of the Bot to fetch the Exchange config for.
      * @return the Exchange configuration.
      */
-    @RequestMapping(value = "/exchanges/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String id) {
+    @RequestMapping(value = "/exchange", method = RequestMethod.GET)
+    public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = "botId") String botId) {
 
-        // TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
-        LOG.info("GET /exchanges/" + id + " - getExchange() "); //- caller: " + user.getUsername());
+        LOG.info("GET /exchange/?botId=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
 
-        final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(id);
+        final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
         return exchangeConfig != null
                 ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
