@@ -33,12 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestBotsConfigController extends AbstractConfigControllerTest {
 
-    // This must match a user's login_id in the user table in src/test/resources/import.sql
-    private static final String VALID_USERNAME = "admin";
-
-    // This must match a user's password in the user table in src/test/resources/import.sql
-    private static final String VALID_PASSWORD = "admin";
-
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
     private static final String BOT_1_STATUS = "Running";
@@ -66,7 +60,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenGetAllBotConfigCalledWhenUserIsAuthenticatedThenExpectAllBotConfigToBeReturned() throws Exception {
+    public void whenGetAllBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(botConfigService.getAllBotConfig()).willReturn(allTheBotsConfig());
 
@@ -99,7 +93,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenGetBotConfigCalledWhenUserIsAuthenticatedThenExpectBotConfigToBeReturned() throws Exception {
+    public void whenGetBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(botConfigService.getBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 
@@ -125,7 +119,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectUpdatedBotConfigToBeReturned() throws Exception {
+    public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(botConfigService.updateBotConfig(any())).willReturn(someBotConfig);
 
@@ -157,7 +151,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenCreateBotConfigCalledWhenUserIsAuthenticatedThenExpectUpdatedBotConfigToBeReturned() throws Exception {
+    public void whenCreateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(botConfigService.createBotConfig(any())).willReturn(someBotConfig);
 
@@ -189,7 +183,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenDeleteBotConfigCalledWhenUserIsAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+    public void whenDeleteBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(botConfigService.deleteBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 

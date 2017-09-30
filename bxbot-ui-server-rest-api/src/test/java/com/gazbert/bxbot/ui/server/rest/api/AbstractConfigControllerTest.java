@@ -50,6 +50,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 abstract class AbstractConfigControllerTest {
 
+    // This must match a user's login_id in the user table in src/test/resources/import.sql
+    static final String VALID_USERNAME = "admin";
+
+    // This must match a user's password in the user table in src/test/resources/import.sql
+    static final String VALID_PASSWORD = "admin";
+
     /**
      * We'll always be sending/receiving JSON content in REST API.
      */

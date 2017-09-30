@@ -26,12 +26,14 @@ package com.gazbert.bxbot.ui.server.rest.api;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -39,6 +41,8 @@ import java.util.List;
 
 /**
  * Controller for directing Strategy config requests.
+ * <p>
+ * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
  *
  * @author gazbert
  * @since 1.0
@@ -46,6 +50,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/config")
 public class StrategyConfigController {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     private final StrategyConfigService strategyConfigService;
 
@@ -61,15 +67,22 @@ public class StrategyConfigController {
      * @return a list of Strategy configurations.
      */
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)
-    public List<StrategyConfig> getAllStrategies(@AuthenticationPrincipal User user) {
-        String botId = "todo";
-        return strategyConfigService.getAllStrategyConfig(botId);
+    public ResponseEntity<?> getAllStrategies(@AuthenticationPrincipal User user, @Param(value = "botId") String botId) {
+
+        final List<StrategyConfig> strategyConfigs = strategyConfigService.getAllStrategyConfig(botId);
+        if (strategyConfigs.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(strategyConfigs);
+            LOG.info("Response: " + responseDataWrapper);
+            return new ResponseEntity<>(responseDataWrapper, null, HttpStatus.OK);
+        }
     }
 
     /**
      * Returns the Strategy configuration for a given id.
      *
-     * @param user the authenticated user.
+     * @param user       the authenticated user.
      * @param strategyId the id of the Strategy to fetch.
      * @return the Strategy configuration.
      */
@@ -86,8 +99,8 @@ public class StrategyConfigController {
     /**
      * Updates a given Strategy configuration.
      *
-     * @param user the authenticated user.
-     * @param strategyId id of the Strategy config to update.
+     * @param user           the authenticated user.
+     * @param strategyId     id of the Strategy config to update.
      * @param strategyConfig the updated Strategy config.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
@@ -108,8 +121,8 @@ public class StrategyConfigController {
     /**
      * Creates a new Strategy configuration.
      *
-     * @param user the authenticated user.
-     * @param strategyId id of the Strategy config to create.
+     * @param user           the authenticated user.
+     * @param strategyId     id of the Strategy config to create.
      * @param strategyConfig the new Strategy config.
      * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
      */
@@ -137,7 +150,7 @@ public class StrategyConfigController {
     /**
      * Deletes a Strategy configuration for a given id.
      *
-     * @param user the authenticated user.
+     * @param user       the authenticated user.
      * @param strategyId the id of the Strategy configuration to delete.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */

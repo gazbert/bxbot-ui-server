@@ -23,8 +23,6 @@
 
 package com.gazbert.bxbot.ui.server.rest.api;
 
-//import com.gazbert.bxbot.core.engine.TradingEngine;
-//import com.gazbert.bxbot.core.mail.EmailAlerter;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
 import org.junit.Before;
@@ -45,6 +43,9 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,14 +61,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
-    // This must match a user's login_id in the user table in src/test/resources/import.sql
-    private static final String VALID_USER_LOGINID = "user1";
-
-    // This must match a user's password in the user table in src/test/resources/import.sql
-    private static final String VALID_USER_PASSWORD = "user1-password";
-
     // Canned data
-    private static final String UNKNOWN_STRAT_ID = "unknown-id";
+    private static final String BOT_ID = "gdax-bot-1";
+    private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
+
+    private static final String UNKNOWN_STRAT_ID = "unknown-strat-id";
 
     private static final String STRAT_1_ID = "macd-long-position";
     private static final String STRAT_1_LABEL= "MACD Strat Algo";
@@ -87,54 +85,58 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @MockBean
     StrategyConfigService strategyConfigService;
 
-//    @MockBean
-//    private EmailAlerter emailAlerter;
-//
-//    @MockBean
-//    private TradingEngine tradingEngine;
-
 
     @Before
     public void setupBeforeEachTest() {
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx).addFilter(springSecurityFilterChain).build();
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testGetAllStrategyConfig() throws Exception {
+    public void whenGetAllStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.getAllStrategyConfig("todo")).willReturn(allTheStrategiesConfig());
-//        tradingEngine.start();
+        given(strategyConfigService.getAllStrategyConfig(any())).willReturn(allTheStrategiesConfig());
 
-        mockMvc.perform(get("/api/config/strategy/")
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD)))
+        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("$.[0].id").value(STRAT_1_ID))
-                .andExpect(jsonPath("$.[0].label").value(STRAT_1_LABEL))
-                .andExpect(jsonPath("$.[0].description").value(STRAT_1_DESCRIPTION))
-                .andExpect(jsonPath("$.[0].className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.[0].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.[0].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[0].id").value(STRAT_1_ID))
+                .andExpect(jsonPath("$.data.[0].name").value(STRAT_1_LABEL))
+                .andExpect(jsonPath("$.data.[0].description").value(STRAT_1_DESCRIPTION))
+                .andExpect(jsonPath("$.data.[0].className").value(STRAT_1_CLASSNAME))
+                .andExpect(jsonPath("$.data.[0].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[0].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE))
 
-                .andExpect(jsonPath("$.[1].id").value(STRAT_2_ID))
-                .andExpect(jsonPath("$.[1].label").value(STRAT_2_LABEL))
-                .andExpect(jsonPath("$.[1].description").value(STRAT_2_DESCRIPTION))
-                .andExpect(jsonPath("$.[1].className").value(STRAT_2_CLASSNAME))
-                .andExpect(jsonPath("$.[1].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.[1].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
+                .andExpect(jsonPath("$.data.[1].id").value(STRAT_2_ID))
+                .andExpect(jsonPath("$.data.[1].name").value(STRAT_2_LABEL))
+                .andExpect(jsonPath("$.data.[1].description").value(STRAT_2_DESCRIPTION))
+                .andExpect(jsonPath("$.data.[1].className").value(STRAT_2_CLASSNAME))
+                .andExpect(jsonPath("$.data.[1].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[1].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
                 );
+
+        verify(strategyConfigService, times(1)).getAllStrategyConfig(BOT_ID);
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
-    @Test
-    public void testGetAllStrategyConfigWhenUnauthorized() throws Exception {
+    public void whenGetAllStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(get("/api/config/strategy")
+        given(strategyConfigService.getAllStrategyConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
+
+        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        verify(strategyConfigService, times(1)).getAllStrategyConfig(UNKNOWN_BOT_ID);
+    }
+
+    @Test
+    public void whenGetAllStrategyConfigCalledAndUserIsAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+
+        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("unauthorized")));
+                .andExpect(status().isUnauthorized());
     }
 
     @Ignore("Ignore til I get JWT up and running!")
@@ -144,7 +146,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.getStrategyConfig("botId", STRAT_1_ID)).willReturn(someStrategyConfig());
 
         mockMvc.perform(get("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -174,7 +176,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.getStrategyConfig("botId", UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
 
         mockMvc.perform(get("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -186,7 +188,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.updateStrategyConfig("botId", someStrategyConfig())).willReturn(someStrategyConfig());
 
         mockMvc.perform(put("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isNoContent());
@@ -211,7 +213,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.updateStrategyConfig("botId", unrecognizedStrategyConfig())).willReturn(emptyStrategyConfig());
 
         mockMvc.perform(put("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(unrecognizedStrategyConfig())))
@@ -223,7 +225,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     public void testUpdateStrategyConfigWhenIdIsMissing() throws Exception {
 
         mockMvc.perform(put("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfigWithMissingId())))
@@ -237,7 +239,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.deleteStrategyConfig("botId", STRAT_1_ID)).willReturn(someStrategyConfig());
 
         mockMvc.perform(delete("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andExpect(status().isNoContent());
     }
 
@@ -258,7 +260,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.deleteStrategyConfig("botId", UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
 
         mockMvc.perform(delete("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -270,7 +272,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.createStrategyConfig("botId", someStrategyConfig())).willReturn(someStrategyConfig());
 
         mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isCreated());
@@ -295,7 +297,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.createStrategyConfig("botId", someStrategyConfig())).willReturn(emptyStrategyConfig());
 
         mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
@@ -307,7 +309,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     public void testCreateStrategyConfigWhenIdIsMissing() throws Exception {
 
         mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USER_LOGINID, VALID_USER_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfigWithMissingId())))
