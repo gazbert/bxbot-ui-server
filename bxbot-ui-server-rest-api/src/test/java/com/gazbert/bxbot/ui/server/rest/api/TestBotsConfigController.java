@@ -3,21 +3,19 @@ package com.gazbert.bxbot.ui.server.rest.api;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.services.BotConfigService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,12 +53,16 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     private static final String BOT_2_USERNAME = "admin";
     private static final String BOT_2_PASSWORD = "password";
 
+    private BotConfig someBotConfig;
+
     @MockBean
     BotConfigService botConfigService;
+
 
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx).addFilter(springSecurityFilterChain).build();
+        someBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetBotConfigCalledWhenUserIsAuthenticatedThenExpectBotConfigToBeReturned() throws Exception {
 
-        given(botConfigService.getBotConfig(BOT_1_ID)).willReturn(someBotConfig());
+        given(botConfigService.getBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 
         mockMvc.perform(get("/api/config/bots/" + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
@@ -122,25 +124,26 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("FIXME!")
     @Test
     public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectUpdatedBotConfigToBeReturned() throws Exception {
 
-        final BotConfig updatedConfig = someBotConfig();
+        given(botConfigService.updateBotConfig(any())).willReturn(someBotConfig);
 
-        given(botConfigService.updateBotConfig(updatedConfig)).willReturn(updatedConfig);
-
-        final MvcResult result = mockMvc.perform(put("/api/config/bots/" + BOT_1_ID)
+        mockMvc.perform(put("/api/config/bots/" + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(updatedConfig)))
+                .content(jsonify(someBotConfig)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
 
-        assertEquals(jsonify(new ResponseDataWrapper(updatedConfig)), result.getResponse().getContentAsString());
+                .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
+                .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
+                .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
+                .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
 
-        verify(botConfigService, times(1)).updateBotConfig(updatedConfig);
+        verify(botConfigService, times(1)).updateBotConfig(any());
     }
 
     @Test
@@ -148,30 +151,31 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         mockMvc.perform(put("/api/config/bots/" + BOT_1_ID)
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someBotConfig())))
+                .content(jsonify(someBotConfig)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("FIXME!")
     @Test
     public void whenCreateBotConfigCalledWhenUserIsAuthenticatedThenExpectUpdatedBotConfigToBeReturned() throws Exception {
 
-        final BotConfig createdConfig = someBotConfig();
+        given(botConfigService.createBotConfig(any())).willReturn(someBotConfig);
 
-        given(botConfigService.createBotConfig(createdConfig)).willReturn(createdConfig);
-
-        final MvcResult result = mockMvc.perform(post("/api/config/bots")
+        mockMvc.perform(post("/api/config/bots")
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(createdConfig)))
+                .content(jsonify(someBotConfig)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isCreated())
 
-        assertEquals(jsonify(new ResponseDataWrapper(createdConfig)), result.getResponse().getContentAsString());
+                .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
+                .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
+                .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
+                .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
 
-        verify(botConfigService, times(1)).createBotConfig(createdConfig);
+        verify(botConfigService, times(1)).createBotConfig(any());
     }
 
     @Test
@@ -179,7 +183,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         mockMvc.perform(post("/api/config/bots")
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someBotConfig())))
+                .content(jsonify(someBotConfig)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
@@ -187,7 +191,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteBotConfigCalledWhenUserIsAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        given(botConfigService.deleteBotConfig(BOT_1_ID)).willReturn(someBotConfig());
+        given(botConfigService.deleteBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 
         mockMvc.perform(delete("/api/config/bots/" + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
@@ -216,10 +220,6 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
         allTheBots.add(bot1);
         allTheBots.add(bot2);
         return allTheBots;
-    }
-
-    private static BotConfig someBotConfig() {
-        return new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
     }
 }
 

@@ -83,7 +83,7 @@ public class BotsConfigController {
     public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
-        return createResponseWrapper(botConfigService.getBotConfig(botId));
+        return createSuccessResponseWrapper(botConfigService.getBotConfig(botId), HttpStatus.OK);
     }
 
     /**
@@ -105,7 +105,7 @@ public class BotsConfigController {
         }
 
         final BotConfig updateBotConfig = botConfigService.updateBotConfig(botConfig);
-        return createResponseWrapper(updateBotConfig);
+        return createSuccessResponseWrapper(updateBotConfig, HttpStatus.OK);
     }
 
     /**
@@ -128,7 +128,7 @@ public class BotsConfigController {
         final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
 
         if (createdConfig.getId() != null) {
-            return new ResponseEntity<>(createResponseWrapper(createdConfig), HttpStatus.CREATED);
+            return createSuccessResponseWrapper(createdConfig, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -157,11 +157,11 @@ public class BotsConfigController {
     // Private utils
     // ------------------------------------------------------------------------
 
-    private ResponseEntity<ResponseDataWrapper> createResponseWrapper(BotConfig botConfig) {
+    private ResponseEntity<ResponseDataWrapper> createSuccessResponseWrapper(BotConfig botConfig, HttpStatus successStatus) {
         if (botConfig.getId() != null) {
             final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(botConfig);
             LOG.info("Response: " + responseDataWrapper);
-            return new ResponseEntity<>(responseDataWrapper, null, HttpStatus.OK);
+            return new ResponseEntity<>(responseDataWrapper, null, successStatus);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
