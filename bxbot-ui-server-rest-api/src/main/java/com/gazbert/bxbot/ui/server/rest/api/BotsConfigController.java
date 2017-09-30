@@ -37,12 +37,14 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for directing Bot config requests.
+ * <p>
+ * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
  *
  * @author gazbert
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/config")
 public class BotsConfigController {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -63,7 +65,7 @@ public class BotsConfigController {
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
     public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
 
-        LOG.info("GET /bots - getBots()"); // - caller: " + user.getUsername());
+        LOG.info("GET /bots - getBots()"); // caller: " + user.getUsername());
         final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(botConfigService.getAllBotConfig());
 
         LOG.info("Response: " + responseDataWrapper);
@@ -104,6 +106,51 @@ public class BotsConfigController {
 
         final BotConfig updateBotConfig = botConfigService.updateBotConfig(botConfig);
         return createResponseWrapper(updateBotConfig);
+    }
+
+    /**
+     * Creates a new Bot configuration.
+     *
+     * @param user      the authenticated user.
+     * @param botConfig the new Bot config.
+     * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Bot config already exists.
+     */
+    @RequestMapping(value = "/bots", method = RequestMethod.POST)
+    ResponseEntity<?> createBot(@AuthenticationPrincipal User user, @RequestBody BotConfig botConfig) {
+
+        LOG.info("POST /bots - createBot()"); // - caller: " + user.getUsername());
+        LOG.info("Request: " + botConfig);
+
+        if (botConfig == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
+
+        if (createdConfig.getId() != null) {
+            return new ResponseEntity<>(createResponseWrapper(createdConfig), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Deletes a Bot configuration for a given id.
+     *
+     * @param user       the authenticated user.
+     * @param botId the id of the Bot configuration to delete.
+     * @return 204 'No Content' HTTP status code if delete successful, 404 'Not Found' HTTP status code if
+     *         Bot config not found.
+     */
+    @RequestMapping(value = "/bots/{botId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
+
+        LOG.info("DELETE /bots/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
+
+        final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
+        return deletedConfig.getId() != null
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // ------------------------------------------------------------------------
