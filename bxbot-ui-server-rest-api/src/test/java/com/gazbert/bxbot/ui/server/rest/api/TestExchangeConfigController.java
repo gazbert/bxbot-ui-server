@@ -40,9 +40,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -134,7 +137,61 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenGetExchangeConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get("/api/config/exchange"))
+        mockMvc.perform(get("/api/config/exchange/?botId=" + BOT_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
+
+        given(exchangeConfigService.updateExchangeConfig(eq(BOT_ID), any())).willReturn(someExchangeConfig());
+
+        mockMvc.perform(put("/api/config/exchange/?botId=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someExchangeConfig())))
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.data.exchangeName").value(EXCHANGE_NAME))
+                .andExpect(jsonPath("$.data.exchangeAdapter").value(EXCHANGE_ADAPTER))
+
+                // REST API does not expose AuthenticationConfig - potential security risk.
+                .andExpect(jsonPath("$.data.authenticationConfig").doesNotExist())
+
+                .andExpect(jsonPath("$.data.networkConfig.connectionTimeout").value(CONNECTION_TIMEOUT))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[0]").value(HTTP_STATUS_502))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[1]").value(HTTP_STATUS_503))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[2]").value(HTTP_STATUS_504))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[0]").value(ERROR_MESSAGE_REFUSED))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[1]").value(ERROR_MESSAGE_RESET))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[2]").value(ERROR_MESSAGE_CLOSED))
+
+                .andExpect(jsonPath("$.data.optionalConfig.items.buy-fee").value(BUY_FEE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.optionalConfig.items.sell-fee").value(SELL_FEE_CONFIG_ITEM_VALUE));
+
+        verify(exchangeConfigService, times(1)).updateExchangeConfig(eq(BOT_ID), any());
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
+
+        given(exchangeConfigService.updateExchangeConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
+
+        mockMvc.perform(put("/api/config/exchange/?botId=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someExchangeConfig())))
+                .andExpect(status().isNotFound());
+
+        verify(exchangeConfigService, times(1)).updateExchangeConfig(eq(UNKNOWN_BOT_ID), any());
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledForKnownBotIdAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/exchange/?botId=" + UNKNOWN_BOT_ID)
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someExchangeConfig())))
                 .andExpect(status().isUnauthorized());
     }
 

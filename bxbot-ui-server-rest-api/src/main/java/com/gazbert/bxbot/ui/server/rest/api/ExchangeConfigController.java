@@ -32,7 +32,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,7 +40,7 @@ import org.springframework.web.bind.annotation.*;
  * Exchange config can only be fetched and updated - it cannot be deleted or created.
  * <p>
  * There is only 1 Exchange Adapter per bot.
- *
+ * <p>
  * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
  *
  * @author gazbert
@@ -65,8 +64,8 @@ public class ExchangeConfigController {
      * The Exchange id is the same as the Bot id, given the 1:1 relationship between an Exchange and a Bot:
      * a Bot can only have 1 Exchange Adapter.
      *
-     * @param user the authenticated user making the request.
-     * @param botId   the id of the Bot to fetch the Exchange config for.
+     * @param user  the authenticated user making the request.
+     * @param botId the id of the Bot to fetch the Exchange config for.
      * @return the Exchange configuration.
      */
     @RequestMapping(value = "/exchange", method = RequestMethod.GET)
@@ -85,17 +84,25 @@ public class ExchangeConfigController {
      *
      * @param user           the authenticated user making the request.
      * @param exchangeConfig the Exchange config to update.
+     * @param botId the id of the Bot to update the Exchange config for.
      * @return 200 'OK' HTTP status code with updated Exchange config in the body if update successful, some other
      * HTTP status code otherwise.
      */
     @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig) {
+    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
+                                            @Param(value = "botId") String botId) {
 
-        LOG.info("PUT /exchange - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /exchange/?botId=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);
 
-        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(exchangeConfig.getId(), exchangeConfig);
-        return new ResponseEntity<>(updatedConfig, HttpStatus.OK);
+        if (exchangeConfig == null || botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(botId, exchangeConfig);
+        return updatedConfig != null
+                ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
 
