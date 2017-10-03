@@ -43,16 +43,16 @@ import java.util.List;
  * Controller for directing Strategy config requests.
  * <p>
  * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
- * TODO - need to add this for all ops! @param botId the id of the Bot to fetch the Strategies config for.
  *
  * @author gazbert
  * @since 1.0
  */
 @RestController
 @RequestMapping("/api/config")
-public class StrategyConfigController {
+public class StrategyConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String BOT_ID_PARAM = "botId";
 
     private final StrategyConfigService strategyConfigService;
 
@@ -69,16 +69,13 @@ public class StrategyConfigController {
      * @return a list of Strategy configurations.
      */
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllStrategies(@AuthenticationPrincipal User user, @Param(value = "botId") String botId) {
+    public ResponseEntity<?> getAllStrategies(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
+
+        LOG.info("GET /strategies/?" + BOT_ID_PARAM + "=" + botId + " - getAllStrategies()"); // caller: " + user.getUsername());
 
         final List<StrategyConfig> strategyConfigs = strategyConfigService.getAllStrategyConfig(botId);
-        if (strategyConfigs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(strategyConfigs);
-            LOG.info("Response: " + responseDataWrapper);
-            return new ResponseEntity<>(responseDataWrapper, null, HttpStatus.OK);
-        }
+        return strategyConfigs.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(strategyConfigs, HttpStatus.OK);
     }
 
     /**
@@ -86,17 +83,21 @@ public class StrategyConfigController {
      *
      * @param user       the authenticated user.
      * @param strategyId the id of the Strategy to fetch.
+     * @param botId      the id of the Bot to fetch the Strategies config for.
      * @return the Strategy configuration.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
+    public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
+                                         @Param(value = BOT_ID_PARAM) String botId) {
 
-        String botId = "todo";
+        LOG.info("GET /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - getStrategy() "); //- caller: " + user.getUsername());
+
         final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(botId, strategyId);
-        return strategyConfig.getId() != null
-                ? new ResponseEntity<>(strategyConfig, null, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return strategyConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                buildResponseEntity(strategyConfig, HttpStatus.OK);
     }
+
+    // TODO - Got to here
 
     /**
      * Updates a given Strategy configuration.
@@ -115,7 +116,7 @@ public class StrategyConfigController {
 
         String botId = "todo";
         final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(botId, strategyConfig);
-        return updatedConfig.getId() != null
+        return updatedConfig.getId() == null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

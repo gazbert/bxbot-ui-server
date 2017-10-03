@@ -35,6 +35,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Controller for directing Bot config requests.
  * <p>
@@ -45,10 +47,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/config")
-public class BotsConfigController {
+public class BotsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
-
     private final BotConfigService botConfigService;
 
     @Autowired
@@ -63,13 +64,13 @@ public class BotsConfigController {
      */
     @PreAuthorize("hasRole('USER')") // Spring Security maps USER to ROLE_USER in database - ROLE_ prefix must be used.
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
-    public ResponseDataWrapper getBots(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> getBots(@AuthenticationPrincipal User user) {
 
         LOG.info("GET /bots - getBots()"); // caller: " + user.getUsername());
-        final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(botConfigService.getAllBotConfig());
 
-        LOG.info("Response: " + responseDataWrapper);
-        return responseDataWrapper;
+        final List<BotConfig> botConfigs = botConfigService.getAllBotConfig();
+        return botConfigs.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(botConfigs, HttpStatus.OK);
     }
 
     /**
@@ -83,7 +84,10 @@ public class BotsConfigController {
     public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
-        return createSuccessResponseWrapper(botConfigService.getBotConfig(botId), HttpStatus.OK);
+
+        final BotConfig botConfig = botConfigService.getBotConfig(botId);
+        return botConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(botConfig, HttpStatus.OK);
     }
 
     /**
@@ -105,7 +109,8 @@ public class BotsConfigController {
         }
 
         final BotConfig updateBotConfig = botConfigService.updateBotConfig(botConfig);
-        return createSuccessResponseWrapper(updateBotConfig, HttpStatus.OK);
+        return updateBotConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                buildResponseEntity(updateBotConfig, HttpStatus.OK);
     }
 
     /**
@@ -126,21 +131,17 @@ public class BotsConfigController {
         }
 
         final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
-
-        if (createdConfig.getId() != null) {
-            return createSuccessResponseWrapper(createdConfig, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return createdConfig == null ? new ResponseEntity<>(HttpStatus.CREATED) :
+                buildResponseEntity(createdConfig, HttpStatus.CREATED);
     }
 
     /**
      * Deletes a Bot configuration for a given id.
      *
-     * @param user       the authenticated user.
+     * @param user  the authenticated user.
      * @param botId the id of the Bot configuration to delete.
      * @return 204 'No Content' HTTP status code if delete successful, 404 'Not Found' HTTP status code if
-     *         Bot config not found.
+     * Bot config not found.
      */
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
@@ -148,23 +149,8 @@ public class BotsConfigController {
         LOG.info("DELETE /bots/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
 
         final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
-        return deletedConfig.getId() != null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    // ------------------------------------------------------------------------
-    // Private utils
-    // ------------------------------------------------------------------------
-
-    private ResponseEntity<ResponseDataWrapper> createSuccessResponseWrapper(BotConfig botConfig, HttpStatus successStatus) {
-        if (botConfig.getId() != null) {
-            final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(botConfig);
-            LOG.info("Response: " + responseDataWrapper);
-            return new ResponseEntity<>(responseDataWrapper, null, successStatus);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return deletedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

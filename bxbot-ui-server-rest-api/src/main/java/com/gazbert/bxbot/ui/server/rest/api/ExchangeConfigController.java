@@ -48,9 +48,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/config")
-public class ExchangeConfigController {
+public class ExchangeConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String BOT_ID_PARAM = "botId";
 
     private final ExchangeConfigService exchangeConfigService;
 
@@ -69,14 +70,13 @@ public class ExchangeConfigController {
      * @return the Exchange configuration.
      */
     @RequestMapping(value = "/exchange", method = RequestMethod.GET)
-    public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = "botId") String botId) {
+    public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /exchange/?botId=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
+        LOG.info("GET /exchange/?" + BOT_ID_PARAM + "=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
 
         final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
-        return exchangeConfig != null
-                ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return exchangeConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                buildResponseEntity(exchangeConfig, HttpStatus.OK);
     }
 
     /**
@@ -84,15 +84,15 @@ public class ExchangeConfigController {
      *
      * @param user           the authenticated user making the request.
      * @param exchangeConfig the Exchange config to update.
-     * @param botId the id of the Bot to update the Exchange config for.
+     * @param botId          the id of the Bot to update the Exchange config for.
      * @return 200 'OK' HTTP status code with updated Exchange config in the body if update successful, some other
      * HTTP status code otherwise.
      */
     @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
-                                            @Param(value = "botId") String botId) {
+                                            @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /exchange/?botId=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /exchange/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);
 
         if (exchangeConfig == null || botId == null) {
@@ -100,9 +100,8 @@ public class ExchangeConfigController {
         }
 
         final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(botId, exchangeConfig);
-        return updatedConfig != null
-                ? new ResponseEntity<>(new ResponseDataWrapper(exchangeConfig), null, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return updatedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                buildResponseEntity(exchangeConfig, HttpStatus.OK);
     }
 }
 

@@ -54,14 +54,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests the Strategy config controller behaviour.
  *
- * TODO - 404 not found tests!
- *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
 public class TestStrategyConfigController extends AbstractConfigControllerTest {
+
+    private static final String BOT_ID_PARAM = "botId";
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
@@ -97,7 +97,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.getAllStrategyConfig(any())).willReturn(allTheStrategiesConfig());
 
-        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
+        mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -124,7 +124,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.getAllStrategyConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
 
-        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
+        mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -133,53 +133,53 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenGetAllStrategyConfigCalledAndUserIsAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+    public void whenGetAllStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get("/api/config/strategies/?botId=" + BOT_ID)
+        mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testGetStrategyConfigById() throws Exception {
+    public void whenGeStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.getStrategyConfig("botId", STRAT_1_ID)).willReturn(someStrategyConfig());
+        given(strategyConfigService.getStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
 
-        mockMvc.perform(get("/api/config/strategy/" + STRAT_1_ID)
+        mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("$.id").value(STRAT_1_ID))
-                .andExpect(jsonPath("$.label").value(STRAT_1_LABEL))
-                .andExpect(jsonPath("$.description").value(STRAT_1_DESCRIPTION))
-                .andExpect(jsonPath("$.className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
+                .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(STRAT_1_LABEL))
+                .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
+                .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
+                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
                 );
+
+        verify(strategyConfigService, times(1)).getStrategyConfig(BOT_ID, STRAT_1_ID);
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testGetStrategyConfigByIdWhenUnauthorized() throws Exception {
+    public void whenGeStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(get("/api/config/strategy/" + STRAT_1_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("unauthorized")));
-    }
+        given(strategyConfigService.getStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
 
-    @Ignore("Ignore til I get JWT up and running!")
-    @Test
-    public void testGetStrategyConfigByIdWhenNotRecognized() throws Exception {
-
-        given(strategyConfigService.getStrategyConfig("botId", UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
-
-        mockMvc.perform(get("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .andDo(print())
                 .andExpect(status().isNotFound());
+
+        verify(strategyConfigService, times(1)).getStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID);
+    }
+
+    @Test
+    public void whenGetStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+
+        mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
     @Ignore("Ignore til I get JWT up and running!")
