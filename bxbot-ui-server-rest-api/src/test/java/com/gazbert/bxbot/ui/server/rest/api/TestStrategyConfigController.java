@@ -120,11 +120,12 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         verify(strategyConfigService, times(1)).getAllStrategyConfig(BOT_ID);
     }
 
+    @Test
     public void whenGetAllStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
         given(strategyConfigService.getAllStrategyConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
 
-        mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
