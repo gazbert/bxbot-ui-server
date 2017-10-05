@@ -53,6 +53,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests the Exchange config controller behaviour.
  *
+ * TODO - Bad Request tests
+ *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)

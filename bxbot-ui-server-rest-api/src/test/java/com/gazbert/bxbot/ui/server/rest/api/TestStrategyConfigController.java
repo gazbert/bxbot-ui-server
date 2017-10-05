@@ -44,6 +44,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -53,6 +54,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Tests the Strategy config controller behaviour.
+ * <p>
+ * TODO - Bad Request tests
  *
  * @author gazbert
  */
@@ -69,12 +72,12 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     private static final String UNKNOWN_STRAT_ID = "unknown-strat-id";
 
     private static final String STRAT_1_ID = "macd-long-position";
-    private static final String STRAT_1_LABEL= "MACD Strat Algo";
+    private static final String STRAT_1_LABEL = "MACD Strat Algo";
     private static final String STRAT_1_DESCRIPTION = "Uses MACD as indicator and takes long position in base currency.";
     private static final String STRAT_1_CLASSNAME = "com.gazbert.nova.algos.MacdLongBase";
 
     private static final String STRAT_2_ID = "long-scalper";
-    private static final String STRAT_2_LABEL= "Long Position Scalper Algo";
+    private static final String STRAT_2_LABEL = "Long Position Scalper Algo";
     private static final String STRAT_2_DESCRIPTION = "Scalps and goes long...";
     private static final String STRAT_2_CLASSNAME = "com.gazbert.nova.algos.LongScalper";
 
@@ -183,88 +186,72 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testUpdateStrategyConfig() throws Exception {
+    public void whenUpdateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.updateStrategyConfig("botId", someStrategyConfig())).willReturn(someStrategyConfig());
+        given(strategyConfigService.updateStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
 
-        mockMvc.perform(put("/api/config/strategy/" + STRAT_1_ID)
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
+
+        verify(strategyConfigService, times(1)).updateStrategyConfig(eq(BOT_ID), any());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testUpdateStrategyConfigWhenUnauthorized() throws Exception {
+    public void whenUpdateStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(put("/api/config/strategy/" + STRAT_1_ID)
-                .accept(MediaType.APPLICATION_JSON)
+        given(strategyConfigService.updateStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(someStrategyConfig());
+
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("unauthorized")));
+                .andExpect(status().isOk());
+
+        verify(strategyConfigService, times(1)).updateStrategyConfig(eq(UNKNOWN_BOT_ID), any());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testUpdateStrategyConfigWhenIdNotRecognized() throws Exception {
+    public void whenUpdateStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        given(strategyConfigService.updateStrategyConfig("botId", unrecognizedStrategyConfig())).willReturn(emptyStrategyConfig());
-
-        mockMvc.perform(put("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(unrecognizedStrategyConfig())))
-                .andExpect(status().isNotFound());
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testUpdateStrategyConfigWhenIdIsMissing() throws Exception {
+    public void whenDeleteStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        mockMvc.perform(put("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfigWithMissingId())))
-                .andExpect(status().isBadRequest());
-    }
+        given(strategyConfigService.deleteStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
 
-    @Ignore("Ignore til I get JWT up and running!")
-    @Test
-    public void testDeleteStrategyConfig() throws Exception {
-
-        given(strategyConfigService.deleteStrategyConfig("botId", STRAT_1_ID)).willReturn(someStrategyConfig());
-
-        mockMvc.perform(delete("/api/config/strategy/" + STRAT_1_ID)
+        mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andExpect(status().isNoContent());
+
+        verify(strategyConfigService, times(1)).deleteStrategyConfig(BOT_ID, STRAT_1_ID);
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testDeleteStrategyConfigWhenUnauthorized() throws Exception {
+    public void whenDeleteStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(delete("/api/config/strategy/" + STRAT_1_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("unauthorized")));
+        mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID))
+                .andExpect(status().isUnauthorized());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testDeleteStrategyConfigWhenIdNotRecognized() throws Exception {
+    public void whenDeleteStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(strategyConfigService.deleteStrategyConfig("botId", UNKNOWN_STRAT_ID)).willReturn(emptyStrategyConfig());
+        given(strategyConfigService.deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
 
-        mockMvc.perform(delete("/api/config/strategy/" + UNKNOWN_STRAT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
                 .andExpect(status().isNotFound());
+
+        verify(strategyConfigService, times(1)).deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID);
     }
 
     @Ignore("Ignore til I get JWT up and running!")
@@ -352,14 +339,6 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
         return new StrategyConfig(null, STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
-    }
-
-    private static StrategyConfig unrecognizedStrategyConfig() {
-
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig("unknown-id", STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
     }
 
     private static StrategyConfig emptyStrategyConfig() {

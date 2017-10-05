@@ -73,6 +73,10 @@ public class StrategyConfigController extends AbstractController {
 
         LOG.info("GET /strategies/?" + BOT_ID_PARAM + "=" + botId + " - getAllStrategies()"); // caller: " + user.getUsername());
 
+        if (botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         final List<StrategyConfig> strategyConfigs = strategyConfigService.getAllStrategyConfig(botId);
         return strategyConfigs.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(strategyConfigs, HttpStatus.OK);
@@ -83,7 +87,7 @@ public class StrategyConfigController extends AbstractController {
      *
      * @param user       the authenticated user.
      * @param strategyId the id of the Strategy to fetch.
-     * @param botId      the id of the Bot to fetch the Strategies config for.
+     * @param botId      the id of the Bot to fetch the Strategy config for.
      * @return the Strategy configuration.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.GET)
@@ -92,12 +96,14 @@ public class StrategyConfigController extends AbstractController {
 
         LOG.info("GET /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - getStrategy() "); //- caller: " + user.getUsername());
 
+        if (botId == null || strategyId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(botId, strategyId);
         return strategyConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
                 buildResponseEntity(strategyConfig, HttpStatus.OK);
     }
-
-    // TODO - Got to here
 
     /**
      * Updates a given Strategy configuration.
@@ -105,20 +111,24 @@ public class StrategyConfigController extends AbstractController {
      * @param user           the authenticated user.
      * @param strategyId     id of the Strategy config to update.
      * @param strategyConfig the updated Strategy config.
+     * @param botId          the id of the Bot to update the Strategy config for.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig strategyConfig) {
+    ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
+                                     @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
 
-        if (strategyConfig == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
+        LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + strategyConfig);
+
+        if (botId == null || strategyConfig == null ||
+                strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String botId = "todo";
         final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(botId, strategyConfig);
-        return updatedConfig.getId() == null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return updatedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                buildResponseEntity(updatedConfig, HttpStatus.OK);
     }
 
     /**
@@ -130,7 +140,8 @@ public class StrategyConfigController extends AbstractController {
      * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.POST)
-    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId, @RequestBody StrategyConfig strategyConfig) {
+    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String
+            strategyId, @RequestBody StrategyConfig strategyConfig) {
 
         if (strategyConfig == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -155,16 +166,21 @@ public class StrategyConfigController extends AbstractController {
      *
      * @param user       the authenticated user.
      * @param strategyId the id of the Strategy configuration to delete.
+     * @param botId      the id of the Bot to delete the Strategy config for.
      * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId) {
+    public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
+                                            @Param(value = BOT_ID_PARAM) String botId) {
 
-        String botId = "todo";
+        if (strategyId == null || botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(botId, strategyId);
-        return deletedConfig.getId() != null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return deletedConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

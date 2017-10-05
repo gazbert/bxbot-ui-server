@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests the Bot config controller behaviour.
  *
  * TODO - 404 tests
+ * TODO - Bad Request tests
  *
  * @author gazbert
  */

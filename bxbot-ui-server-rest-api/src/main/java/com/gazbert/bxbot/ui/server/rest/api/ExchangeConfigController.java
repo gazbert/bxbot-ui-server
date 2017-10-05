@@ -74,6 +74,10 @@ public class ExchangeConfigController extends AbstractController {
 
         LOG.info("GET /exchange/?" + BOT_ID_PARAM + "=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
 
+        if (botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
         return exchangeConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
                 buildResponseEntity(exchangeConfig, HttpStatus.OK);

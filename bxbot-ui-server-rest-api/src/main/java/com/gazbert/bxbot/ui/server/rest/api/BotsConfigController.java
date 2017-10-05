@@ -41,6 +41,7 @@ import java.util.List;
  * Controller for directing Bot config requests.
  * <p>
  * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
+ * TODO - Bad Request tests
  *
  * @author gazbert
  * @since 1.0
@@ -85,6 +86,10 @@ public class BotsConfigController extends AbstractController {
 
         LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
 
+        if (botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         final BotConfig botConfig = botConfigService.getBotConfig(botId);
         return botConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(botConfig, HttpStatus.OK);
@@ -104,7 +109,7 @@ public class BotsConfigController extends AbstractController {
         LOG.info("PUT /api/bots/" + botId + " - updateBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
-        if (botConfig == null || botConfig.getId() == null || !botId.equals(botConfig.getId())) {
+        if (botId == null || botConfig == null || botConfig.getId() == null || !botId.equals(botConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -147,6 +152,10 @@ public class BotsConfigController extends AbstractController {
     public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("DELETE /bots/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
+
+        if (botId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
         return deletedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
