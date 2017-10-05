@@ -42,6 +42,9 @@ import org.springframework.web.bind.annotation.*;
  * There is only 1 Exchange Adapter per bot.
  * <p>
  * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
+ * TODO - update javadoc for return values
+ * TODO -  @PreAuthorize("hasRole('USER')") vs admin for update/delete
+ * TODO - update to use full REST path in logging
  *
  * @author gazbert
  * @since 1.0

@@ -43,6 +43,9 @@ import java.util.List;
  * Controller for directing Strategy config requests.
  * <p>
  * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
+ * TODO - update javadoc for return values
+ * TODO -  @PreAuthorize("hasRole('USER')") vs admin for update/delete
+ * TODO - update to use full REST path in logging
  *
  * @author gazbert
  * @since 1.0
