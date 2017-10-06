@@ -26,7 +26,6 @@ package com.gazbert.bxbot.ui.server.rest.api;
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -254,55 +252,41 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         verify(strategyConfigService, times(1)).deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID);
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testCreateStrategyConfig() throws Exception {
+    public void whenCreateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.createStrategyConfig("botId", someStrategyConfig())).willReturn(someStrategyConfig());
+        given(strategyConfigService.createStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
 
-        mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
+        mockMvc.perform(post("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isCreated());
+
+        verify(strategyConfigService, times(1)).createStrategyConfig(eq(BOT_ID), any());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testCreateStrategyConfigWhenUnauthorized() throws Exception {
+    public void whenCreateStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .accept(MediaType.APPLICATION_JSON)
+        given(strategyConfigService.createStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
+
+        mockMvc.perform(post("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error", is("unauthorized")));
+                .andExpect(status().isNotFound());
+
+        verify(strategyConfigService, times(1)).createStrategyConfig(eq(UNKNOWN_BOT_ID), any());
     }
 
-    @Ignore("Ignore til I get JWT up and running!")
     @Test
-    public void testCreateStrategyConfigWhenIdAlreadyExists() throws Exception {
+    public void whenCreateStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(strategyConfigService.createStrategyConfig("botId", someStrategyConfig())).willReturn(emptyStrategyConfig());
-
-        mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isConflict());
-    }
-
-    @Ignore("Ignore til I get JWT up and running!")
-    @Test
-    public void testCreateStrategyConfigWhenIdIsMissing() throws Exception {
-
-        mockMvc.perform(post("/api/config/strategy/" + STRAT_1_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfigWithMissingId())))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     // ------------------------------------------------------------------------------------------------

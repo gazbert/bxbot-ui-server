@@ -138,30 +138,21 @@ public class StrategyConfigController extends AbstractController {
      * Creates a new Strategy configuration.
      *
      * @param user           the authenticated user.
-     * @param strategyId     id of the Strategy config to create.
      * @param strategyConfig the new Strategy config.
+     * @param botId          the id of the Bot to update the Strategy config for.
      * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
      */
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.POST)
-    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String
-            strategyId, @RequestBody StrategyConfig strategyConfig) {
+    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
+                                     @Param(value = BOT_ID_PARAM) String botId) {
 
-        if (strategyConfig == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
+        if (botId == null || strategyConfig == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String botId = "todo";
         final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(botId, strategyConfig);
-        if (createdConfig.getId() != null) {
-            final HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setLocation(ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{strategyId}")
-                    .buildAndExpand(createdConfig.getId()).toUri());
-            return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
-
-        } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return createdConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(createdConfig, HttpStatus.CREATED);
     }
 
     /**
