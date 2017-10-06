@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,6 @@ import org.springframework.web.bind.annotation.*;
  * There is only 1 Exchange Adapter per bot.
  * <p>
  * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
- * TODO - update javadoc for return values
- * TODO -  @PreAuthorize("hasRole('USER')") vs admin for update/delete
- * TODO - update to use full REST path in logging
  *
  * @author gazbert
  * @since 1.0
@@ -72,6 +70,7 @@ public class ExchangeConfigController extends AbstractController {
      * @param botId the id of the Bot to fetch the Exchange config for.
      * @return the Exchange configuration.
      */
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/exchange", method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
@@ -92,9 +91,9 @@ public class ExchangeConfigController extends AbstractController {
      * @param user           the authenticated user making the request.
      * @param exchangeConfig the Exchange config to update.
      * @param botId          the id of the Bot to update the Exchange config for.
-     * @return 200 'OK' HTTP status code with updated Exchange config in the body if update successful, some other
-     * HTTP status code otherwise.
+     * @return 200 'Ok' HTTP status code with updated Exchange config if update successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
                                             @Param(value = BOT_ID_PARAM) String botId) {
@@ -102,7 +101,7 @@ public class ExchangeConfigController extends AbstractController {
         LOG.info("PUT /exchange/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);
 
-        if (exchangeConfig == null || botId == null) {
+        if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

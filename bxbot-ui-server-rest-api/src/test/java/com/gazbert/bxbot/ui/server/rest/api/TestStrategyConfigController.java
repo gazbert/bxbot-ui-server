@@ -52,8 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Tests the Strategy config controller behaviour.
- * <p>
- * TODO - Bad Request tests
  *
  * @author gazbert
  */
@@ -66,8 +64,6 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
-
-    private static final String UNKNOWN_STRAT_ID = "unknown-strat-id";
 
     private static final String STRAT_1_ID = "macd-long-position";
     private static final String STRAT_1_LABEL = "MACD Strat Algo";
@@ -99,7 +95,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.getAllStrategyConfig(any())).willReturn(allTheStrategiesConfig());
 
         mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -127,7 +123,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.getAllStrategyConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
 
         mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -143,12 +139,21 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
+    public void whenGetAllStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(get("/api/config/strategies/")
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenGeStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(strategyConfigService.getStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
 
         mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -169,7 +174,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.getStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
 
         mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -185,12 +190,21 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
+    public void whenGeStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(get("/api/config/strategies/" + STRAT_1_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenUpdateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(strategyConfigService.updateStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
 
         mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isOk());
@@ -204,7 +218,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.updateStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(someStrategyConfig());
 
         mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isOk());
@@ -222,12 +236,42 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
+    public void whenUpdateStrategyConfigCalledAndUserNotAdminThenExpectForbiddenResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void whenUpdateStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenUpdateStrategyConfigCalledWithBotIdMismatchThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/strategies/" + STRAT_2_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenDeleteStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(strategyConfigService.deleteStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
 
         mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNoContent());
 
         verify(strategyConfigService, times(1)).deleteStrategyConfig(BOT_ID, STRAT_1_ID);
@@ -246,10 +290,26 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         given(strategyConfigService.deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
 
         mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNotFound());
 
         verify(strategyConfigService, times(1)).deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID);
+    }
+
+    @Test
+    public void whenDeleteStrategyConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
+
+        mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void whenDeleteStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -257,8 +317,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.createStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
 
-        mockMvc.perform(post("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+        mockMvc.perform(post("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isCreated());
@@ -271,8 +331,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.createStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
 
-        mockMvc.perform(post("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+        mockMvc.perform(post("/api/config/strategies/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isNotFound());
@@ -287,6 +347,26 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void whenCreateStrategyConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
+
+        mockMvc.perform(post("/api/config/strategies/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void whenCreateStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(post("/api/config/strategies")
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someStrategyConfig())))
+                .andExpect(status().isBadRequest());
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -315,17 +395,5 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
         return new StrategyConfig(STRAT_1_ID, STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
-    }
-
-    private static StrategyConfig someStrategyConfigWithMissingId() {
-
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(null, STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
-    }
-
-    private static StrategyConfig emptyStrategyConfig() {
-        return new StrategyConfig();
     }
 }

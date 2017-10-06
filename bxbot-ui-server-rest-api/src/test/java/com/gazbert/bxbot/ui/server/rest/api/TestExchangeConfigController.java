@@ -53,8 +53,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests the Exchange config controller behaviour.
  *
- * TODO - Bad Request tests
- *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
@@ -102,7 +100,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
         given(exchangeConfigService.getExchangeConfig(BOT_ID)).willReturn(someExchangeConfig());
 
         mockMvc.perform(get("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -132,7 +130,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
         given(exchangeConfigService.getExchangeConfig(UNKNOWN_BOT_ID)).willReturn(null); // none found!
 
         mockMvc.perform(get("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD)))
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -146,12 +144,20 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
+    public void whenGetExchangeConfigCalledWithoutBotIdThenExpectBadRequestResponse() throws Exception {
+        mockMvc.perform(get("/api/config/exchange")
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenUpdateExchangeConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(exchangeConfigService.updateExchangeConfig(eq(BOT_ID), any())).willReturn(someExchangeConfig());
 
         mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))
                 .andExpect(status().isOk())
@@ -182,7 +188,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
         given(exchangeConfigService.updateExchangeConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
 
         mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
-                .header("Authorization", "Bearer " + getJwt(VALID_USERNAME, VALID_PASSWORD))
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))
                 .andExpect(status().isNotFound());
@@ -197,6 +203,26 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+                .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someExchangeConfig())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+
+        mockMvc.perform(put("/api/config/exchange")
+                .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
+                .contentType(CONTENT_TYPE)
+                .content(jsonify(someExchangeConfig())))
+                .andExpect(status().isBadRequest());
     }
 
     // ------------------------------------------------------------------------

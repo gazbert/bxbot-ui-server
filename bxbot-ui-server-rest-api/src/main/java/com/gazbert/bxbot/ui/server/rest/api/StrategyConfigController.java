@@ -30,22 +30,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
 /**
  * Controller for directing Strategy config requests.
  * <p>
- * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
- * TODO - update javadoc for return values
- * TODO -  @PreAuthorize("hasRole('USER')") vs admin for update/delete
- * TODO - update to use full REST path in logging
+ * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth?
  *
  * @author gazbert
  * @since 1.0
@@ -71,6 +67,7 @@ public class StrategyConfigController extends AbstractController {
      * @param botId the id of the Bot to fetch the Strategies config for.
      * @return a list of Strategy configurations.
      */
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/strategies", method = RequestMethod.GET)
     public ResponseEntity<?> getAllStrategies(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
@@ -93,13 +90,14 @@ public class StrategyConfigController extends AbstractController {
      * @param botId      the id of the Bot to fetch the Strategy config for.
      * @return the Strategy configuration.
      */
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                          @Param(value = BOT_ID_PARAM) String botId) {
 
         LOG.info("GET /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - getStrategy() "); //- caller: " + user.getUsername());
 
-        if (botId == null || strategyId == null) {
+        if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -115,8 +113,9 @@ public class StrategyConfigController extends AbstractController {
      * @param strategyId     id of the Strategy config to update.
      * @param strategyConfig the updated Strategy config.
      * @param botId          the id of the Bot to update the Strategy config for.
-     * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
+     * @return 200 'Ok' and the updated Strategy config if successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
     ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                      @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
@@ -124,8 +123,7 @@ public class StrategyConfigController extends AbstractController {
         LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);
 
-        if (botId == null || strategyConfig == null ||
-                strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
+        if (botId == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -140,13 +138,17 @@ public class StrategyConfigController extends AbstractController {
      * @param user           the authenticated user.
      * @param strategyConfig the new Strategy config.
      * @param botId          the id of the Bot to update the Strategy config for.
-     * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Strategy config already exists.
+     * @return 201 'Created' HTTP status code and created Strategy config if successful, some other HTTP status code otherwise.
      */
-    @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/strategies", method = RequestMethod.POST)
     ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
                                      @Param(value = BOT_ID_PARAM) String botId) {
 
-        if (botId == null || strategyConfig == null) {
+        LOG.info("POST /strategies - createStrategy()"); // - caller: " + user.getUsername());
+        LOG.info("Request: " + strategyConfig);
+
+        if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -161,13 +163,16 @@ public class StrategyConfigController extends AbstractController {
      * @param user       the authenticated user.
      * @param strategyId the id of the Strategy configuration to delete.
      * @param botId      the id of the Bot to delete the Strategy config for.
-     * @return 204 'No Content' HTTP status code if update successful, 404 'Not Found' HTTP status code if Strategy config not found.
+     * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                             @Param(value = BOT_ID_PARAM) String botId) {
 
-        if (strategyId == null || botId == null) {
+        LOG.info("DELETE /strategies/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
+
+        if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

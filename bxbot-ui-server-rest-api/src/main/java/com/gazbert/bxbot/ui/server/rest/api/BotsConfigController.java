@@ -40,11 +40,7 @@ import java.util.List;
 /**
  * Controller for directing Bot config requests.
  * <p>
- * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth
- * TODO - Bad Request tests
- * TODO - update javadoc for return values
- * TODO -  @PreAuthorize("hasRole('USER')") vs admin for update/delete
- * TODO - update to use full REST path in logging
+ * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth?
  *
  * @author gazbert
  * @since 1.0
@@ -64,7 +60,8 @@ public class BotsConfigController extends AbstractController {
     /**
      * Returns the Bot config for all the bots.
      *
-     * @return the BotConfig configuration.
+     * @param user the authenticated user.
+     * @return all the Bots configuration.
      */
     @PreAuthorize("hasRole('USER')") // Spring Security maps USER to ROLE_USER in database - ROLE_ prefix must be used.
     @RequestMapping(value = "/bots", method = RequestMethod.GET)
@@ -82,16 +79,13 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user  the authenticated user.
      * @param botId the id of the Bot to fetch.
-     * @return the Bot Details configuration.
+     * @return the Bot config for the given id.
      */
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
-
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         final BotConfig botConfig = botConfigService.getBotConfig(botId);
         return botConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
@@ -103,16 +97,16 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user      the authenticated user making the request.
      * @param botConfig the Bot config to update.
-     * @return 200 'OK' HTTP status code with updated Bot config in the body if update successful, some other
-     * HTTP status code otherwise.
+     * @return 200 'OK' HTTP status code with updated Bot config if successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateBot(@AuthenticationPrincipal User user, @PathVariable String botId, @RequestBody BotConfig botConfig) {
 
-        LOG.info("PUT /api/bots/" + botId + " - updateBot()"); // - caller: " + user.getUsername());
+        LOG.info("PUT /bots/" + botId + " - updateBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
-        if (botId == null || botConfig == null || botConfig.getId() == null || !botId.equals(botConfig.getId())) {
+        if (!botId.equals(botConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -126,20 +120,17 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user      the authenticated user.
      * @param botConfig the new Bot config.
-     * @return 201 'Created' HTTP status code if create successful, 409 'Conflict' HTTP status code if Bot config already exists.
+     * @return 201 'Created' HTTP status code if create successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/bots", method = RequestMethod.POST)
     ResponseEntity<?> createBot(@AuthenticationPrincipal User user, @RequestBody BotConfig botConfig) {
 
         LOG.info("POST /bots - createBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
-        if (botConfig == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
-        return createdConfig == null ? new ResponseEntity<>(HttpStatus.CREATED) :
+        return createdConfig == null ? new ResponseEntity<>(HttpStatus.CONFLICT) :
                 buildResponseEntity(createdConfig, HttpStatus.CREATED);
     }
 
@@ -148,17 +139,13 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user  the authenticated user.
      * @param botId the id of the Bot configuration to delete.
-     * @return 204 'No Content' HTTP status code if delete successful, 404 'Not Found' HTTP status code if
-     * Bot config not found.
+     * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/bots/{botId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        LOG.info("DELETE /bots/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
-
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        LOG.info("DELETE /bots/" + botId + " - deleteBot()"); // - caller: " + user.getUsername());
 
         final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
         return deletedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
