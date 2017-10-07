@@ -66,12 +66,12 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
     private static final String STRAT_1_ID = "macd-long-position";
-    private static final String STRAT_1_LABEL = "MACD Strat Algo";
+    private static final String STRAT_1_NAME = "MACD Strat Algo";
     private static final String STRAT_1_DESCRIPTION = "Uses MACD as indicator and takes long position in base currency.";
     private static final String STRAT_1_CLASSNAME = "com.gazbert.nova.algos.MacdLongBase";
 
     private static final String STRAT_2_ID = "long-scalper";
-    private static final String STRAT_2_LABEL = "Long Position Scalper Algo";
+    private static final String STRAT_2_NAME = "Long Position Scalper Algo";
     private static final String STRAT_2_DESCRIPTION = "Scalps and goes long...";
     private static final String STRAT_2_CLASSNAME = "com.gazbert.nova.algos.LongScalper";
 
@@ -100,14 +100,14 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.[0].id").value(STRAT_1_ID))
-                .andExpect(jsonPath("$.data.[0].name").value(STRAT_1_LABEL))
+                .andExpect(jsonPath("$.data.[0].name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.[0].description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.[0].className").value(STRAT_1_CLASSNAME))
                 .andExpect(jsonPath("$.data.[0].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
                 .andExpect(jsonPath("$.data.[0].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE))
 
                 .andExpect(jsonPath("$.data.[1].id").value(STRAT_2_ID))
-                .andExpect(jsonPath("$.data.[1].name").value(STRAT_2_LABEL))
+                .andExpect(jsonPath("$.data.[1].name").value(STRAT_2_NAME))
                 .andExpect(jsonPath("$.data.[1].description").value(STRAT_2_DESCRIPTION))
                 .andExpect(jsonPath("$.data.[1].className").value(STRAT_2_CLASSNAME))
                 .andExpect(jsonPath("$.data.[1].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
@@ -158,7 +158,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
-                .andExpect(jsonPath("$.data.name").value(STRAT_1_LABEL))
+                .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
                 .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
@@ -380,8 +380,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
 
-        final StrategyConfig strategyConfig1 = new StrategyConfig(STRAT_1_ID, STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
-        final StrategyConfig strategyConfig2 = new StrategyConfig(STRAT_2_ID, STRAT_2_LABEL, STRAT_2_DESCRIPTION, STRAT_2_CLASSNAME, configItems);
+        final StrategyConfig strategyConfig1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
+        final StrategyConfig strategyConfig2 = new StrategyConfig(STRAT_2_ID, STRAT_2_NAME, STRAT_2_DESCRIPTION, STRAT_2_CLASSNAME, configItems);
 
         final List<StrategyConfig> allStrategies = new ArrayList<>();
         allStrategies.add(strategyConfig1);
@@ -394,6 +394,6 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         final Map<String, String> configItems = new HashMap<>();
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(STRAT_1_ID, STRAT_1_LABEL, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
+        return new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
     }
 }

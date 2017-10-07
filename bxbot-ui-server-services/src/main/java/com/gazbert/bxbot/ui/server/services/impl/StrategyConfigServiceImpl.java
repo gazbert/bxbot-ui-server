@@ -34,14 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Implementation of the Strategy config service.
- *
- * TODO - add unit tests for unknown bot ids etc...
  *
  * @author gazbert
  */
@@ -69,10 +67,12 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
         LOG.info(() -> "About to fetch all Strategies for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
-
-        return strategyConfigRepository.findAll(botConfig);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return new ArrayList<>();
+        } else {
+            return strategyConfigRepository.findAll(botConfig);
+        }
     }
 
     @Override
@@ -81,10 +81,12 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
         LOG.info(() -> "Fetching Strategy config for strategyId: " + strategyId + " for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
-
-        return strategyConfigRepository.findById(botConfig, strategyId);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return null;
+        } else {
+            return strategyConfigRepository.findById(botConfig, strategyId);
+        }
     }
 
     @Override
@@ -93,10 +95,12 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
         LOG.info(() -> "About to update Strategy config: " + strategyConfig + " for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
-
-        return strategyConfigRepository.save(botConfig, strategyConfig);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return null;
+        } else {
+            return strategyConfigRepository.save(botConfig, strategyConfig);
+        }
     }
 
     @Override
@@ -105,10 +109,12 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
         LOG.info(() -> "About to create Strategy config: " + strategyConfig + " for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
-
-        return strategyConfigRepository.save(botConfig, strategyConfig);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return null;
+        } else {
+            return strategyConfigRepository.save(botConfig, strategyConfig);
+        }
     }
 
     @Override
@@ -117,9 +123,11 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
         LOG.info(() -> "About to delete Strategy config for strategyId: " + strategyId + " for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty StrategyConfig
-
-        return strategyConfigRepository.delete(botConfig, strategyId);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return false;
+        } else {
+            return strategyConfigRepository.delete(botConfig, strategyId);
+        }
     }
 }
