@@ -43,5 +43,5 @@ public interface StrategyConfigService {
 
     StrategyConfig createStrategyConfig(String botId, StrategyConfig config);
 
-    StrategyConfig deleteStrategyConfig(String botId, String strategyId);
+    boolean deleteStrategyConfig(String botId, String strategyId);
 }

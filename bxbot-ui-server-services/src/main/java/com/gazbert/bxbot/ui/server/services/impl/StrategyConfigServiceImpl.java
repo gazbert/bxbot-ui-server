@@ -112,7 +112,7 @@ public class StrategyConfigServiceImpl implements StrategyConfigService {
     }
 
     @Override
-    public StrategyConfig deleteStrategyConfig(String botId, String strategyId) {
+    public boolean deleteStrategyConfig(String botId, String strategyId) {
 
         LOG.info(() -> "About to delete Strategy config for strategyId: " + strategyId + " for botId: " + botId);
 

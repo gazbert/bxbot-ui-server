@@ -176,8 +176,8 @@ public class StrategyConfigController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final StrategyConfig deletedConfig = strategyConfigService.deleteStrategyConfig(botId, strategyId);
-        return deletedConfig == null
+        final boolean result = strategyConfigService.deleteStrategyConfig(botId, strategyId);
+        return !result
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

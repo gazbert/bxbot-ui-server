@@ -268,7 +268,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.deleteStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
+        given(strategyConfigService.deleteStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(true);
 
         mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
@@ -287,7 +287,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(strategyConfigService.deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
+        given(strategyConfigService.deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(false);
 
         mockMvc.perform(delete("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
