@@ -35,8 +35,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,15 +65,21 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 
         LOG.info(() -> "Fetching all StrategyConfig for botId: " + botConfig.getId());
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        @SuppressWarnings("unchecked") final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, List.class);
+            @SuppressWarnings("unchecked") final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(
+                    botConfig.getBaseUrl() + REST_ENDPOINT_PATH, List.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + allTheStrategyConfig);
-        return allTheStrategyConfig;
+            LOG.info(() -> "Response received from remote Bot: " + allTheStrategyConfig);
+            return allTheStrategyConfig;
+
+        } catch (HttpClientErrorException e) {
+            LOG.error("Failed to get all Strategy Config from remote bot. Details: " + e.getMessage(), e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -79,15 +87,21 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 
         LOG.info(() -> "Fetching StrategyConfig for strategyId: " + strategyId + " for botId: " + botConfig.getId());
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        @SuppressWarnings("unchecked") final StrategyConfig strategyConfig = restTemplate.getForObject(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH + '/' + strategyId, StrategyConfig.class);
+            @SuppressWarnings("unchecked") final StrategyConfig strategyConfig = restTemplate.getForObject(
+                    botConfig.getBaseUrl() + REST_ENDPOINT_PATH + '/' + strategyId, StrategyConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + strategyConfig);
-        return strategyConfig;
+            LOG.info(() -> "Response received from remote Bot: " + strategyConfig);
+            return strategyConfig;
+
+        } catch (HttpClientErrorException e) {
+            LOG.error("Failed to get Strategy Config from remote bot. Details: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
@@ -95,20 +109,40 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 
         LOG.info(() -> "Saving StrategyConfig: " + strategyConfig + " for botId: " + botConfig.getId());
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final HttpEntity<StrategyConfig> requestUpdate = new HttpEntity<>(strategyConfig);
-        final ResponseEntity<StrategyConfig> savedConfig = restTemplate.exchange(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, StrategyConfig.class);
+            final HttpEntity<StrategyConfig> requestUpdate = new HttpEntity<>(strategyConfig);
+            final ResponseEntity<StrategyConfig> savedConfig = restTemplate.exchange(
+                    botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, StrategyConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + savedConfig.getBody());
-        return savedConfig.getBody();
+            LOG.info(() -> "Response received from remote Bot: " + savedConfig.getBody());
+            return savedConfig.getBody();
+
+        } catch (HttpClientErrorException e) {
+            LOG.error("Failed to save Strategy Config on remote bot. Details: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
-    public StrategyConfig delete(BotConfig botConfig, String strategyId) {
-        throw new UnsupportedOperationException("delete() not implemented");
+    public boolean delete(BotConfig botConfig, String strategyId) {
+
+        LOG.info(() -> "Deleting StrategyConfig for strategyId: " + strategyId + " for botId: " + botConfig.getId());
+
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
+
+            restTemplate.delete(botConfig.getBaseUrl() + REST_ENDPOINT_PATH + '/' + strategyId);
+            return true;
+
+        } catch (HttpClientErrorException e) {
+            LOG.error("Failed to delete Strategy Config on remote bot. Details: " + e.getMessage(), e);
+            return false;
+        }
     }
 }

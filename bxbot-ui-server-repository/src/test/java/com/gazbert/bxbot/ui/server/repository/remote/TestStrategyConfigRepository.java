@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -46,6 +47,8 @@ import java.util.Map;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -131,6 +134,19 @@ public class TestStrategyConfigRepository {
     }
 
     @Test
+    public void whenFindAllCalledAndRemoteCallFailsThenExpectEmptyStrategyConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final List<StrategyConfig> allTheStrategyConfig = restClient.findAll(botConfig);
+        assertThat(allTheStrategyConfig).isEqualTo(new ArrayList<>());
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenFindByIdCalledWithKnownIdThenExpectMatchingStrategyConfigToBeReturned() throws Exception {
 
         final String theStrategyConfigInJson = objectMapper.writeValueAsString(knownStrategyConfig());
@@ -146,21 +162,14 @@ public class TestStrategyConfigRepository {
     }
 
     @Test
-    public void whenFindByIdCalledWithUnknownIdThenReturnEmptyStrategy() throws Exception {
-
-        final String theStrategyConfigInJson = objectMapper.writeValueAsString(emptyStrategyConfig());
+    public void whenFindByIdCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         final StrategyConfig strategyConfig = restClient.findById(botConfig, STRAT_ID_1);
-
-        assertThat(strategyConfig.getId()).isEqualTo(null);
-        assertThat(strategyConfig.getName()).isEqualTo(null);
-        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-        assertThat(strategyConfig.getClassName()).isEqualTo(null);
-        assertThat(strategyConfig.getConfigItems().isEmpty());
+        assertThat(strategyConfig).isEqualTo(null);
 
         mockServer.verify();
     }
@@ -180,190 +189,42 @@ public class TestStrategyConfigRepository {
         mockServer.verify();
     }
 
-//    @Test
-//    public void whenUpdateStrategyCalledWithKnownIdThenExpectServiceToReturnUpdatedStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.save(someExternalStrategyConfig());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
-//        assertThat(strategyConfig.getName()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+    @Test
+    public void whenSaveCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
 
-//    @Test
-//    public void whenUpdateStrategyConfigCalledWithUnrecognizedIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.save(someExternalStrategyConfigWithUnknownId());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getName()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-//    @Test
-//    public void whenDeleteByIdCalledWithRecognizedIdThenReturnMatchingStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.deleteStrategyById(STRAT_ID_1);
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(STRAT_ID_1);
-//        assertThat(strategyConfig.getName()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+        final StrategyConfig strategyConfig = restClient.save(botConfig, someStrategyConfigWithUnknownId());
+        assertThat(strategyConfig).isEqualTo(null);
 
-//    @Test
-//    public void whenDeleteByIdCalledWithUnrecognizedIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.deleteStrategyById("unknown-id");
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getName()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        mockServer.verify();
+    }
 
-//    @Test
-//    public void whenCreateStrategyCalledWithUnknownThenExpectServiceToReturnCreatedStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        ConfigurationManager.saveConfig(
-//                eq(TradingStrategiesType.class),
-//                anyObject(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME));
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfigPlusNewOne());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.createStrategy(someExternalStrategyConfigWithUnknownId());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(UNKNOWN_STRAT_ID);
-//        assertThat(strategyConfig.getName()).isEqualTo(STRAT_LABEL_1);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(STRAT_DESCRIPTION_1);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(STRAT_CLASSNAME_1);
-//        assertThat(strategyConfig.getConfigItems().containsKey(BUY_PRICE_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(BUY_PRICE_CONFIG_ITEM_VALUE));
-//        assertThat(strategyConfig.getConfigItems().containsKey(AMOUNT_TO_BUY_CONFIG_ITEM_KEY));
-//        assertThat(strategyConfig.getConfigItems().containsValue(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
-//
-//        PowerMock.verifyAll();
-//    }
+    @Test
+    public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
 
-//    @Test
-//    public void whenCreateStrategyConfigCalledWithExistingIdThenReturnEmptyStrategy() throws Exception {
-//
-//        expect(ConfigurationManager.loadConfig(
-//                eq(TradingStrategiesType.class),
-//                eq(STRATEGIES_CONFIG_XML_FILENAME),
-//                eq(STRATEGIES_CONFIG_XSD_FILENAME))).
-//                andReturn(allTheInternalStrategiesConfig());
-//
-//        PowerMock.replayAll();
-//
-//        final StrategyConfigRepository strategyConfigRepository = new StrategyConfigRepositoryRestClient();
-//        final StrategyConfig strategyConfig = strategyConfigRepository.createStrategy(someExternalStrategyConfig());
-//
-//        assertThat(strategyConfig.getId()).isEqualTo(null);
-//        assertThat(strategyConfig.getName()).isEqualTo(null);
-//        assertThat(strategyConfig.getDescription()).isEqualTo(null);
-//        assertThat(strategyConfig.getExchangeAdapter()).isEqualTo(null);
-//        assertThat(strategyConfig.getConfigItems().isEmpty());
-//
-//        PowerMock.verifyAll();
-//    }
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + STRAT_ID_1))
+                .andRespond(withNoContent());
 
-    //    @Test
-//    public void testGetMessage_404() {
-//        mockServer.expect(requestTo("http://google.com")).andExpect(method(HttpMethod.GET))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        String result = simpleRestService.getMessage();
-//
-//        mockServer.verify();
-//        assertThat(result, allOf(containsString("FAILED"), containsString("404")));
+        final boolean result = restClient.delete(botConfig, STRAT_ID_1);
+        assertThat(result).isEqualTo(true);
 
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenDeleteCalledWithUnknownIdThenExpectFailureResponse() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);
+        assertThat(result).isEqualTo(false);
+
+        mockServer.verify();
+    }
 
     // ------------------------------------------------------------------------------------------------
     // Private utils
@@ -376,10 +237,6 @@ public class TestStrategyConfigRepository {
         return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
     }
 
-    private static StrategyConfig emptyStrategyConfig() {
-        return new StrategyConfig();
-    }
-
     private List<StrategyConfig> allTheStrategyConfig() {
         final List<StrategyConfig> allTheStrategyConfig = new ArrayList<>();
         allTheStrategyConfig.add(strategyConfig_1);
@@ -387,10 +244,10 @@ public class TestStrategyConfigRepository {
         return allTheStrategyConfig;
     }
 
-//    private static StrategyConfig someExternalStrategyConfigWithUnknownId() {
-//        final Map<String, String> configItems = new HashMap<>();
-//        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-//        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-//        return new StrategyConfig(UNKNOWN_STRAT_ID, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
-//    }
+    private static StrategyConfig someStrategyConfigWithUnknownId() {
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return new StrategyConfig(UNKNOWN_STRAT_ID, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
+    }
 }
