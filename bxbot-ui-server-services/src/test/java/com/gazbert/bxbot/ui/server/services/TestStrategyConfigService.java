@@ -45,7 +45,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Tests the Bot configuration repository behaves as expected.
+ * Tests the Strategy configuration service behaves as expected.
  *
  * @author gazbert
  */
