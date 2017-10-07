@@ -34,12 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of the Exchange config service.
- *
- *  TODO - add unit tests for unknown bot ids etc...
  *
  * @author gazbert
  */
@@ -67,20 +64,25 @@ public class ExchangeConfigServiceImpl implements ExchangeConfigService {
         LOG.info(() -> "About to fetch Exchange config for botId: " + botId);
 
         final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangeConfig
-
-        return exchangeConfigRepository.get(botConfig);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return null;
+        } else {
+            return exchangeConfigRepository.get(botConfig);
+        }
     }
 
     @Override
     public ExchangeConfig updateExchangeConfig(String botId, ExchangeConfig exchangeConfig) {
 
-        final BotConfig botConfig = botConfigRepository.findById(botId);
-
-        // TODO - bot not found check - if botId is bad, we need to 404 immediately, not go remote... return empty ExchangeConfig
-
         LOG.info(() -> "About to update bot " + botId + " Exchange config: " + exchangeConfig);
-        return exchangeConfigRepository.save(botConfig, exchangeConfig);
+
+        final BotConfig botConfig = botConfigRepository.findById(botId);
+        if (botConfig == null) {
+            LOG.warn("Failed to find BotConfig for botId: " + botId);
+            return null;
+        } else {
+            return exchangeConfigRepository.save(botConfig, exchangeConfig);
+        }
     }
 }
