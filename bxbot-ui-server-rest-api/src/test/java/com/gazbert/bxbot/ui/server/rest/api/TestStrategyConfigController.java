@@ -162,8 +162,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
                 .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
-                );
+                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).getStrategyConfig(BOT_ID, STRAT_1_ID);
     }
@@ -207,7 +206,14 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
+                .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
+                .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
+                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).updateStrategyConfig(eq(BOT_ID), any());
     }
@@ -321,7 +327,14 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+
+                .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
+                .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
+                .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
+                .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
+                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).createStrategyConfig(eq(BOT_ID), any());
     }

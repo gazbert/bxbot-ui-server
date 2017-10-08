@@ -81,8 +81,9 @@ public class ExchangeConfigController extends AbstractController {
         }
 
         final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
-        return exchangeConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                buildResponseEntity(exchangeConfig, HttpStatus.OK);
+        return exchangeConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(exchangeConfig, HttpStatus.OK);
     }
 
     /**
@@ -106,8 +107,9 @@ public class ExchangeConfigController extends AbstractController {
         }
 
         final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(botId, exchangeConfig);
-        return updatedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                buildResponseEntity(exchangeConfig, HttpStatus.OK);
+        return updatedConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(exchangeConfig, HttpStatus.OK);
     }
 }
 

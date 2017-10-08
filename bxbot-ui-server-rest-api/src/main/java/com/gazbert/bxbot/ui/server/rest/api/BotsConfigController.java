@@ -70,7 +70,8 @@ public class BotsConfigController extends AbstractController {
         LOG.info("GET /bots - getBots()"); // caller: " + user.getUsername());
 
         final List<BotConfig> botConfigs = botConfigService.getAllBotConfig();
-        return botConfigs.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return botConfigs.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(botConfigs, HttpStatus.OK);
     }
 
@@ -88,7 +89,8 @@ public class BotsConfigController extends AbstractController {
         LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
 
         final BotConfig botConfig = botConfigService.getBotConfig(botId);
-        return botConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return botConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(botConfig, HttpStatus.OK);
     }
 
@@ -111,8 +113,9 @@ public class BotsConfigController extends AbstractController {
         }
 
         final BotConfig updateBotConfig = botConfigService.updateBotConfig(botConfig);
-        return updateBotConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                buildResponseEntity(updateBotConfig, HttpStatus.OK);
+        return updateBotConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(updateBotConfig, HttpStatus.OK);
     }
 
     /**
@@ -124,14 +127,15 @@ public class BotsConfigController extends AbstractController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/bots", method = RequestMethod.POST)
-    ResponseEntity<?> createBot(@AuthenticationPrincipal User user, @RequestBody BotConfig botConfig) {
+    public ResponseEntity<?> createBot(@AuthenticationPrincipal User user, @RequestBody BotConfig botConfig) {
 
         LOG.info("POST /bots - createBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
         final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
-        return createdConfig == null ? new ResponseEntity<>(HttpStatus.CONFLICT) :
-                buildResponseEntity(createdConfig, HttpStatus.CREATED);
+        return createdConfig == null
+                ? new ResponseEntity<>(HttpStatus.CONFLICT)
+                : buildResponseEntity(createdConfig, HttpStatus.CREATED);
     }
 
     /**
@@ -148,7 +152,8 @@ public class BotsConfigController extends AbstractController {
         LOG.info("DELETE /bots/" + botId + " - deleteBot()"); // - caller: " + user.getUsername());
 
         final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
-        return deletedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return deletedConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

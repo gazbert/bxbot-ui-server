@@ -78,7 +78,8 @@ public class StrategyConfigController extends AbstractController {
         }
 
         final List<StrategyConfig> strategyConfigs = strategyConfigService.getAllStrategyConfig(botId);
-        return strategyConfigs.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return strategyConfigs.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(strategyConfigs, HttpStatus.OK);
     }
 
@@ -102,8 +103,9 @@ public class StrategyConfigController extends AbstractController {
         }
 
         final StrategyConfig strategyConfig = strategyConfigService.getStrategyConfig(botId, strategyId);
-        return strategyConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                buildResponseEntity(strategyConfig, HttpStatus.OK);
+        return strategyConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(strategyConfig, HttpStatus.OK);
     }
 
     /**
@@ -117,19 +119,20 @@ public class StrategyConfigController extends AbstractController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
+    public ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                      @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
 
         LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);
 
-        if (botId == null || !strategyId.equals(strategyConfig.getId())) {
+        if (botId == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(botId, strategyConfig);
-        return updatedConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                buildResponseEntity(updatedConfig, HttpStatus.OK);
+        return updatedConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(updatedConfig, HttpStatus.OK);
     }
 
     /**
@@ -142,7 +145,7 @@ public class StrategyConfigController extends AbstractController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies", method = RequestMethod.POST)
-    ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
+    public ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
                                      @Param(value = BOT_ID_PARAM) String botId) {
 
         LOG.info("POST /strategies - createStrategy()"); // - caller: " + user.getUsername());
@@ -153,7 +156,8 @@ public class StrategyConfigController extends AbstractController {
         }
 
         final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(botId, strategyConfig);
-        return createdConfig == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return createdConfig == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(createdConfig, HttpStatus.CREATED);
     }
 
