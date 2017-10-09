@@ -41,6 +41,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -84,6 +86,7 @@ public class TestExchangeConfigService {
     private static final String SELL_FEE_CONFIG_ITEM_VALUE = "0.25";
 
     private BotConfig knownBotConfig;
+    private ExchangeConfig exchangeConfig;
 
     @MockBean
     ExchangeConfigRepository exchangeConfigRepository;
@@ -95,19 +98,20 @@ public class TestExchangeConfigService {
     @Before
     public void setup() throws Exception {
         knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        exchangeConfig = buildExchangeConfig();
     }
 
     @Test
     public void whenGetExchangeConfigCalledWithKnownBotIdThenReturnExchangeConfig() throws Exception {
 
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
-        given(exchangeConfigRepository.get(knownBotConfig)).willReturn(someExchangeConfig());
+        given(exchangeConfigRepository.get(knownBotConfig)).willReturn(exchangeConfig);
 
         final ExchangeConfigService exchangeConfigService =
                 new ExchangeConfigServiceImpl(exchangeConfigRepository, botConfigRepository);
 
-        final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(BOT_1_ID);
-        assertThat(exchangeConfig.equals(someExchangeConfig()));
+        final ExchangeConfig fetchedConfig = exchangeConfigService.getExchangeConfig(BOT_1_ID);
+        assertThat(fetchedConfig.equals(exchangeConfig));
 
         verify(botConfigRepository, times(1)).findById(BOT_1_ID);
         verify(exchangeConfigRepository, times(1)).get(knownBotConfig);
@@ -127,11 +131,41 @@ public class TestExchangeConfigService {
         verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);
     }
 
+    @Test
+    public void whenUpdateExchangeConfigCalledWithKnownBotIdThenReturnExchangeConfig() throws Exception {
+
+        given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
+        given(exchangeConfigRepository.save(knownBotConfig, exchangeConfig)).willReturn(exchangeConfig);
+
+        final ExchangeConfigService exchangeConfigService =
+                new ExchangeConfigServiceImpl(exchangeConfigRepository, botConfigRepository);
+
+        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(BOT_1_ID, exchangeConfig);
+        assertThat(updatedConfig.equals(exchangeConfig));
+
+        verify(botConfigRepository, times(1)).findById(BOT_1_ID);
+        verify(exchangeConfigRepository, times(1)).save(knownBotConfig, exchangeConfig);
+    }
+
+    @Test
+    public void whenUpdateExchangeConfigCalledWithUnknownBotIdThenReturnNullExchangeConfig() throws Exception {
+
+        given(botConfigRepository.findById(UNKNOWN_BOT_ID)).willReturn(null);
+
+        final ExchangeConfigService exchangeConfigService =
+                new ExchangeConfigServiceImpl(exchangeConfigRepository, botConfigRepository);
+
+        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(UNKNOWN_BOT_ID, exchangeConfig);
+        assertThat(updatedConfig == null);
+
+        verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);
+    }
+
     // ------------------------------------------------------------------------------------------------
     // Private utils
     // ------------------------------------------------------------------------------------------------
 
-    private static ExchangeConfig someExchangeConfig() {
+    private static ExchangeConfig buildExchangeConfig() {
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(CONNECTION_TIMEOUT);

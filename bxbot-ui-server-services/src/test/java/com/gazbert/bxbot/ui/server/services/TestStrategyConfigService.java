@@ -94,14 +94,16 @@ public class TestStrategyConfigService {
     @Test
     public void whenGetAllStrategyConfigCalledWithKnownBotIdThenReturnAllBotConfig() throws Exception {
 
+        final List<StrategyConfig> allTheStrategiesConfig = buildAllTheStrategiesConfig();
+
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
-        given(strategyConfigRepository.findAll(knownBotConfig)).willReturn(allTheStrategiesConfig());
+        given(strategyConfigRepository.findAll(knownBotConfig)).willReturn(allTheStrategiesConfig);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
         final List<StrategyConfig> strategyConfigs = strategyConfigService.getAllStrategyConfig(BOT_1_ID);
-        assertThat(strategyConfigs.equals(allTheStrategiesConfig()));
+        assertThat(strategyConfigs.equals(allTheStrategiesConfig));
 
         verify(botConfigRepository, times(1)).findById(BOT_1_ID);
         verify(strategyConfigRepository, times(1)).findAll(knownBotConfig);
@@ -125,7 +127,7 @@ public class TestStrategyConfigService {
     // Private utils
     // ------------------------------------------------------------------------------------------------
 
-    private static List<StrategyConfig> allTheStrategiesConfig() {
+    private static List<StrategyConfig> buildAllTheStrategiesConfig() {
 
         final StrategyConfig strategyConfig1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION,
                 STRAT_1_CLASSNAME, someConfigItems());
