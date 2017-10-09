@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.api;
+package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
@@ -59,6 +59,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @WebAppConfiguration
 public class TestExchangeConfigController extends AbstractConfigControllerTest {
+
+    private static final String EXCHANGE_CONFIG_ENDPOINT_URI = "/api/v1/config/exchange/";
 
     private static final String BOT_ID_PARAM = "botId";
 
@@ -99,7 +101,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
         given(exchangeConfigService.getExchangeConfig(BOT_ID)).willReturn(someExchangeConfig());
 
-        mockMvc.perform(get("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -129,7 +131,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
         given(exchangeConfigService.getExchangeConfig(UNKNOWN_BOT_ID)).willReturn(null); // none found!
 
-        mockMvc.perform(get("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -139,13 +141,13 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenGetExchangeConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID))
+        mockMvc.perform(get(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void whenGetExchangeConfigCalledWithoutBotIdThenExpectBadRequestResponse() throws Exception {
-        mockMvc.perform(get("/api/config/exchange")
+        mockMvc.perform(get(EXCHANGE_CONFIG_ENDPOINT_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -157,7 +159,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
         final ExchangeConfig updatedConfig = someExchangeConfig();
         given(exchangeConfigService.updateExchangeConfig(eq(BOT_ID), any())).willReturn(updatedConfig);
 
-        mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -189,7 +191,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
         final ExchangeConfig updatedConfig = someExchangeConfig();
         given(exchangeConfigService.updateExchangeConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
 
-        mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -201,7 +203,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateExchangeConfigCalledForKnownBotIdAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(EXCHANGE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))
                 .andExpect(status().isUnauthorized());
@@ -210,7 +212,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateExchangeConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(EXCHANGE_CONFIG_ENDPOINT_URI + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))
@@ -220,7 +222,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateExchangeConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put("/api/config/exchange")
+        mockMvc.perform(put(EXCHANGE_CONFIG_ENDPOINT_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someExchangeConfig())))

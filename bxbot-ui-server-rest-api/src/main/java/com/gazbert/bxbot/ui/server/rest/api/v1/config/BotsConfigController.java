@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.api;
+package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
@@ -46,7 +46,7 @@ import java.util.List;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/config")
+@RequestMapping("/api/v1/config")
 public class BotsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();

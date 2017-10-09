@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.api;
+package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/config")
+@RequestMapping("/api/v1/config")
 public class ExchangeConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();

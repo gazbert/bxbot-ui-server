@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.rest.api;
+package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.google.common.base.MoreObjects;
 
