@@ -136,12 +136,14 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(botConfigService.updateBotConfig(any())).willReturn(someBotConfig);
+
+        final BotConfig updatedConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        given(botConfigService.updateBotConfig(any())).willReturn(updatedConfig);
 
         mockMvc.perform(put("/api/config/bots/" + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someBotConfig)))
+                .content(jsonify(updatedConfig)))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -205,12 +207,15 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(botConfigService.createBotConfig(any())).willReturn(someBotConfig);
+        final BotConfig createdConfig = new BotConfig(null, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        final BotConfig createdConfigWithId = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+
+        given(botConfigService.createBotConfig(any())).willReturn(createdConfigWithId);
 
         mockMvc.perform(post("/api/config/bots")
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someBotConfig)))
+                .content(jsonify(createdConfig)))
                 .andDo(print())
                 .andExpect(status().isCreated())
 

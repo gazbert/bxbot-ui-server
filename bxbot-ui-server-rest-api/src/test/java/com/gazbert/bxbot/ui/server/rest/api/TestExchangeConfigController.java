@@ -154,12 +154,13 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateExchangeConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(exchangeConfigService.updateExchangeConfig(eq(BOT_ID), any())).willReturn(someExchangeConfig());
+        final ExchangeConfig updatedConfig = someExchangeConfig();
+        given(exchangeConfigService.updateExchangeConfig(eq(BOT_ID), any())).willReturn(updatedConfig);
 
         mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someExchangeConfig())))
+                .content(jsonify(updatedConfig)))
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.exchangeName").value(EXCHANGE_NAME))
@@ -185,12 +186,13 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateExchangeConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(exchangeConfigService.updateExchangeConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
+        final ExchangeConfig updatedConfig = someExchangeConfig();
+        given(exchangeConfigService.updateExchangeConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
 
         mockMvc.perform(put("/api/config/exchange/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someExchangeConfig())))
+                .content(jsonify(updatedConfig)))
                 .andExpect(status().isNotFound());
 
         verify(exchangeConfigService, times(1)).updateExchangeConfig(eq(UNKNOWN_BOT_ID), any());

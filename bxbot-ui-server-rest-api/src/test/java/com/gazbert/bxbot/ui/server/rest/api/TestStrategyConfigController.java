@@ -41,8 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -92,7 +90,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetAllStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.getAllStrategyConfig(any())).willReturn(allTheStrategiesConfig());
+        given(strategyConfigService.getAllStrategyConfig(BOT_ID)).willReturn(allTheStrategiesConfig());
 
         mockMvc.perform(get("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
@@ -200,12 +198,13 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.updateStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
+        final StrategyConfig updatedConfig = someStrategyConfig();
+        given(strategyConfigService.updateStrategyConfig(BOT_ID, updatedConfig)).willReturn(updatedConfig);
 
         mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(updatedConfig)))
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
@@ -215,21 +214,22 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
                 .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
-        verify(strategyConfigService, times(1)).updateStrategyConfig(eq(BOT_ID), any());
+        verify(strategyConfigService, times(1)).updateStrategyConfig(BOT_ID, updatedConfig);
     }
 
     @Test
     public void whenUpdateStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(strategyConfigService.updateStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(someStrategyConfig());
+        final StrategyConfig updatedConfig = someStrategyConfig();
+        given(strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
 
         mockMvc.perform(put("/api/config/strategies/" + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
-                .andExpect(status().isOk());
+                .content(jsonify(updatedConfig)))
+                .andExpect(status().isNotFound());
 
-        verify(strategyConfigService, times(1)).updateStrategyConfig(eq(UNKNOWN_BOT_ID), any());
+        verify(strategyConfigService, times(1)).updateStrategyConfig(UNKNOWN_BOT_ID, updatedConfig);
     }
 
     @Test
@@ -321,12 +321,15 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.createStrategyConfig(eq(BOT_ID), any())).willReturn(someStrategyConfig());
+        final StrategyConfig createdConfig = someNewStrategyConfig();
+        final StrategyConfig createdConfigWithId = someStrategyConfig();
+
+        given(strategyConfigService.createStrategyConfig(BOT_ID, createdConfig)).willReturn(createdConfigWithId);
 
         mockMvc.perform(post("/api/config/strategies/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(createdConfig)))
                 .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
@@ -336,21 +339,22 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
                 .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
-        verify(strategyConfigService, times(1)).createStrategyConfig(eq(BOT_ID), any());
+        verify(strategyConfigService, times(1)).createStrategyConfig(BOT_ID, createdConfig);
     }
 
     @Test
     public void whenCreateStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        given(strategyConfigService.createStrategyConfig(eq(UNKNOWN_BOT_ID), any())).willReturn(null);
+        final StrategyConfig createdConfig = someNewStrategyConfig();
+        given(strategyConfigService.createStrategyConfig(UNKNOWN_BOT_ID, createdConfig)).willReturn(null);
 
         mockMvc.perform(post("/api/config/strategies/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(createdConfig)))
                 .andExpect(status().isNotFound());
 
-        verify(strategyConfigService, times(1)).createStrategyConfig(eq(UNKNOWN_BOT_ID), any());
+        verify(strategyConfigService, times(1)).createStrategyConfig(UNKNOWN_BOT_ID, createdConfig);
     }
 
     @Test
@@ -403,10 +407,16 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     private static StrategyConfig someStrategyConfig() {
-
         final Map<String, String> configItems = new HashMap<>();
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
         return new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
+    }
+
+    private static StrategyConfig someNewStrategyConfig() {
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return new StrategyConfig(null, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
     }
 }
