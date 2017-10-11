@@ -53,7 +53,6 @@ import static org.mockito.Mockito.verify;
 public class TestStrategyConfigService {
 
     private static final String UNKNOWN_BOT_ID = "unknown-or-new-bot-id";
-    private static final String GENERATED_BOT_ID = "new-bot-id-123";
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
