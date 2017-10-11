@@ -28,7 +28,7 @@ import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 /**
  * The remote Exchange configuration repository.
  *
- * It provides access to data stored on the remote BX-bot nodes.
+ * It provides access to Exchange config stored on remote BX-bot nodes.
  *
  * @author gazbert
  */

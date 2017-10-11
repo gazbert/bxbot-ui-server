@@ -20,29 +20,21 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 package com.gazbert.bxbot.ui.server.repository.remote;
 
-
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
-
-import java.util.List;
+import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
 
 /**
- * The remote Strategy configuration repository.
- *
- * It provides access to Strategies config stored on remote BX-bot nodes.
+ * The remote Engine configuration repository.
+ * <p>
+ * It provides access to Engine config stored on remote BX-bot nodes.
  *
  * @author gazbert
  */
-public interface StrategyConfigRepository {
+public interface EngineConfigRepository {
 
-    List<StrategyConfig> findAll(BotConfig botConfig);
+    EngineConfig get(BotConfig botConfig);
 
-    StrategyConfig findById(BotConfig botConfig, String strategyId);
-
-    StrategyConfig save(BotConfig botConfig, StrategyConfig config);
-
-    boolean delete(BotConfig botConfig, String strategyId);
+    EngineConfig save(BotConfig botConfig, EngineConfig config);
 }

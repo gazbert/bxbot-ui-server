@@ -24,8 +24,8 @@
 package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
-import com.gazbert.bxbot.ui.server.repository.remote.ExchangeConfigRepository;
+import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
+import com.gazbert.bxbot.ui.server.repository.remote.EngineConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -38,52 +38,52 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * A REST client implementation of the remote Exchange config repository.
+ * A REST client implementation of the remote Engine config repository.
  *
  * @author gazbert
  */
-@Repository("exchangeConfigRepository")
+@Repository("engineConfigRepository")
 @Transactional
-public class ExchangeConfigRepositoryRestClient implements ExchangeConfigRepository {
+public class EngineConfigRepositoryRestClient implements EngineConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String REST_ENDPOINT_PATH = "/config/exchange";
+    private static final String REST_ENDPOINT_PATH = "/config/engine";
 
     private RestTemplate restTemplate;
 
 
-    public ExchangeConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
+    public EngineConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
     @Override
-    public ExchangeConfig get(BotConfig botConfig) {
+    public EngineConfig get(BotConfig botConfig) {
 
-        LOG.info(() -> "Fetching ExchangeConfig...");
+        LOG.info(() -> "Fetching EngineConfig...");
 
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
-        final ExchangeConfig config = restTemplate.getForObject(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, ExchangeConfig.class);
+        final EngineConfig config = restTemplate.getForObject(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, EngineConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + config);
         return config;
     }
 
     @Override
-    public ExchangeConfig save(BotConfig botConfig, ExchangeConfig exchangeConfig) {
+    public EngineConfig save(BotConfig botConfig, EngineConfig engineConfig) {
 
-        LOG.info(() -> "About to save ExchangeConfig: " + exchangeConfig);
+        LOG.info(() -> "About to save EngineConfig: " + engineConfig);
 
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
-        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(exchangeConfig);
-        final ResponseEntity<ExchangeConfig> savedConfig = restTemplate.exchange(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
+        final HttpEntity<EngineConfig> requestUpdate = new HttpEntity<>(engineConfig);
+        final ResponseEntity<EngineConfig> savedConfig  = restTemplate.exchange(
+                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, EngineConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + savedConfig);
         return savedConfig.getBody();
