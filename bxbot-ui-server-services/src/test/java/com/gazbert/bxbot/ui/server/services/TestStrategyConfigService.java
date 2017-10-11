@@ -47,6 +47,8 @@ import static org.mockito.Mockito.verify;
 /**
  * Tests the Strategy configuration service behaves as expected.
  *
+ * TODO - test other operations!
+ *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)

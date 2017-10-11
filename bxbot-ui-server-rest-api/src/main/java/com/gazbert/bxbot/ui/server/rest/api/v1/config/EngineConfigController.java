@@ -23,9 +23,9 @@
 
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
+import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.ExchangeConfigService;
+import com.gazbert.bxbot.ui.server.services.EngineConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.repository.query.Param;
@@ -33,14 +33,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for directing Exchange config requests.
+ * Controller for directing Engine config requests.
  * <p>
- * Exchange config can only be fetched and updated - it cannot be deleted or created.
+ * Engine config can only be fetched and updated - it cannot be deleted or created.
  * <p>
- * There is only 1 Exchange Adapter per bot.
+ * There is only 1 Engine config per bot.
  * <p>
  * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
  *
@@ -49,64 +52,61 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/v1/config")
-public class ExchangeConfigController extends AbstractController {
+public class EngineConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String BOT_ID_PARAM = "botId";
 
-    private final ExchangeConfigService exchangeConfigService;
+    private final EngineConfigService engineConfigService;
 
-    public ExchangeConfigController(ExchangeConfigService exchangeConfigService) {
-        this.exchangeConfigService = exchangeConfigService;
+    public EngineConfigController(EngineConfigService engineConfigService) {
+        this.engineConfigService = engineConfigService;
     }
 
     /**
-     * Returns the Exchange Config for a Bot id.
-     * <p>
-     * The Exchange id is the same as the Bot id, given the 1:1 relationship between an Exchange and a Bot:
-     * a Bot can only have 1 Exchange Adapter.
+     * Returns the Engine Config for a Bot id.
      *
      * @param user  the authenticated user making the request.
-     * @param botId the id of the Bot to fetch the Exchange config for.
-     * @return the Exchange configuration.
+     * @param botId the id of the Bot to fetch the Engine config for.
+     * @return the Engine configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/exchange", method = RequestMethod.GET)
-    public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
+    @RequestMapping(value = "/engine", method = RequestMethod.GET)
+    public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /exchange/?" + BOT_ID_PARAM + "=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
+        LOG.info("GET /engine/?" + BOT_ID_PARAM + "=" + botId + " - getEngine() "); //- caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
-        return exchangeConfig == null
+        final EngineConfig engineConfig = engineConfigService.getEngineConfig(botId);
+        return engineConfig == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : buildResponseEntity(exchangeConfig, HttpStatus.OK);
+                : buildResponseEntity(engineConfig, HttpStatus.OK);
     }
 
     /**
-     * Updates the Exchange configuration for a bot.
+     * Updates the Engine configuration for a bot.
      *
      * @param user           the authenticated user making the request.
-     * @param exchangeConfig the Exchange config to update.
-     * @param botId          the id of the Bot to update the Exchange config for.
-     * @return 200 'Ok' HTTP status code with updated Exchange config if update successful, some other HTTP status code otherwise.
+     * @param engineConfig the Engine config to update.
+     * @param botId          the id of the Bot to update the Engine config for.
+     * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
+    @RequestMapping(value = "/engine", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
                                             @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /exchange/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + exchangeConfig);
+        LOG.info("PUT /engine/?" + BOT_ID_PARAM + "=" + botId + " - updateEngine() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + engineConfig);
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(botId, exchangeConfig);
+        final EngineConfig updatedConfig = engineConfigService.updateEngineConfig(botId, engineConfig);
         return updatedConfig == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(updatedConfig, HttpStatus.OK);
