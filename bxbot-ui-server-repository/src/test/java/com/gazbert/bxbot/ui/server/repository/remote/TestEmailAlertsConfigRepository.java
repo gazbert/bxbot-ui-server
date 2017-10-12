@@ -25,8 +25,9 @@ package com.gazbert.bxbot.ui.server.repository.remote;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
-import com.gazbert.bxbot.ui.server.repository.remote.impl.EngineConfigRepositoryRestClient;
+import com.gazbert.bxbot.ui.server.domain.emailalerts.EmailAlertsConfig;
+import com.gazbert.bxbot.ui.server.domain.emailalerts.SmtpConfig;
+import com.gazbert.bxbot.ui.server.repository.remote.impl.EmailAlertsConfigRepositoryRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,25 +39,23 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import java.math.BigDecimal;
-
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
- * Tests the behaviour of the Engine config repository.
+ * Tests the behaviour of the Email Alerts config repository.
  *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
-@RestClientTest(EngineConfigRepositoryRestClient.class)
-@SpringBootTest(classes = EngineConfigRepositoryRestClient.class)
-public class TestEngineConfigRepository {
+@RestClientTest(EmailAlertsConfigRepositoryRestClient.class)
+@SpringBootTest(classes = EmailAlertsConfigRepositoryRestClient.class)
+public class TestEmailAlertsConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/engine";
+    private static final String REST_ENDPOINT_PATH = "/config/email-alerts";
 
     private static final String BOT_NAME = "GDAX";
     private static final String BOT_STATUS = "Running";
@@ -65,9 +64,13 @@ public class TestEngineConfigRepository {
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
 
-    private static final String ENGINE_EMERGENCY_STOP_CURRENCY = "BTC";
-    private static final BigDecimal ENGINE_EMERGENCY_STOP_BALANCE = new BigDecimal("0.9232320");
-    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
+    private static final boolean ENABLED = true;
+    private static final String HOST = "smtp.host.deathstar.com";
+    private static final int TLS_PORT = 573;
+    private static final String ACCOUNT_USERNAME = "boba@google.com";
+    private static final String ACCOUNT_PASSWORD = "bounty";
+    private static final String FROM_ADDRESS = "boba.fett@Mandalore.com";
+    private static final String TO_ADDRESS = "darth.vader@deathstar.com";
 
     @Autowired
     private MockRestServiceServer mockServer;
@@ -76,7 +79,7 @@ public class TestEngineConfigRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    EngineConfigRepositoryRestClient restClient;
+    EmailAlertsConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
 
@@ -87,39 +90,43 @@ public class TestEngineConfigRepository {
     }
 
     @Test
-    public void whenGetCalledThenExpectEngineConfigToBeReturned() throws Exception {
+    public void whenGetCalledThenExpectEmailAlertsConfigToBeReturned() throws Exception {
 
-        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig());
+        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig());
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
-        final EngineConfig engineConfig = restClient.get(botConfig);
-        assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
-        assertThat(engineConfig.getBotName()).isEqualTo(BOT_NAME);
-        assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
-        assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
-        assertThat(engineConfig.getEmergencyStopBalance()).isEqualTo(ENGINE_EMERGENCY_STOP_BALANCE);
+        final EmailAlertsConfig emailAlertsConfig = restClient.get(botConfig);
+        assertThat(emailAlertsConfig.isEnabled()).isEqualTo(ENABLED);
+        assertThat(emailAlertsConfig.getSmtpConfig().getAccountUsername()).isEqualTo(ACCOUNT_USERNAME);
+        assertThat(emailAlertsConfig.getSmtpConfig().getAccountPassword()).isEqualTo(ACCOUNT_PASSWORD);
+        assertThat(emailAlertsConfig.getSmtpConfig().getHost()).isEqualTo(HOST);
+        assertThat(emailAlertsConfig.getSmtpConfig().getTlsPort()).isEqualTo(TLS_PORT);
+        assertThat(emailAlertsConfig.getSmtpConfig().getFromAddress()).isEqualTo(FROM_ADDRESS);
+        assertThat(emailAlertsConfig.getSmtpConfig().getToAddress()).isEqualTo(TO_ADDRESS);
 
         mockServer.verify();
     }
 
     @Test
-    public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEngineConfig() throws Exception {
+    public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEmailAlertsConfig() throws Exception {
 
-        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig());
+        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig());
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.PUT))
-                .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
-        final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig());
-        assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
-        assertThat(engineConfig.getBotName()).isEqualTo(BOT_NAME);
-        assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
-        assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
-        assertThat(engineConfig.getEmergencyStopBalance()).isEqualTo(ENGINE_EMERGENCY_STOP_BALANCE);
+        final EmailAlertsConfig emailAlertsConfig = restClient.save(botConfig, someEmailAlertsConfig());
+        assertThat(emailAlertsConfig.isEnabled()).isEqualTo(ENABLED);
+        assertThat(emailAlertsConfig.getSmtpConfig().getAccountUsername()).isEqualTo(ACCOUNT_USERNAME);
+        assertThat(emailAlertsConfig.getSmtpConfig().getAccountPassword()).isEqualTo(ACCOUNT_PASSWORD);
+        assertThat(emailAlertsConfig.getSmtpConfig().getHost()).isEqualTo(HOST);
+        assertThat(emailAlertsConfig.getSmtpConfig().getTlsPort()).isEqualTo(TLS_PORT);
+        assertThat(emailAlertsConfig.getSmtpConfig().getFromAddress()).isEqualTo(FROM_ADDRESS);
+        assertThat(emailAlertsConfig.getSmtpConfig().getToAddress()).isEqualTo(TO_ADDRESS);
 
         mockServer.verify();
     }
@@ -128,13 +135,11 @@ public class TestEngineConfigRepository {
     // Private utils
     // ------------------------------------------------------------------------
 
-    private static EngineConfig someEngineConfig() {
-        final EngineConfig engineConfig = new EngineConfig();
-        engineConfig.setBotId(BOT_ID);
-        engineConfig.setBotName(BOT_NAME);
-        engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
-        engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);
-        engineConfig.setTradeCycleInterval(ENGINE_TRADE_CYCLE_INTERVAL);
-        return engineConfig;
+    private static EmailAlertsConfig someEmailAlertsConfig() {
+        final EmailAlertsConfig emailAlertsConfig = new EmailAlertsConfig();
+        final SmtpConfig smtpConfig = new SmtpConfig(HOST, TLS_PORT, ACCOUNT_USERNAME, ACCOUNT_PASSWORD, FROM_ADDRESS, TO_ADDRESS);
+        emailAlertsConfig.setSmtpConfig(smtpConfig);
+        emailAlertsConfig.setEnabled(ENABLED);
+        return emailAlertsConfig;
     }
 }

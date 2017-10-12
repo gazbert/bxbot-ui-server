@@ -24,8 +24,8 @@
 package com.gazbert.bxbot.ui.server.repository.remote.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
-import com.gazbert.bxbot.ui.server.repository.remote.ExchangeConfigRepository;
+import com.gazbert.bxbot.ui.server.domain.emailalerts.EmailAlertsConfig;
+import com.gazbert.bxbot.ui.server.repository.remote.EmailAlertsConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -38,55 +38,55 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * A REST client implementation of the remote Exchange config repository.
+ * A REST client implementation of the remote Email Alerts config repository.
  *
  * @author gazbert
  */
-@Repository("exchangeConfigRepository")
+@Repository("emailAlertsConfigRepository")
 @Transactional
-public class ExchangeConfigRepositoryRestClient implements ExchangeConfigRepository {
+public class EmailAlertsConfigRepositoryRestClient implements EmailAlertsConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String REST_ENDPOINT_PATH = "/config/exchange";
+    private static final String REST_ENDPOINT_PATH = "/config/email-alerts";
 
     private RestTemplate restTemplate;
 
 
-    public ExchangeConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
+    public EmailAlertsConfigRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
     @Override
-    public ExchangeConfig get(BotConfig botConfig) {
+    public EmailAlertsConfig get(BotConfig botConfig) {
 
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
         final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Fetching ExchangeConfig from: " + endpointUrl);
+        LOG.info(() -> "Fetching EmailAlertsConfig from: " + endpointUrl);
 
-        final ExchangeConfig config = restTemplate.getForObject(endpointUrl, ExchangeConfig.class);
+        final EmailAlertsConfig config = restTemplate.getForObject(endpointUrl, EmailAlertsConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + config);
         return config;
     }
 
     @Override
-    public ExchangeConfig save(BotConfig botConfig, ExchangeConfig exchangeConfig) {
+    public EmailAlertsConfig save(BotConfig botConfig, EmailAlertsConfig emailAlertsConfig) {
 
-        LOG.info(() -> "About to save ExchangeConfig: " + exchangeConfig);
+        LOG.info(() -> "About to save EmailAlertsConfig: " + emailAlertsConfig);
 
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
         final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Sending ExchangeConfig to: " + endpointUrl);
+        LOG.info(() -> "Sending EmailAlertsConfig to: " + endpointUrl);
 
-        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(exchangeConfig);
-        final ResponseEntity<ExchangeConfig> savedConfig = restTemplate.exchange(
-               endpointUrl, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
+        final HttpEntity<EmailAlertsConfig> requestUpdate = new HttpEntity<>(emailAlertsConfig);
+        final ResponseEntity<EmailAlertsConfig> savedConfig = restTemplate.exchange(
+                endpointUrl, HttpMethod.PUT, requestUpdate, EmailAlertsConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + savedConfig);
         return savedConfig.getBody();

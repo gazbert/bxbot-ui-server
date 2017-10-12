@@ -59,14 +59,14 @@ public class EngineConfigRepositoryRestClient implements EngineConfigRepository 
     @Override
     public EngineConfig get(BotConfig botConfig) {
 
-        LOG.info(() -> "Fetching EngineConfig...");
-
         restTemplate.getInterceptors().clear();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
-        final EngineConfig config = restTemplate.getForObject(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, EngineConfig.class);
+        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+        LOG.info(() -> "Fetching EngineConfig from: " + endpointUrl);
+
+        final EngineConfig config = restTemplate.getForObject(endpointUrl, EngineConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + config);
         return config;
@@ -81,9 +81,12 @@ public class EngineConfigRepositoryRestClient implements EngineConfigRepository 
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                 botConfig.getUsername(), botConfig.getPassword()));
 
+        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+        LOG.info(() -> "Sending EngineConfig to: " + endpointUrl);
+
         final HttpEntity<EngineConfig> requestUpdate = new HttpEntity<>(engineConfig);
         final ResponseEntity<EngineConfig> savedConfig  = restTemplate.exchange(
-                botConfig.getBaseUrl() + REST_ENDPOINT_PATH, HttpMethod.PUT, requestUpdate, EngineConfig.class);
+                endpointUrl, HttpMethod.PUT, requestUpdate, EngineConfig.class);
 
         LOG.info(() -> "Response received from remote Bot: " + savedConfig);
         return savedConfig.getBody();
