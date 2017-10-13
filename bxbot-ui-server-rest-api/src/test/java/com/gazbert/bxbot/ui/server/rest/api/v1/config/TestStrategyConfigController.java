@@ -61,7 +61,6 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     private static final String STRATEGIES_CONFIG_ENDPOINT_URI = "/api/v1/config/strategies/";
 
     private static final String BOT_ID_PARAM = "botId";
-
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 

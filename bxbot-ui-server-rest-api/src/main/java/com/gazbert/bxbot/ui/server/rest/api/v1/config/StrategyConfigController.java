@@ -120,7 +120,7 @@ public class StrategyConfigController extends AbstractController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies/{strategyId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
-                                     @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
+                                            @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
 
         LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);
@@ -146,7 +146,7 @@ public class StrategyConfigController extends AbstractController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/strategies", method = RequestMethod.POST)
     public ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
-                                     @Param(value = BOT_ID_PARAM) String botId) {
+                                            @Param(value = BOT_ID_PARAM) String botId) {
 
         LOG.info("POST /strategies - createStrategy()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);

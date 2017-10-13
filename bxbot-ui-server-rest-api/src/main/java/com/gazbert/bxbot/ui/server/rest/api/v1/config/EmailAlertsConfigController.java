@@ -23,9 +23,9 @@
 
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
-import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
+import com.gazbert.bxbot.ui.server.domain.emailalerts.EmailAlertsConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.EngineConfigService;
+import com.gazbert.bxbot.ui.server.services.EmailAlertsConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.repository.query.Param;
@@ -39,11 +39,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for directing Engine config requests.
+ * Controller for directing Email Alerts config requests.
  * <p>
- * Engine config can only be fetched and updated - it cannot be deleted or created.
+ * Email Alerts config can only be fetched and updated - it cannot be deleted or created.
  * <p>
- * There is only 1 Engine config per bot.
+ * There is only 1 Email Alerts config per bot.
  * <p>
  * TODO - user param is null when using JWT Bearer token - what do we use? SecurityContext.getPrincipal?
  *
@@ -52,61 +52,61 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/config")
-public class EngineConfigController extends AbstractController {
+public class EmailAlertsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String BOT_ID_PARAM = "botId";
 
-    private final EngineConfigService engineConfigService;
+    private final EmailAlertsConfigService emailAlertsConfigService;
 
-    public EngineConfigController(EngineConfigService engineConfigService) {
-        this.engineConfigService = engineConfigService;
+    public EmailAlertsConfigController(EmailAlertsConfigService emailAlertsConfigService) {
+        this.emailAlertsConfigService = emailAlertsConfigService;
     }
 
     /**
-     * Returns the Engine Config for a Bot id.
+     * Returns the Email Alerts Config for a Bot id.
      *
      * @param user  the authenticated user making the request.
-     * @param botId the id of the Bot to fetch the Engine config for.
-     * @return the Engine configuration.
+     * @param botId the id of the Bot to fetch the Email Alerts config for.
+     * @return the Email Alerts configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/engine", method = RequestMethod.GET)
-    public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
+    @RequestMapping(value = "/email-alerts", method = RequestMethod.GET)
+    public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /engine/?" + BOT_ID_PARAM + "=" + botId + " - getEngine() "); //- caller: " + user.getUsername());
+        LOG.info("GET /email-alerts/?" + BOT_ID_PARAM + "=" + botId + " - getEmailAlerts() "); //- caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final EngineConfig engineConfig = engineConfigService.getEngineConfig(botId);
-        return engineConfig == null
+        final EmailAlertsConfig emailAlertsConfig = emailAlertsConfigService.getEmailAlertsConfig(botId);
+        return emailAlertsConfig == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : buildResponseEntity(engineConfig, HttpStatus.OK);
+                : buildResponseEntity(emailAlertsConfig, HttpStatus.OK);
     }
 
     /**
-     * Updates the Engine configuration for a bot.
+     * Updates the Email Alerts configuration for a bot.
      *
-     * @param user         the authenticated user making the request.
-     * @param engineConfig the Engine config to update.
-     * @param botId        the id of the Bot to update the Engine config for.
-     * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
+     * @param user              the authenticated user making the request.
+     * @param emailAlertsConfig the Email Alerts config to update.
+     * @param botId             the id of the Bot to update the Email Alerts config for.
+     * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/engine", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
-                                          @Param(value = BOT_ID_PARAM) String botId) {
+    @RequestMapping(value = "/email-alerts", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
+                                               @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /engine/?" + BOT_ID_PARAM + "=" + botId + " - updateEngine() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + engineConfig);
+        LOG.info("PUT /email-alerts/?" + BOT_ID_PARAM + "=" + botId + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + emailAlertsConfig);
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final EngineConfig updatedConfig = engineConfigService.updateEngineConfig(botId, engineConfig);
+        final EmailAlertsConfig updatedConfig = emailAlertsConfigService.updateEmailAlertsConfig(botId, emailAlertsConfig);
         return updatedConfig == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(updatedConfig, HttpStatus.OK);
