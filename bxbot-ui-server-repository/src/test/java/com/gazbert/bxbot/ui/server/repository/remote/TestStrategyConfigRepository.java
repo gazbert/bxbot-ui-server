@@ -95,7 +95,7 @@ public class TestStrategyConfigRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    StrategyConfigRepositoryRestClient restClient;
+    private StrategyConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
     private StrategyConfig strategyConfig_1;
@@ -230,18 +230,18 @@ public class TestStrategyConfigRepository {
     // Private utils
     // ------------------------------------------------------------------------------------------------
 
-    private static StrategyConfig knownStrategyConfig() {
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
-    }
-
     private List<StrategyConfig> allTheStrategyConfig() {
         final List<StrategyConfig> allTheStrategyConfig = new ArrayList<>();
         allTheStrategyConfig.add(strategyConfig_1);
         allTheStrategyConfig.add(strategyConfig_2);
         return allTheStrategyConfig;
+    }
+
+    private static StrategyConfig knownStrategyConfig() {
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
     }
 
     private static StrategyConfig someStrategyConfigWithUnknownId() {

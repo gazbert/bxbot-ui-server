@@ -87,7 +87,7 @@ public class TestExchangeConfigRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    ExchangeConfigRepositoryRestClient restClient;
+    private ExchangeConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
 

@@ -79,7 +79,7 @@ public class TestEmailAlertsConfigRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    EmailAlertsConfigRepositoryRestClient restClient;
+    private EmailAlertsConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
 

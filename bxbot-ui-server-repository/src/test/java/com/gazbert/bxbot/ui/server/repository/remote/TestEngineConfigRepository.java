@@ -76,7 +76,7 @@ public class TestEngineConfigRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    EngineConfigRepositoryRestClient restClient;
+    private EngineConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
 
