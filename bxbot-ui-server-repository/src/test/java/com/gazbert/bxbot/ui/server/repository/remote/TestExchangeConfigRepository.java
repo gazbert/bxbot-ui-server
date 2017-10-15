@@ -90,17 +90,19 @@ public class TestExchangeConfigRepository {
     private ExchangeConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
+    private ExchangeConfig someExchangeConfig;
 
 
     @Before
     public void setUp() throws Exception {
         botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        someExchangeConfig = someExchangeConfig();
     }
 
     @Test
     public void whenGetCalledThenExpectExchangeConfigToBeReturned() throws Exception {
 
-        final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig());
+        final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
@@ -122,13 +124,13 @@ public class TestExchangeConfigRepository {
     @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedExchangeConfig() throws Exception {
 
-        final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig());
+        final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(exchangeConfigInJson, MediaType.APPLICATION_JSON));
 
-        final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig());
+        final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig);
 
         assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
         assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);

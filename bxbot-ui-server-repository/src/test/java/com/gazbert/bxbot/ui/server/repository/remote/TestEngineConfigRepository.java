@@ -79,17 +79,19 @@ public class TestEngineConfigRepository {
     private EngineConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
+    private EngineConfig someEngineConfig;
 
 
     @Before
     public void setUp() throws Exception {
         botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        someEngineConfig = someEngineConfig();
     }
 
     @Test
     public void whenGetCalledThenExpectEngineConfigToBeReturned() throws Exception {
 
-        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig());
+        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
@@ -108,13 +110,13 @@ public class TestEngineConfigRepository {
     @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEngineConfig() throws Exception {
 
-        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig());
+        final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
-        final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig());
+        final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig);
         assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
         assertThat(engineConfig.getBotName()).isEqualTo(BOT_NAME);
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);

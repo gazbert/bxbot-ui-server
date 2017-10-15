@@ -82,17 +82,19 @@ public class TestEmailAlertsConfigRepository {
     private EmailAlertsConfigRepositoryRestClient restClient;
 
     private BotConfig botConfig;
+    private EmailAlertsConfig someEmailAlertsConfig;
 
 
     @Before
     public void setUp() throws Exception {
         botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        someEmailAlertsConfig = someEmailAlertsConfig();
     }
 
     @Test
     public void whenGetCalledThenExpectEmailAlertsConfigToBeReturned() throws Exception {
 
-        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig());
+        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
@@ -113,13 +115,13 @@ public class TestEmailAlertsConfigRepository {
     @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEmailAlertsConfig() throws Exception {
 
-        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig());
+        final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
-        final EmailAlertsConfig emailAlertsConfig = restClient.save(botConfig, someEmailAlertsConfig());
+        final EmailAlertsConfig emailAlertsConfig = restClient.save(botConfig, someEmailAlertsConfig);
         assertThat(emailAlertsConfig.isEnabled()).isEqualTo(ENABLED);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountUsername()).isEqualTo(ACCOUNT_USERNAME);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountPassword()).isEqualTo(ACCOUNT_PASSWORD);

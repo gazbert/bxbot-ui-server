@@ -47,9 +47,7 @@ import java.util.Map;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * Tests Strategy configuration repository behaves as expected.
@@ -134,7 +132,7 @@ public class TestStrategyConfigRepository {
     }
 
     @Test
-    public void whenFindAllCalledAndRemoteCallFailsThenExpectEmptyStrategyConfigToBeReturned() throws Exception {
+    public void whenFindAllCalledAndRemoteCallFailsThenExpectNoStrategyConfigToBeReturned() throws Exception {
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
@@ -149,7 +147,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenFindByIdCalledWithKnownIdThenExpectMatchingStrategyConfigToBeReturned() throws Exception {
 
-        final String theStrategyConfigInJson = objectMapper.writeValueAsString(knownStrategyConfig());
+        final String theStrategyConfigInJson = objectMapper.writeValueAsString(strategyConfig_1);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
                 .andExpect(method(HttpMethod.GET))
@@ -177,13 +175,13 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenSaveCalledWithKnownIdThenExpectSavedStrategyToBeReturned() throws Exception {
 
-        final String theStrategyConfigInJson = objectMapper.writeValueAsString(knownStrategyConfig());
+        final String theStrategyConfigInJson = objectMapper.writeValueAsString(strategyConfig_1);
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
 
-        final StrategyConfig strategyConfig = restClient.save(botConfig, knownStrategyConfig());
+        final StrategyConfig strategyConfig = restClient.save(botConfig, strategyConfig_1);
         assertThat(strategyConfig).isEqualTo(strategyConfig_1);
 
         mockServer.verify();
@@ -235,13 +233,6 @@ public class TestStrategyConfigRepository {
         allTheStrategyConfig.add(strategyConfig_1);
         allTheStrategyConfig.add(strategyConfig_2);
         return allTheStrategyConfig;
-    }
-
-    private static StrategyConfig knownStrategyConfig() {
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(STRAT_ID_1, STRAT_LABEL_1, STRAT_DESCRIPTION_1, STRAT_CLASSNAME_1, configItems);
     }
 
     private static StrategyConfig someStrategyConfigWithUnknownId() {

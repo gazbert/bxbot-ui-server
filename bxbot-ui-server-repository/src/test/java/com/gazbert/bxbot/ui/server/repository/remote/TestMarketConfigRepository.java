@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -44,6 +45,8 @@ import java.util.List;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -126,98 +129,98 @@ public class TestMarketConfigRepository {
         mockServer.verify();
     }
 
-//    @Test
-//    public void whenFindAllCalledAndRemoteCallFailsThenExpectEmptyStrategyConfigToBeReturned() throws Exception {
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        final List<StrategyConfig> allTheStrategyConfig = restClient.findAll(botConfig);
-//        assertThat(allTheStrategyConfig).isEqualTo(new ArrayList<>());
-//
-//        mockServer.verify();
-//    }
+    @Test
+    public void whenFindAllCalledAndRemoteCallFailsThenExpectNoMarketConfigToBeReturned() throws Exception {
 
-//    @Test
-//    public void whenFindByIdCalledWithKnownIdThenExpectMatchingStrategyConfigToBeReturned() throws Exception {
-//
-//        final String theStrategyConfigInJson = objectMapper.writeValueAsString(knownStrategyConfig());
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
-//
-//        final StrategyConfig strategyConfig = restClient.findById(botConfig, STRAT_ID_1);
-//        assertThat(strategyConfig).isEqualTo(strategyConfig_1);
-//
-//        mockServer.verify();
-//    }
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-//    @Test
-//    public void whenFindByIdCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        final StrategyConfig strategyConfig = restClient.findById(botConfig, STRAT_ID_1);
-//        assertThat(strategyConfig).isEqualTo(null);
-//
-//        mockServer.verify();
-//    }
+        final List<MarketConfig> allTheMarketConfig = restClient.findAll(botConfig);
+        assertThat(allTheMarketConfig).isEqualTo(new ArrayList<>());
 
-//    @Test
-//    public void whenSaveCalledWithKnownIdThenExpectSavedStrategyToBeReturned() throws Exception {
-//
-//        final String theStrategyConfigInJson = objectMapper.writeValueAsString(knownStrategyConfig());
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
-//                .andExpect(method(HttpMethod.PUT))
-//                .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
-//
-//        final StrategyConfig strategyConfig = restClient.save(botConfig, knownStrategyConfig());
-//        assertThat(strategyConfig).isEqualTo(strategyConfig_1);
-//
-//        mockServer.verify();
-//    }
+        mockServer.verify();
+    }
 
-//    @Test
-//    public void whenSaveCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
-//                .andExpect(method(HttpMethod.PUT))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        final StrategyConfig strategyConfig = restClient.save(botConfig, someStrategyConfigWithUnknownId());
-//        assertThat(strategyConfig).isEqualTo(null);
-//
-//        mockServer.verify();
-//    }
+    @Test
+    public void whenFindByIdCalledWithKnownIdThenExpectMatchingMarketConfigToBeReturned() throws Exception {
 
-//    @Test
-//    public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + STRAT_ID_1))
-//                .andRespond(withNoContent());
-//
-//        final boolean result = restClient.delete(botConfig, STRAT_ID_1);
-//        assertThat(result).isEqualTo(true);
-//
-//        mockServer.verify();
-//    }
+        final String theMarketConfigInJson = objectMapper.writeValueAsString(marketConfig_1);
 
-//    @Test
-//    public void whenDeleteCalledWithUnknownIdThenExpectFailureResponse() throws Exception {
-//
-//        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
-//                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-//
-//        final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);
-//        assertThat(result).isEqualTo(false);
-//
-//        mockServer.verify();
-//    }
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + MARKET_1_ID))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(theMarketConfigInJson, MediaType.APPLICATION_JSON));
+
+        final MarketConfig marketConfig = restClient.findById(botConfig, MARKET_1_ID);
+        assertThat(marketConfig).isEqualTo(marketConfig_1);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenFindByIdCalledWithUnknownIdThenReturnNullMarket() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + MARKET_1_ID))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final MarketConfig marketConfig = restClient.findById(botConfig, MARKET_1_ID);
+        assertThat(marketConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenSaveCalledWithKnownIdThenExpectSavedMarketToBeReturned() throws Exception {
+
+        final String theMarketConfigInJson = objectMapper.writeValueAsString(marketConfig_1);
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withSuccess(theMarketConfigInJson, MediaType.APPLICATION_JSON));
+
+        final MarketConfig strategyConfig = restClient.save(botConfig, marketConfig_1);
+        assertThat(strategyConfig).isEqualTo(marketConfig_1);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenSaveCalledWithUnknownIdThenReturnNullMarket() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final MarketConfig marketConfig = restClient.save(botConfig, unrecognizedMarketConfig());
+        assertThat(marketConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + MARKET_1_ID))
+                .andRespond(withNoContent());
+
+        final boolean result = restClient.delete(botConfig, MARKET_1_ID);
+        assertThat(result).isEqualTo(true);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenDeleteCalledWithUnknownIdThenExpectFailureResponse() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_MARKET_ID))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final boolean result = restClient.delete(botConfig, UNKNOWN_MARKET_ID);
+        assertThat(result).isEqualTo(false);
+
+        mockServer.verify();
+    }
 
     // ------------------------------------------------------------------------------------------------
     // Private utils
@@ -230,23 +233,8 @@ public class TestMarketConfigRepository {
         return allMarkets;
     }
 
-    private static MarketConfig someMarketConfig() {
-        return new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
-                MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);
-    }
-
     private static MarketConfig unrecognizedMarketConfig() {
         return new MarketConfig(UNKNOWN_MARKET_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
                 MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);
-    }
-
-    private static MarketConfig someMarketConfigWithMissingId() {
-        return new MarketConfig(null, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
-                MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);
-    }
-
-    private static MarketConfig someMarketConfigWithMissingStrategyId() {
-        return new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
-                MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, null);
     }
 }
