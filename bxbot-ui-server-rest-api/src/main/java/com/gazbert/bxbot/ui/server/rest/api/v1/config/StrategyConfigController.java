@@ -122,7 +122,7 @@ public class StrategyConfigController extends AbstractController {
     public ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                             @RequestBody StrategyConfig strategyConfig, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateStrategy() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);
 
         if (botId == null || strategyConfig.getId() == null || !strategyId.equals(strategyConfig.getId())) {
@@ -148,7 +148,7 @@ public class StrategyConfigController extends AbstractController {
     public ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @RequestBody StrategyConfig strategyConfig,
                                             @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("POST /strategies - createStrategy()"); // - caller: " + user.getUsername());
+        LOG.info("POST /strategies/?" + BOT_ID_PARAM + "=" + botId + " - createStrategy()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + strategyConfig);
 
         if (botId == null) {
@@ -174,7 +174,7 @@ public class StrategyConfigController extends AbstractController {
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String strategyId,
                                             @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("DELETE /strategies/" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
+        LOG.info("DELETE /strategies/" + strategyId + "/?" + BOT_ID_PARAM + "=" + botId + " - deleteStrategy()"); // - caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

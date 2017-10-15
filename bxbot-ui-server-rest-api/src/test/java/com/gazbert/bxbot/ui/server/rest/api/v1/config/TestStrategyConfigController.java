@@ -79,6 +79,9 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_KEY = "buy-amount";
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_VALUE = "0.5";
 
+    private StrategyConfig strategyConfig_1;
+    private StrategyConfig strategyConfig_2;
+
     @MockBean
     StrategyConfigService strategyConfigService;
 
@@ -86,6 +89,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Before
     public void setupBeforeEachTest() {
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx).addFilter(springSecurityFilterChain).build();
+        strategyConfig_1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, someConfigItems());
+        strategyConfig_2 = new StrategyConfig(STRAT_2_ID, STRAT_2_NAME, STRAT_2_DESCRIPTION, STRAT_2_CLASSNAME, someConfigItems());
     }
 
     @Test
@@ -149,7 +154,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGeStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(strategyConfigService.getStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(someStrategyConfig());
+        given(strategyConfigService.getStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(strategyConfig_1);
 
         mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
@@ -199,13 +204,12 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        final StrategyConfig updatedConfig = someStrategyConfig();
-        given(strategyConfigService.updateStrategyConfig(BOT_ID, updatedConfig)).willReturn(updatedConfig);
+        given(strategyConfigService.updateStrategyConfig(BOT_ID, strategyConfig_1)).willReturn(strategyConfig_1);
 
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(updatedConfig)))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(STRAT_1_ID))
@@ -215,22 +219,21 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
                 .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
-        verify(strategyConfigService, times(1)).updateStrategyConfig(BOT_ID, updatedConfig);
+        verify(strategyConfigService, times(1)).updateStrategyConfig(BOT_ID, strategyConfig_1);
     }
 
     @Test
     public void whenUpdateStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        final StrategyConfig updatedConfig = someStrategyConfig();
-        given(strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
+        given(strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, strategyConfig_1)).willReturn(null);
 
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(updatedConfig)))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isNotFound());
 
-        verify(strategyConfigService, times(1)).updateStrategyConfig(UNKNOWN_BOT_ID, updatedConfig);
+        verify(strategyConfigService, times(1)).updateStrategyConfig(UNKNOWN_BOT_ID, strategyConfig_1);
     }
 
     @Test
@@ -238,7 +241,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -248,7 +251,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isForbidden());
     }
 
@@ -258,7 +261,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -268,7 +271,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_2_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -323,9 +326,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     public void whenCreateStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         final StrategyConfig createdConfig = someNewStrategyConfig();
-        final StrategyConfig createdConfigWithId = someStrategyConfig();
-
-        given(strategyConfigService.createStrategyConfig(BOT_ID, createdConfig)).willReturn(createdConfigWithId);
+        given(strategyConfigService.createStrategyConfig(BOT_ID, createdConfig)).willReturn(strategyConfig_1);
 
         mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
@@ -363,7 +364,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(someNewStrategyConfig())))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -373,7 +374,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(someNewStrategyConfig())))
                 .andExpect(status().isForbidden());
     }
 
@@ -383,7 +384,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
-                .content(jsonify(someStrategyConfig())))
+                .content(jsonify(someNewStrategyConfig())))
                 .andExpect(status().isBadRequest());
     }
 
@@ -391,27 +392,11 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     // Private utils
     // ------------------------------------------------------------------------------------------------
 
-    private static List<StrategyConfig> allTheStrategiesConfig() {
-
-        final Map<String, String> configItems = new HashMap<>();
-
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-
-        final StrategyConfig strategyConfig1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
-        final StrategyConfig strategyConfig2 = new StrategyConfig(STRAT_2_ID, STRAT_2_NAME, STRAT_2_DESCRIPTION, STRAT_2_CLASSNAME, configItems);
-
+    private List<StrategyConfig> allTheStrategiesConfig() {
         final List<StrategyConfig> allStrategies = new ArrayList<>();
-        allStrategies.add(strategyConfig1);
-        allStrategies.add(strategyConfig2);
+        allStrategies.add(strategyConfig_1);
+        allStrategies.add(strategyConfig_2);
         return allStrategies;
-    }
-
-    private static StrategyConfig someStrategyConfig() {
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
     }
 
     private static StrategyConfig someNewStrategyConfig() {
@@ -419,5 +404,12 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
         configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
         return new StrategyConfig(null, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
+    }
+
+    private static Map<String, String> someConfigItems() {
+        final Map<String, String> configItems = new HashMap<>();
+        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return configItems;
     }
 }
