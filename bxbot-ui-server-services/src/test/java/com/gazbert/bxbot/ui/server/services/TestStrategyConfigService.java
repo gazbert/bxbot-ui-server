@@ -79,6 +79,8 @@ public class TestStrategyConfigService {
     private static final String AMOUNT_TO_BUY_CONFIG_ITEM_VALUE = "0.5";
 
     private BotConfig knownBotConfig;
+    private StrategyConfig strategyConfig_1;
+    private StrategyConfig strategyConfig_2;
 
     @MockBean
     StrategyConfigRepository strategyConfigRepository;
@@ -90,12 +92,17 @@ public class TestStrategyConfigService {
     @Before
     public void setup() throws Exception {
         knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+
+        strategyConfig_1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION,
+                STRAT_1_CLASSNAME, someConfigItems());
+        strategyConfig_2 = new StrategyConfig(STRAT_2_ID, STRAT_2_LABEL, STRAT_2_DESCRIPTION,
+                STRAT_2_CLASSNAME, someConfigItems());
     }
 
     @Test
     public void whenGetAllStrategyConfigCalledWithKnownBotIdThenReturnAllStrategyConfigForTheBot() throws Exception {
 
-        final List<StrategyConfig> allTheStrategiesConfig = buildAllTheStrategiesConfig();
+        final List<StrategyConfig> allTheStrategiesConfig = allTheStrategiesConfig();
 
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
         given(strategyConfigRepository.findAll(knownBotConfig)).willReturn(allTheStrategiesConfig);
@@ -127,16 +134,14 @@ public class TestStrategyConfigService {
     @Test
     public void whenGetStrategyConfigCalledWithKnownBotIdThenReturnStrategyConfig() throws Exception {
 
-        final StrategyConfig strategyConfig = someStrategyConfig();
-
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
-        given(strategyConfigRepository.findById(knownBotConfig, STRAT_1_ID)).willReturn(strategyConfig);
+        given(strategyConfigRepository.findById(knownBotConfig, STRAT_1_ID)).willReturn(strategyConfig_1);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
         final StrategyConfig fetchedConfig = strategyConfigService.getStrategyConfig(BOT_1_ID, STRAT_1_ID);
-        assertThat(fetchedConfig.equals(strategyConfig));
+        assertThat(fetchedConfig.equals(strategyConfig_1));
 
         verify(botConfigRepository, times(1)).findById(BOT_1_ID);
         verify(strategyConfigRepository, times(1)).findById(knownBotConfig, STRAT_1_ID);
@@ -159,32 +164,28 @@ public class TestStrategyConfigService {
     @Test
     public void whenUpdateStrategyConfigCalledWithKnownBotIdThenReturnUpdatedStrategyConfig() throws Exception {
 
-        final StrategyConfig strategyConfig = someStrategyConfig();
-
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
-        given(strategyConfigRepository.save(knownBotConfig, strategyConfig)).willReturn(strategyConfig);
+        given(strategyConfigRepository.save(knownBotConfig, strategyConfig_1)).willReturn(strategyConfig_1);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
-        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(BOT_1_ID, strategyConfig);
-        assertThat(updatedConfig.equals(strategyConfig));
+        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(BOT_1_ID, strategyConfig_1);
+        assertThat(updatedConfig.equals(strategyConfig_1));
 
         verify(botConfigRepository, times(1)).findById(BOT_1_ID);
-        verify(strategyConfigRepository, times(1)).save(knownBotConfig, strategyConfig);
+        verify(strategyConfigRepository, times(1)).save(knownBotConfig, strategyConfig_1);
     }
 
     @Test
     public void whenUpdateStrategyConfigCalledWithUnknownBotIdThenReturnNullStrategyConfig() throws Exception {
-
-        final StrategyConfig strategyConfig = someStrategyConfig();
 
         given(botConfigRepository.findById(UNKNOWN_BOT_ID)).willReturn(null);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
-        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, strategyConfig);
+        final StrategyConfig updatedConfig = strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, strategyConfig_1);
         assertThat(updatedConfig == null);
 
         verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);
@@ -193,32 +194,28 @@ public class TestStrategyConfigService {
     @Test
     public void whenCreateStrategyConfigCalledWithKnownBotIdThenReturnCreatedStrategyConfig() throws Exception {
 
-        final StrategyConfig strategyConfig = someNewStrategyConfig();
-
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(knownBotConfig);
-        given(strategyConfigRepository.save(knownBotConfig, strategyConfig)).willReturn(strategyConfig);
+        given(strategyConfigRepository.save(knownBotConfig, strategyConfig_1)).willReturn(strategyConfig_1);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
-        final StrategyConfig createdConfig = strategyConfigService.updateStrategyConfig(BOT_1_ID, strategyConfig);
-        assertThat(createdConfig.equals(strategyConfig));
+        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(BOT_1_ID, strategyConfig_1);
+        assertThat(createdConfig.equals(strategyConfig_1));
 
         verify(botConfigRepository, times(1)).findById(BOT_1_ID);
-        verify(strategyConfigRepository, times(1)).save(knownBotConfig, strategyConfig);
+        verify(strategyConfigRepository, times(1)).save(knownBotConfig, strategyConfig_1);
     }
 
     @Test
     public void whenCreateStrategyConfigCalledWithUnknownBotIdThenReturnNullStrategyConfig() throws Exception {
-
-        final StrategyConfig strategyConfig = someNewStrategyConfig();
 
         given(botConfigRepository.findById(UNKNOWN_BOT_ID)).willReturn(null);
 
         final StrategyConfigService strategyConfigService =
                 new StrategyConfigServiceImpl(strategyConfigRepository, botConfigRepository);
 
-        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(UNKNOWN_BOT_ID, strategyConfig);
+        final StrategyConfig createdConfig = strategyConfigService.createStrategyConfig(UNKNOWN_BOT_ID, strategyConfig_1);
         assertThat(createdConfig == null);
 
         verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);
@@ -256,25 +253,11 @@ public class TestStrategyConfigService {
     // Private utils
     // ------------------------------------------------------------------------------------------------
 
-    private static List<StrategyConfig> buildAllTheStrategiesConfig() {
-
-        final StrategyConfig strategyConfig1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION,
-                STRAT_1_CLASSNAME, someConfigItems());
-        final StrategyConfig strategyConfig2 = new StrategyConfig(STRAT_2_ID, STRAT_2_LABEL, STRAT_2_DESCRIPTION,
-                STRAT_2_CLASSNAME, someConfigItems());
-
+    private List<StrategyConfig> allTheStrategiesConfig() {
         final List<StrategyConfig> allStrategies = new ArrayList<>();
-        allStrategies.add(strategyConfig1);
-        allStrategies.add(strategyConfig2);
+        allStrategies.add(strategyConfig_1);
+        allStrategies.add(strategyConfig_2);
         return allStrategies;
-    }
-
-    private static StrategyConfig someStrategyConfig() {
-        return new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, someConfigItems());
-    }
-
-    private static StrategyConfig someNewStrategyConfig() {
-        return new StrategyConfig(null, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, someConfigItems());
     }
 
     private static Map<String, String> someConfigItems() {
