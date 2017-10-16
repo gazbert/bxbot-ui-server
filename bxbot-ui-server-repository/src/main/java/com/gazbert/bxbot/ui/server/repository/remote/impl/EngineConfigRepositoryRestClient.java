@@ -48,6 +48,8 @@ import org.springframework.web.client.RestTemplate;
 public class EngineConfigRepositoryRestClient implements EngineConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REMOTE_RESPONSE_RECEIVED_LOG_MSG = "Response received from remote Bot: ";
+    private static final String FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG = "Failed to invoke remote bot! Details: ";
     private static final String REST_ENDPOINT_PATH = "/config/engine";
 
     private RestTemplate restTemplate;
@@ -70,11 +72,11 @@ public class EngineConfigRepositoryRestClient implements EngineConfigRepository 
 
             final EngineConfig config = restTemplate.getForObject(endpointUrl, EngineConfig.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + config);
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + config);
             return config;
 
-        } catch(RestClientException e) {
-            LOG.error("Failed to invoke remote bot! Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
     }
@@ -82,20 +84,26 @@ public class EngineConfigRepositoryRestClient implements EngineConfigRepository 
     @Override
     public EngineConfig save(BotConfig botConfig, EngineConfig engineConfig) {
 
-        LOG.info(() -> "About to save EngineConfig: " + engineConfig);
+        try {
+            LOG.info(() -> "About to save EngineConfig: " + engineConfig);
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Sending EngineConfig to: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Sending EngineConfig to: " + endpointUrl);
 
-        final HttpEntity<EngineConfig> requestUpdate = new HttpEntity<>(engineConfig);
-        final ResponseEntity<EngineConfig> savedConfig  = restTemplate.exchange(
-                endpointUrl, HttpMethod.PUT, requestUpdate, EngineConfig.class);
+            final HttpEntity<EngineConfig> requestUpdate = new HttpEntity<>(engineConfig);
+            final ResponseEntity<EngineConfig> savedConfig = restTemplate.exchange(
+                    endpointUrl, HttpMethod.PUT, requestUpdate, EngineConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + savedConfig);
-        return savedConfig.getBody();
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig);
+            return savedConfig.getBody();
+
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
+            return null;
+        }
     }
 }

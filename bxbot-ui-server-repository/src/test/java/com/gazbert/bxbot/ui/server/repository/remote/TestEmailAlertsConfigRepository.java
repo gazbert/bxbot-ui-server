@@ -42,6 +42,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -113,6 +114,19 @@ public class TestEmailAlertsConfigRepository {
     }
 
     @Test
+    public void whenGetCalledAndRemoteCallFailsThenExpectNullEmailAlertsConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        final EmailAlertsConfig emailAlertsConfig = restClient.get(botConfig);
+        assertThat(emailAlertsConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEmailAlertsConfig() throws Exception {
 
         final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig);
@@ -129,6 +143,19 @@ public class TestEmailAlertsConfigRepository {
         assertThat(emailAlertsConfig.getSmtpConfig().getTlsPort()).isEqualTo(TLS_PORT);
         assertThat(emailAlertsConfig.getSmtpConfig().getFromAddress()).isEqualTo(FROM_ADDRESS);
         assertThat(emailAlertsConfig.getSmtpConfig().getToAddress()).isEqualTo(TO_ADDRESS);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenSaveCalledAndRemoteCallFailsThenExpectNullEmailAlertsConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withServerError());
+
+        final EmailAlertsConfig emailAlertsConfig = restClient.save(botConfig, someEmailAlertsConfig);
+        assertThat(emailAlertsConfig).isEqualTo(null);
 
         mockServer.verify();
     }

@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -108,6 +109,19 @@ public class TestEngineConfigRepository {
     }
 
     @Test
+    public void whenGetCalledAndRemoteCallFailsThenExpectNullEngineConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        final EngineConfig engineConfig = restClient.get(botConfig);
+        assertThat(engineConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedEngineConfig() throws Exception {
 
         final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig);
@@ -122,6 +136,19 @@ public class TestEngineConfigRepository {
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
         assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
         assertThat(engineConfig.getEmergencyStopBalance()).isEqualTo(ENGINE_EMERGENCY_STOP_BALANCE);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenSaveCalledAndRemoteCallFailsThenExpectNullEngineConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withServerError());
+
+        final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig);
+        assertThat(engineConfig).isEqualTo(null);
 
         mockServer.verify();
     }

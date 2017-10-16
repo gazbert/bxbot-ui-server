@@ -136,7 +136,7 @@ public class TestStrategyConfigRepository {
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+                .andRespond(withServerError());
 
         final List<StrategyConfig> allTheStrategyConfig = restClient.findAll(botConfig);
         assertThat(allTheStrategyConfig).isEqualTo(new ArrayList<>());
@@ -173,6 +173,19 @@ public class TestStrategyConfigRepository {
     }
 
     @Test
+    public void whenFindByIdCalledAndRemoteCallFailsThenReturnNullStrategy() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        final StrategyConfig strategyConfig = restClient.findById(botConfig, STRAT_ID_1);
+        assertThat(strategyConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenSaveCalledWithKnownIdThenExpectSavedStrategyToBeReturned() throws Exception {
 
         final String theStrategyConfigInJson = objectMapper.writeValueAsString(strategyConfig_1);
@@ -201,6 +214,19 @@ public class TestStrategyConfigRepository {
     }
 
     @Test
+    public void whenSaveCalledAndRemoteCallFailsThenReturnNullStrategy() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withServerError());
+
+        final StrategyConfig strategyConfig = restClient.save(botConfig, someStrategyConfigWithUnknownId());
+        assertThat(strategyConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + STRAT_ID_1))
@@ -217,6 +243,18 @@ public class TestStrategyConfigRepository {
 
         mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);
+        assertThat(result).isEqualTo(false);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenDeleteCalledAndRemoteCallFailsThenExpectFailureResponse() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
+                .andRespond(withServerError());
 
         final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);
         assertThat(result).isEqualTo(false);

@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -47,6 +48,8 @@ import org.springframework.web.client.RestTemplate;
 public class ExchangeConfigRepositoryRestClient implements ExchangeConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REMOTE_RESPONSE_RECEIVED_LOG_MSG = "Response received from remote Bot: ";
+    private static final String FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG = "Failed to invoke remote bot! Details: ";
     private static final String REST_ENDPOINT_PATH = "/config/exchange";
 
     private RestTemplate restTemplate;
@@ -59,36 +62,48 @@ public class ExchangeConfigRepositoryRestClient implements ExchangeConfigReposit
     @Override
     public ExchangeConfig get(BotConfig botConfig) {
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Fetching ExchangeConfig from: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Fetching ExchangeConfig from: " + endpointUrl);
 
-        final ExchangeConfig config = restTemplate.getForObject(endpointUrl, ExchangeConfig.class);
+            final ExchangeConfig config = restTemplate.getForObject(endpointUrl, ExchangeConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + config);
-        return config;
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + config);
+            return config;
+
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
     public ExchangeConfig save(BotConfig botConfig, ExchangeConfig exchangeConfig) {
 
-        LOG.info(() -> "About to save ExchangeConfig: " + exchangeConfig);
+        try {
+            LOG.info(() -> "About to save ExchangeConfig: " + exchangeConfig);
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Sending ExchangeConfig to: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Sending ExchangeConfig to: " + endpointUrl);
 
-        final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(exchangeConfig);
-        final ResponseEntity<ExchangeConfig> savedConfig = restTemplate.exchange(
-               endpointUrl, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
+            final HttpEntity<ExchangeConfig> requestUpdate = new HttpEntity<>(exchangeConfig);
+            final ResponseEntity<ExchangeConfig> savedConfig = restTemplate.exchange(
+                    endpointUrl, HttpMethod.PUT, requestUpdate, ExchangeConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + savedConfig);
-        return savedConfig.getBody();
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig);
+            return savedConfig.getBody();
+
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
+            return null;
+        }
     }
 }

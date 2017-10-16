@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -47,6 +48,8 @@ import org.springframework.web.client.RestTemplate;
 public class EmailAlertsConfigRepositoryRestClient implements EmailAlertsConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REMOTE_RESPONSE_RECEIVED_LOG_MSG = "Response received from remote Bot: ";
+    private static final String FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG = "Failed to invoke remote bot! Details: ";
     private static final String REST_ENDPOINT_PATH = "/config/email-alerts";
 
     private RestTemplate restTemplate;
@@ -59,36 +62,48 @@ public class EmailAlertsConfigRepositoryRestClient implements EmailAlertsConfigR
     @Override
     public EmailAlertsConfig get(BotConfig botConfig) {
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Fetching EmailAlertsConfig from: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Fetching EmailAlertsConfig from: " + endpointUrl);
 
-        final EmailAlertsConfig config = restTemplate.getForObject(endpointUrl, EmailAlertsConfig.class);
+            final EmailAlertsConfig config = restTemplate.getForObject(endpointUrl, EmailAlertsConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + config);
-        return config;
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + config);
+            return config;
+
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
     public EmailAlertsConfig save(BotConfig botConfig, EmailAlertsConfig emailAlertsConfig) {
 
-        LOG.info(() -> "About to save EmailAlertsConfig: " + emailAlertsConfig);
+        try {
+            LOG.info(() -> "About to save EmailAlertsConfig: " + emailAlertsConfig);
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Sending EmailAlertsConfig to: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Sending EmailAlertsConfig to: " + endpointUrl);
 
-        final HttpEntity<EmailAlertsConfig> requestUpdate = new HttpEntity<>(emailAlertsConfig);
-        final ResponseEntity<EmailAlertsConfig> savedConfig = restTemplate.exchange(
-                endpointUrl, HttpMethod.PUT, requestUpdate, EmailAlertsConfig.class);
+            final HttpEntity<EmailAlertsConfig> requestUpdate = new HttpEntity<>(emailAlertsConfig);
+            final ResponseEntity<EmailAlertsConfig> savedConfig = restTemplate.exchange(
+                    endpointUrl, HttpMethod.PUT, requestUpdate, EmailAlertsConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + savedConfig);
-        return savedConfig.getBody();
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig);
+            return savedConfig.getBody();
+
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
+            return null;
+        }
     }
 }

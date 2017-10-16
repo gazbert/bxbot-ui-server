@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -51,6 +51,8 @@ import java.util.List;
 public class StrategyConfigRepositoryRestClient implements StrategyConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REMOTE_RESPONSE_RECEIVED_LOG_MSG = "Response received from remote Bot: ";
+    private static final String FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG = "Failed to invoke remote bot! Details: ";
     private static final String REST_ENDPOINT_PATH = "/config/strategies";
 
     private RestTemplate restTemplate;
@@ -73,11 +75,11 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 
             @SuppressWarnings("unchecked") final List<StrategyConfig> allTheStrategyConfig = restTemplate.getForObject(endpointUrl, List.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + allTheStrategyConfig);
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + allTheStrategyConfig);
             return allTheStrategyConfig;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to get all Strategy Config from remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return new ArrayList<>();
         }
     }
@@ -95,11 +97,11 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
 
             @SuppressWarnings("unchecked") final StrategyConfig strategyConfig = restTemplate.getForObject(endpointUrl, StrategyConfig.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + strategyConfig);
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + strategyConfig);
             return strategyConfig;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to get Strategy Config from remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
     }
@@ -121,11 +123,11 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
             final ResponseEntity<StrategyConfig> savedConfig = restTemplate.exchange(
                     endpointUrl, HttpMethod.PUT, requestUpdate, StrategyConfig.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + savedConfig.getBody());
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig.getBody());
             return savedConfig.getBody();
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to save Strategy Config on remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
     }
@@ -146,8 +148,8 @@ public class StrategyConfigRepositoryRestClient implements StrategyConfigReposit
             restTemplate.delete(endpointUrl);
             return true;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to delete Strategy Config on remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return false;
         }
     }

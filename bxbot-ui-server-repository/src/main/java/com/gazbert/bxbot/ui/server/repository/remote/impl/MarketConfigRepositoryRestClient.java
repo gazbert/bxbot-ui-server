@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -51,6 +51,8 @@ import java.util.List;
 public class MarketConfigRepositoryRestClient implements MarketConfigRepository {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String REMOTE_RESPONSE_RECEIVED_LOG_MSG = "Response received from remote Bot: ";
+    private static final String FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG = "Failed to invoke remote bot! Details: ";
     private static final String REST_ENDPOINT_PATH = "/config/markets";
 
     private RestTemplate restTemplate;
@@ -73,11 +75,11 @@ public class MarketConfigRepositoryRestClient implements MarketConfigRepository 
 
             @SuppressWarnings("unchecked") final List<MarketConfig> allTheMarketConfig = restTemplate.getForObject(endpointUrl, List.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + allTheMarketConfig);
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + allTheMarketConfig);
             return allTheMarketConfig;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to get all Market Config from remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return new ArrayList<>();
         }
     }
@@ -95,11 +97,11 @@ public class MarketConfigRepositoryRestClient implements MarketConfigRepository 
 
             @SuppressWarnings("unchecked") final MarketConfig marketConfig = restTemplate.getForObject(endpointUrl, MarketConfig.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + marketConfig);
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + marketConfig);
             return marketConfig;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to get Market Config from remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
     }
@@ -121,11 +123,11 @@ public class MarketConfigRepositoryRestClient implements MarketConfigRepository 
             final ResponseEntity<MarketConfig> savedConfig = restTemplate.exchange(
                     endpointUrl, HttpMethod.PUT, requestUpdate, MarketConfig.class);
 
-            LOG.info(() -> "Response received from remote Bot: " + savedConfig.getBody());
+            LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig.getBody());
             return savedConfig.getBody();
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to save Market Config on remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
     }
@@ -146,8 +148,8 @@ public class MarketConfigRepositoryRestClient implements MarketConfigRepository 
             restTemplate.delete(endpointUrl);
             return true;
 
-        } catch (HttpClientErrorException e) {
-            LOG.error("Failed to delete Market Config on remote bot. Details: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return false;
         }
     }

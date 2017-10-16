@@ -44,7 +44,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -122,6 +124,19 @@ public class TestExchangeConfigRepository {
     }
 
     @Test
+    public void whenGetCalledAndRemoteCallFailsThenExpectNullExchangeConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        final ExchangeConfig exchangeConfig = restClient.get(botConfig);
+        assertThat(exchangeConfig).isEqualTo(null);
+
+        mockServer.verify();
+    }
+
+    @Test
     public void whenSaveCalledThenExpectRepositoryToSaveItAndReturnSavedExchangeConfig() throws Exception {
 
         final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig);
@@ -139,6 +154,19 @@ public class TestExchangeConfigRepository {
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorCodes()).isEqualTo(NON_FATAL_ERROR_CODES);
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorMessages()).isEqualTo(NON_FATAL_ERROR_MESSAGES);
         assertThat(exchangeConfig.getOptionalConfig().getItems().get(BUY_FEE_CONFIG_ITEM_KEY)).isEqualTo(BUY_FEE_CONFIG_ITEM_VALUE);
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void whenSaveCalledAndRemoteCallFailsThenExpectNullExchangeConfigToBeReturned() throws Exception {
+
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withServerError());
+
+        final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig);
+        assertThat(exchangeConfig).isEqualTo(null);
 
         mockServer.verify();
     }
