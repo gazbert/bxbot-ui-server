@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -59,17 +60,23 @@ public class EngineConfigRepositoryRestClient implements EngineConfigRepository 
     @Override
     public EngineConfig get(BotConfig botConfig) {
 
-        restTemplate.getInterceptors().clear();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
-                botConfig.getUsername(), botConfig.getPassword()));
+        try {
+            restTemplate.getInterceptors().clear();
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
+                    botConfig.getUsername(), botConfig.getPassword()));
 
-        final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
-        LOG.info(() -> "Fetching EngineConfig from: " + endpointUrl);
+            final String endpointUrl = botConfig.getBaseUrl() + REST_ENDPOINT_PATH;
+            LOG.info(() -> "Fetching EngineConfig from: " + endpointUrl);
 
-        final EngineConfig config = restTemplate.getForObject(endpointUrl, EngineConfig.class);
+            final EngineConfig config = restTemplate.getForObject(endpointUrl, EngineConfig.class);
 
-        LOG.info(() -> "Response received from remote Bot: " + config);
-        return config;
+            LOG.info(() -> "Response received from remote Bot: " + config);
+            return config;
+
+        } catch(RestClientException e) {
+            LOG.error("Failed to invoke remote bot! Details: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
