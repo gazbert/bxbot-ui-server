@@ -65,45 +65,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        // Extract token after Bearer prefix if present
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
-            authorizationHeader = authorizationHeader.substring(BEARER_PREFIX_LENGTH);
-        }
+        try {
 
-        // Might be null if client does not have a token yet
-        if (authorizationHeader != null) {
-
-            final Claims claims = jwtUtils.validateTokenAndGetClaims(authorizationHeader);
-            final String username = jwtUtils.getUsernameFromTokenClaims(claims);
-            LOG.info(() -> "Username in JWT: " + username);
-
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
-
-                // It is not compulsory to load the User details from the database.
-                // We can just use the information in the token claims - this saves a repo lookup.
-                //
-                // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                // if (userDetails != null && !(userDetails.getUsername().equals(username))) {
-                //    final String errorMsg = "Username is token not found in User repository! Token username: " + username;
-                //    throw new JwtAuthenticationException(errorMsg);
-                // }
-
-                LOG.info(() -> "JWT is valid");
-
-                // final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                //        userDetails, null, userDetails.getAuthorities());
-                final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, jwtUtils.getRolesFromTokenClaims(claims));
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                LOG.info(() -> "Authenticated User: " + username + " has been set in Spring SecurityContext.");
+            // Extract token after Bearer prefix if present
+            String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+            if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
+                authorizationHeader = authorizationHeader.substring(BEARER_PREFIX_LENGTH);
             }
-        }
 
-        chain.doFilter(request, response);
+            // Might be null if client does not have a token yet
+            if (authorizationHeader != null) {
+
+                final Claims claims = jwtUtils.validateTokenAndGetClaims(authorizationHeader);
+                final String username = jwtUtils.getUsernameFromTokenClaims(claims);
+                LOG.info(() -> "Username in JWT: " + username);
+
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                    // It is not compulsory to load the User details from the database.
+                    // We can just use the information in the token claims - this saves a repo lookup.
+                    //
+                    // final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    // if (userDetails != null && !(userDetails.getUsername().equals(username))) {
+                    //    final String errorMsg = "Username is token not found in User repository! Token username: " + username;
+                    //    throw new JwtAuthenticationException(errorMsg);
+                    // }
+
+                    LOG.info(() -> "JWT is valid");
+
+                    // final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    //        userDetails, null, userDetails.getAuthorities());
+                    final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            username, null, jwtUtils.getRolesFromTokenClaims(claims));
+
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    LOG.info(() -> "Authenticated User: " + username + " has been set in Spring SecurityContext.");
+                }
+            }
+
+            chain.doFilter(request, response);
+
+        } catch (Exception e) {
+            LOG.error("JWT Authentication failure! Details: " + e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        }
     }
 
     @Autowired
