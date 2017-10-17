@@ -71,10 +71,10 @@ public class EngineConfigController extends AbstractController {
      * @return the Engine configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/engine", method = RequestMethod.GET)
+    @RequestMapping(value = "/engines", method = RequestMethod.GET)
     public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /engine/?" + BOT_ID_PARAM + "=" + botId + " - getEngine() "); //- caller: " + user.getUsername());
+        LOG.info("GET /engines/?" + BOT_ID_PARAM + "=" + botId + " - getEngine() "); //- caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -95,11 +95,11 @@ public class EngineConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/engine", method = RequestMethod.PUT)
+    @RequestMapping(value = "/engines", method = RequestMethod.PUT)
     public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
                                           @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /engine/?" + BOT_ID_PARAM + "=" + botId + " - updateEngine() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /engines/?" + BOT_ID_PARAM + "=" + botId + " - updateEngine() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + engineConfig);
 
         if (botId == null) {

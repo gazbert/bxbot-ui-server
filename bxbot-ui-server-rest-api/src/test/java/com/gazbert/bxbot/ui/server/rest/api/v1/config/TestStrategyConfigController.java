@@ -107,15 +107,15 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.[0].name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.[0].description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.[0].className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.data.[0].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.[0].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[0].optionalConfig.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[0].optionalConfig.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE))
 
                 .andExpect(jsonPath("$.data.[1].id").value(STRAT_2_ID))
                 .andExpect(jsonPath("$.data.[1].name").value(STRAT_2_NAME))
                 .andExpect(jsonPath("$.data.[1].description").value(STRAT_2_DESCRIPTION))
                 .andExpect(jsonPath("$.data.[1].className").value(STRAT_2_CLASSNAME))
-                .andExpect(jsonPath("$.data.[1].configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.[1].configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
+                .andExpect(jsonPath("$.data.[1].optionalConfig.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.[1].optionalConfig.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE)
                 );
 
         verify(strategyConfigService, times(1)).getAllStrategyConfig(BOT_ID);
@@ -165,8 +165,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
+                .andExpect(jsonPath("$.data.optionalConfig.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.optionalConfig.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).getStrategyConfig(BOT_ID, STRAT_1_ID);
     }
@@ -216,8 +216,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
+                .andExpect(jsonPath("$.data.optionalConfig.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.optionalConfig.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).updateStrategyConfig(BOT_ID, strategyConfig_1);
     }
@@ -338,8 +338,8 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.name").value(STRAT_1_NAME))
                 .andExpect(jsonPath("$.data.description").value(STRAT_1_DESCRIPTION))
                 .andExpect(jsonPath("$.data.className").value(STRAT_1_CLASSNAME))
-                .andExpect(jsonPath("$.data.configItems.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
-                .andExpect(jsonPath("$.data.configItems.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
+                .andExpect(jsonPath("$.data.optionalConfig.buy-price").value(BUY_PRICE_CONFIG_ITEM_VALUE))
+                .andExpect(jsonPath("$.data.optionalConfig.buy-amount").value(AMOUNT_TO_BUY_CONFIG_ITEM_VALUE));
 
         verify(strategyConfigService, times(1)).createStrategyConfig(BOT_ID, createdConfig);
     }
@@ -400,16 +400,16 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     private static StrategyConfig someNewStrategyConfig() {
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return new StrategyConfig(null, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, configItems);
+        final Map<String, String> optionalConfig = new HashMap<>();
+        optionalConfig.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        optionalConfig.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return new StrategyConfig(null, STRAT_1_NAME, STRAT_1_DESCRIPTION, STRAT_1_CLASSNAME, optionalConfig);
     }
 
     private static Map<String, String> someConfigItems() {
-        final Map<String, String> configItems = new HashMap<>();
-        configItems.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
-        configItems.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
-        return configItems;
+        final Map<String, String> optionalConfig = new HashMap<>();
+        optionalConfig.put(BUY_PRICE_CONFIG_ITEM_KEY, BUY_PRICE_CONFIG_ITEM_VALUE);
+        optionalConfig.put(AMOUNT_TO_BUY_CONFIG_ITEM_KEY, AMOUNT_TO_BUY_CONFIG_ITEM_VALUE);
+        return optionalConfig;
     }
 }

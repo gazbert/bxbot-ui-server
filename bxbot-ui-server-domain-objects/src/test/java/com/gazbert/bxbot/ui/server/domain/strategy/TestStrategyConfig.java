@@ -53,7 +53,7 @@ public class TestStrategyConfig {
         assertEquals(LABEL, strategyConfig.getName());
         assertEquals(DESCRIPTION, strategyConfig.getDescription());
         assertEquals(CLASSNAME, strategyConfig.getClassName());
-        assertEquals(CONFIG_ITEMS, strategyConfig.getConfigItems());
+        assertEquals(CONFIG_ITEMS, strategyConfig.getOptionalConfig());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TestStrategyConfig {
         assertEquals(null, strategyConfig.getName());
         assertEquals(null, strategyConfig.getDescription());
         assertEquals(null, strategyConfig.getClassName());
-        assertTrue(strategyConfig.getConfigItems().isEmpty());
+        assertTrue(strategyConfig.getOptionalConfig().isEmpty());
 
         strategyConfig.setId(ID);
         assertEquals(ID, strategyConfig.getId());
@@ -78,7 +78,7 @@ public class TestStrategyConfig {
         strategyConfig.setClassName(CLASSNAME);
         assertEquals(CLASSNAME, strategyConfig.getClassName());
 
-        strategyConfig.setConfigItems(CONFIG_ITEMS);
-        assertEquals(CONFIG_ITEMS, strategyConfig.getConfigItems());
+        strategyConfig.setOptionalConfig(CONFIG_ITEMS);
+        assertEquals(CONFIG_ITEMS, strategyConfig.getOptionalConfig());
     }
 }

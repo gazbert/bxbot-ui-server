@@ -40,19 +40,19 @@ public class StrategyConfig {
     private String name;
     private String description;
     private String className;
-    private Map<String, String> configItems = new HashMap<>();
+    private Map<String, String> optionalConfig = new HashMap<>();
 
 
     // required for Jackson
     public StrategyConfig() {
     }
 
-    public StrategyConfig(String id, String name, String description, String className, Map<String, String> configItems) {
+    public StrategyConfig(String id, String name, String description, String className, Map<String, String> optionalConfig) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.className = className;
-        this.configItems = configItems;
+        this.optionalConfig = optionalConfig;
     }
 
     public String getId() {
@@ -87,12 +87,12 @@ public class StrategyConfig {
         this.className = className;
     }
 
-    public Map<String, String> getConfigItems() {
-        return configItems;
+    public Map<String, String> getOptionalConfig() {
+        return optionalConfig;
     }
 
-    public void setConfigItems(Map<String, String> configItems) {
-        this.configItems = configItems;
+    public void setOptionalConfig(Map<String, String> optionalConfig) {
+        this.optionalConfig = optionalConfig;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class StrategyConfig {
                 .add("name", name)
                 .add("description", description)
                 .add("className", className)
-                .add("configItems", configItems)
+                .add("optionalConfig", optionalConfig)
                 .toString();
     }
 }

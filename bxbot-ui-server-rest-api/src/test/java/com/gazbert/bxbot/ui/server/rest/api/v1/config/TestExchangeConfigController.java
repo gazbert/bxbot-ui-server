@@ -60,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
-    private static final String EXCHANGE_CONFIG_ENDPOINT_URI = "/api/v1/config/exchange/";
+    private static final String EXCHANGE_CONFIG_ENDPOINT_URI = "/api/v1/config/exchanges/";
 
     private static final String BOT_ID_PARAM = "botId";
     private static final String BOT_ID = "gdax-bot-1";

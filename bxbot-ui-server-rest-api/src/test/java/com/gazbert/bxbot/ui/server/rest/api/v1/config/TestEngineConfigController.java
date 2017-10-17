@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestEngineConfigController extends AbstractConfigControllerTest {
 
-    private static final String ENGINE_CONFIG_ENDPOINT_URI = "/api/v1/config/engine/";
+    private static final String ENGINE_CONFIG_ENDPOINT_URI = "/api/v1/config/engines/";
 
     private static final String BOT_ID_PARAM = "botId";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";

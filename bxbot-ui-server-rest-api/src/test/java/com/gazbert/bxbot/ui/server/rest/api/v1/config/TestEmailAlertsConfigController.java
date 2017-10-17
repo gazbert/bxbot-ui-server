@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestEmailAlertsConfigController extends AbstractConfigControllerTest {
 
-    private static final String EMAIL_ALERTS_CONFIG_ENDPOINT_URI = "/api/v1/config/email-alerts/";
+    private static final String EMAIL_ALERTS_CONFIG_ENDPOINT_URI = "/api/v1/config/email_alerts/";
 
     private static final String BOT_ID_PARAM = "botId";
     private static final String BOT_ID = "bitstamp-bot-1";

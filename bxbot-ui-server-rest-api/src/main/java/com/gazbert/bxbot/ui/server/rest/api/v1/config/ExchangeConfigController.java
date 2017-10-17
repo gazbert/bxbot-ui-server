@@ -71,10 +71,10 @@ public class ExchangeConfigController extends AbstractController {
      * @return the Exchange configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/exchange", method = RequestMethod.GET)
+    @RequestMapping(value = "/exchanges", method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /exchange/?" + BOT_ID_PARAM + "=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
+        LOG.info("GET /exchanges/?" + BOT_ID_PARAM + "=" + botId + " - getExchange() "); //- caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -95,11 +95,11 @@ public class ExchangeConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Exchange config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/exchange", method = RequestMethod.PUT)
+    @RequestMapping(value = "/exchanges", method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
                                             @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /exchange/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /exchanges/?" + BOT_ID_PARAM + "=" + botId + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);
 
         if (botId == null) {

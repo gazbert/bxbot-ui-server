@@ -71,10 +71,10 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return the Email Alerts configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/email-alerts", method = RequestMethod.GET)
+    @RequestMapping(value = "/email_alerts", method = RequestMethod.GET)
     public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("GET /email-alerts/?" + BOT_ID_PARAM + "=" + botId + " - getEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("GET /email_alerts/?" + BOT_ID_PARAM + "=" + botId + " - getEmailAlerts() "); //- caller: " + user.getUsername());
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -95,11 +95,11 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/email-alerts", method = RequestMethod.PUT)
+    @RequestMapping(value = "/email_alerts", method = RequestMethod.PUT)
     public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
                                                @Param(value = BOT_ID_PARAM) String botId) {
 
-        LOG.info("PUT /email-alerts/?" + BOT_ID_PARAM + "=" + botId + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("PUT /email_alerts/?" + BOT_ID_PARAM + "=" + botId + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + emailAlertsConfig);
 
         if (botId == null) {
