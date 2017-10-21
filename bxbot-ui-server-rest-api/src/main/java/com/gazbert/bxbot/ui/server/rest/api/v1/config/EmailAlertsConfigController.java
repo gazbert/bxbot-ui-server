@@ -28,15 +28,11 @@ import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import com.gazbert.bxbot.ui.server.services.EmailAlertsConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for directing Email Alerts config requests.
@@ -51,12 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config")
+@RequestMapping("/api/v1/config/bots")
 public class EmailAlertsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String BOT_ID_PARAM = "botId";
-
     private final EmailAlertsConfigService emailAlertsConfigService;
 
     public EmailAlertsConfigController(EmailAlertsConfigService emailAlertsConfigService) {
@@ -71,14 +65,14 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return the Email Alerts configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/email_alerts", method = RequestMethod.GET)
-    public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("GET /email_alerts/?" + BOT_ID_PARAM + "=" + botId + " - getEmailAlerts() "); //- caller: " + user.getUsername());
+    @RequestMapping(value = "{botId}/email_alerts", method = RequestMethod.GET)
+    public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("GET /api/v1/config/bots/" + botId + "/email_alerts - getEmailAlerts() "); //- caller: " + user.getUsername());
 
         final EmailAlertsConfig emailAlertsConfig = emailAlertsConfigService.getEmailAlertsConfig(botId);
         return emailAlertsConfig == null
@@ -95,16 +89,16 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/email_alerts", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}/email_alerts", method = RequestMethod.PUT)
     public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
-                                               @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("PUT /email_alerts/?" + BOT_ID_PARAM + "=" + botId + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + emailAlertsConfig);
+                                               @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("PUT /api/v1/config/bots/" + botId + "/email_alerts - updateEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + emailAlertsConfig);
 
         final EmailAlertsConfig updatedConfig = emailAlertsConfigService.updateEmailAlertsConfig(botId, emailAlertsConfig);
         return updatedConfig == null

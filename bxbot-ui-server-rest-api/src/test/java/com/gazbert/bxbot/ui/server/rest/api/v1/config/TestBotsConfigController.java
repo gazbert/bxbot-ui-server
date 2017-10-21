@@ -32,8 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @WebAppConfiguration
 public class TestBotsConfigController extends AbstractConfigControllerTest {
-
-    private static final String BOTS_CONFIG_ENDPOINT_URI = "/api/v1/config/bots/";
     
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
@@ -68,7 +66,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.getAllBotConfig()).willReturn(allTheBotsConfig());
 
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -92,7 +90,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenGetAllBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI))
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -101,7 +99,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.getBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -121,7 +119,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.getBotConfig(UNKNOWN_BOT_ID)).willReturn(null);
 
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -131,7 +129,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenGetBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID))
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -142,7 +140,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
         final BotConfig updatedConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
         given(botConfigService.updateBotConfig(any())).willReturn(updatedConfig);
 
-        mockMvc.perform(put(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -164,7 +162,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.updateBotConfig(any())).willReturn(null);
 
-        mockMvc.perform(put(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
@@ -177,7 +175,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
                 .andDo(print())
@@ -187,7 +185,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateBotConfigCalledWhenUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
@@ -198,7 +196,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateBotConfigCalledWithBotIdMismatchThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put(BOTS_CONFIG_ENDPOINT_URI + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
@@ -214,7 +212,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.createBotConfig(any())).willReturn(createdConfigWithId);
 
-        mockMvc.perform(post(BOTS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(createdConfig)))
@@ -234,7 +232,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(post(BOTS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
                 .andDo(print())
@@ -244,7 +242,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateBotConfigCalledWhenUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(post(BOTS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someBotConfig)))
@@ -257,7 +255,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.deleteBotConfig(BOT_1_ID)).willReturn(someBotConfig);
 
-        mockMvc.perform(delete(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -270,7 +268,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
         given(botConfigService.deleteBotConfig(UNKNOWN_BOT_ID)).willReturn(null);
 
-        mockMvc.perform(delete(BOTS_CONFIG_ENDPOINT_URI + UNKNOWN_BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -280,14 +278,14 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenDeleteBotConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID))
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void whenDeleteBotConfigCalledWhenUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(delete(BOTS_CONFIG_ENDPOINT_URI + BOT_1_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isForbidden());

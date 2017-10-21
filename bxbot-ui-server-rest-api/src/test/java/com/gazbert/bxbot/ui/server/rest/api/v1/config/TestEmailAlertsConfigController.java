@@ -55,9 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestEmailAlertsConfigController extends AbstractConfigControllerTest {
 
-    private static final String EMAIL_ALERTS_CONFIG_ENDPOINT_URI = "/api/v1/config/email_alerts/";
+    private static final String EMAIL_ALERTS_RESOURCE_PATH = "/email_alerts";
 
-    private static final String BOT_ID_PARAM = "botId";
     private static final String BOT_ID = "bitstamp-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
@@ -81,7 +80,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
     public void whenGetEmailAlertsConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(emailAlertsConfigService.getEmailAlertsConfig(BOT_ID)).willReturn((someEmailAlertsConfig()));
-        mockMvc.perform(get(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -102,7 +101,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
 
         given(emailAlertsConfigService.getEmailAlertsConfig(UNKNOWN_BOT_ID)).willReturn(null); // none found!
 
-        mockMvc.perform(get(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -112,16 +111,16 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
 
     @Test
     public void whenGetEmailAlertsConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID))
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + EMAIL_ALERTS_RESOURCE_PATH))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGetEmailAlertsConfigCalledWithoutBotIdThenExpectBadRequestResponse() throws Exception {
-        mockMvc.perform(get(EMAIL_ALERTS_CONFIG_ENDPOINT_URI)
+    public void whenGetEmailAlertsConfigCalledWithoutBotIdThenExpectUnauthorizedResponse() throws Exception {
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -130,7 +129,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
         final EmailAlertsConfig updatedConfig = someEmailAlertsConfig();
         given(emailAlertsConfigService.updateEmailAlertsConfig(eq(BOT_ID), any())).willReturn(updatedConfig);
 
-        mockMvc.perform(put(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -153,7 +152,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
         final EmailAlertsConfig updatedConfig = someEmailAlertsConfig();
         given(emailAlertsConfigService.updateEmailAlertsConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
 
-        mockMvc.perform(put(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -165,7 +164,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
     @Test
     public void whenUpdateEmailAlertsConfigCalledForKnownBotIdAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEmailAlertsConfig())))
                 .andExpect(status().isUnauthorized());
@@ -174,7 +173,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
     @Test
     public void whenUpdateEmailAlertsConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put(EMAIL_ALERTS_CONFIG_ENDPOINT_URI + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEmailAlertsConfig())))
@@ -184,7 +183,7 @@ public class TestEmailAlertsConfigController extends AbstractConfigControllerTes
     @Test
     public void whenUpdateEmailAlertsConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put(EMAIL_ALERTS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + EMAIL_ALERTS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEmailAlertsConfig())))

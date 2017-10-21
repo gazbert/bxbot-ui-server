@@ -50,6 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 abstract class AbstractConfigControllerTest {
 
+    static final String CONFIG_ENDPOINT_BASE_URI = "/api/v1/config/bots/";
+
     // This must match a user's login_id in the user table in src/test/resources/import.sql
     static final String VALID_USER_NAME = "user";
 
