@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         classpath("io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE")
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
     }
 }
 
@@ -20,8 +20,8 @@ buildScan {
 }
 
 ext.versions = [
-        springBootVersion:'1.5.6.RELEASE',
-        springTxVersion:'4.3.10.RELEASE'
+        springBootVersion:'1.5.8.RELEASE',
+        springTxVersion:'4.3.12.RELEASE'
 ]
 
 ext.libraries = [
@@ -47,15 +47,15 @@ ext.libraries = [
             force = true
         },
         spring_tx: dependencies.create("org.springframework:spring-tx:" + ext.versions.springTxVersion),
-        jjwt: dependencies.create("io.jsonwebtoken:jjwt:0.7.0"),
+        jjwt: dependencies.create("io.jsonwebtoken:jjwt:0.9.0"),
         google_guava: dependencies.create("com.google.guava:guava:23.0"),
-        google_gson: dependencies.create("com.google.code.gson:gson:2.8.1"),
+        google_gson: dependencies.create("com.google.code.gson:gson:2.8.2"),
         h2: dependencies.create("com.h2database:h2:1.4.196"),
 
         junit: dependencies.create("junit:junit:4.12"),
-        powermock_junit: dependencies.create("org.powermock:powermock-module-junit4:1.7.0"),
-        powermock_api_easymock: dependencies.create("org.powermock:powermock-api-easymock:1.7.0"),
-        easymock: dependencies.create("org.easymock:easymock:3.4") {
+        powermock_junit: dependencies.create("org.powermock:powermock-module-junit4:1.7.3"),
+        powermock_api_easymock: dependencies.create("org.powermock:powermock-api-easymock:1.7.3"),
+        easymock: dependencies.create("org.easymock:easymock:3.5") {
             exclude module: "cglib-nodep"
             force = true
         },
@@ -201,6 +201,6 @@ task buildTarGzipDist(type: Tar, dependsOn: build) {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.1'
+        gradleVersion = '4.2.1'
     }
 }
