@@ -34,6 +34,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+
 /**
  * Controller for directing Exchange config requests.
  * <p>
@@ -47,10 +49,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config/bots/")
+@RequestMapping(CONFIG_ENDPOINT_BASE_URI)
 public class ExchangeConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String EXCHANGE_RESOURCE_PATH = "/exchange";
     private final ExchangeConfigService exchangeConfigService;
 
     public ExchangeConfigController(ExchangeConfigService exchangeConfigService) {
@@ -68,14 +71,14 @@ public class ExchangeConfigController extends AbstractController {
      * @return the Exchange configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}/exchange", method = RequestMethod.GET)
+    @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("GET /api/v1/config/bots/" + botId + "/exchange - getExchange() "); //- caller: " + user.getUsername());
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EXCHANGE_RESOURCE_PATH + " - getExchange() "); //- caller: " + user.getUsername());
 
         final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
         return exchangeConfig == null
@@ -92,7 +95,7 @@ public class ExchangeConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Exchange config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}/exchange", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
                                             @PathVariable String botId) {
 
@@ -100,7 +103,7 @@ public class ExchangeConfigController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("PUT /api/v1/config/bots/" + botId + "/exchange - updateExchange() "); //- caller: " + user.getUsername());
+        LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + EXCHANGE_RESOURCE_PATH + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);
 
         final ExchangeConfig updatedConfig = exchangeConfigService.updateExchangeConfig(botId, exchangeConfig);

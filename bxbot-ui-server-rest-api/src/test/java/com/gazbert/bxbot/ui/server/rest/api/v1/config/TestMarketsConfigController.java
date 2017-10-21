@@ -54,11 +54,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-public class TestMarketConfigController extends AbstractConfigControllerTest {
+public class TestMarketsConfigController extends AbstractConfigControllerTest {
 
-    private static final String MARKETS_CONFIG_ENDPOINT_URI = "/api/v1/config/markets/";
+    private static final String MARKETS_RESOURCE_PATH = "/markets";
 
-    private static final String BOT_ID_PARAM = "botId";
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
@@ -99,7 +98,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.getAllMarketConfig(BOT_ID)).willReturn(allTheMarketConfig());
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -126,7 +125,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.getAllMarketConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -137,18 +136,18 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetAllMarketConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + MARKET_1_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGetAllMarketConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenGetAllMarketConfigCalledWithMissingBotIdThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -156,7 +155,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.getMarketConfig(BOT_ID, MARKET_1_ID)).willReturn(marketConfig_1);
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -176,7 +175,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.getMarketConfig(UNKNOWN_BOT_ID, MARKET_1_ID)).willReturn(null);
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -187,18 +186,18 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetMarketConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGetMarketConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenGetMarketConfigCalledWithMissingBotIdThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -206,7 +205,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.updateMarketConfig(BOT_ID, marketConfig_1)).willReturn(marketConfig_1);
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
@@ -227,7 +226,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.updateMarketConfig(UNKNOWN_BOT_ID, marketConfig_1)).willReturn(null);
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
@@ -239,7 +238,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateMarketConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
                 .andExpect(status().isUnauthorized());
@@ -248,7 +247,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateMarketConfigCalledAndUserNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
@@ -256,19 +255,19 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenUpdateMarketConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenUpdateMarketConfigCalledWithMissingBotIdThenExpectNptFoundResponse() throws Exception {
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void whenUpdateMarketConfigCalledWithBotIdMismatchThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put(MARKETS_CONFIG_ENDPOINT_URI + MARKET_2_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_2_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(marketConfig_1)))
@@ -280,7 +279,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.deleteMarketConfig(BOT_ID, MARKET_1_ID)).willReturn(true);
 
-        mockMvc.perform(delete(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNoContent());
 
@@ -290,7 +289,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteMarketConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(delete(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID))
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID ))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -299,7 +298,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
 
         given(marketConfigService.deleteMarketConfig(UNKNOWN_BOT_ID, MARKET_1_ID)).willReturn(false);
 
-        mockMvc.perform(delete(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNotFound());
 
@@ -309,17 +308,17 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteMarketConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(delete(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void whenDeleteMarketConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenDeleteMarketConfigCalledWithMissingBotIdThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(delete(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -328,7 +327,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
         final MarketConfig createdConfig = someNewMarketConfig();
         given(marketConfigService.createMarketConfig(BOT_ID, createdConfig)).willReturn(marketConfig_2);
 
-        mockMvc.perform(post(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(createdConfig)))
@@ -350,7 +349,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
         final MarketConfig createdConfig = someNewMarketConfig();
         given(marketConfigService.createMarketConfig(UNKNOWN_BOT_ID, createdConfig)).willReturn(null);
 
-        mockMvc.perform(post(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(createdConfig)))
@@ -362,7 +361,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateMarketConfigCalledAndUserIsNotAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(post(MARKETS_CONFIG_ENDPOINT_URI + MARKET_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewMarketConfig())))
                 .andExpect(status().isUnauthorized());
@@ -371,7 +370,7 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateMarketConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(post(MARKETS_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewMarketConfig())))
@@ -379,13 +378,13 @@ public class TestMarketConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenCreateMarketConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenCreateMarketConfigCalledWithMissingBotIdThenExpecNoSuchMethodResponse() throws Exception {
 
-        mockMvc.perform(post(MARKETS_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewMarketConfig())))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is(405));
     }
 
     // ------------------------------------------------------------------------------------------------

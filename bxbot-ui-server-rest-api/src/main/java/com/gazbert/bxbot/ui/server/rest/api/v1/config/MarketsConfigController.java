@@ -29,7 +29,6 @@ import com.gazbert.bxbot.ui.server.services.MarketConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,6 +36,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
 
 /**
  * Controller for directing Market config requests.
@@ -47,16 +48,15 @@ import java.util.List;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config")
-public class MarketConfigController extends AbstractController {
+@RequestMapping(CONFIG_ENDPOINT_BASE_URI)
+public class MarketsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String BOT_ID_PARAM = "botId";
-
+    private static final String MARKETS_RESOURCE_PATH = "/markets";
     private final MarketConfigService marketConfigService;
 
     @Autowired
-    public MarketConfigController(MarketConfigService marketConfigService) {
+    public MarketsConfigController(MarketConfigService marketConfigService) {
         this.marketConfigService = marketConfigService;
     }
 
@@ -68,14 +68,14 @@ public class MarketConfigController extends AbstractController {
      * @return a list of Market configurations.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/markets", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllMarkets(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("GET /markets/?" + BOT_ID_PARAM + "=" + botId + " - getAllMarkets()"); // caller: " + user.getUsername());
+    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.GET)
+    public ResponseEntity<?> getAllMarkets(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + " - getAllMarkets()"); // caller: " + user.getUsername());
 
         final List<MarketConfig> allMarketConfig = marketConfigService.getAllMarketConfig(botId);
         return allMarketConfig.isEmpty()
@@ -87,20 +87,20 @@ public class MarketConfigController extends AbstractController {
      * Returns the Market configuration for a given id.
      *
      * @param user     the authenticated user.
-     * @param marketId the id of the Market to fetch.
      * @param botId    the id of the Bot to fetch the Market config for.
+     * @param marketId the id of the Market to fetch.
      * @return the Market configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/markets/{marketId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getMarket(@AuthenticationPrincipal User user, @PathVariable String marketId,
-                                       @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("GET /markets/" + marketId + "/?" + BOT_ID_PARAM + "=" + botId + " - getMarket() "); //- caller: " + user.getUsername());
+    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
+                                       @PathVariable String marketId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + "/" + marketId + " - getMarket() "); //- caller: " + user.getUsername());
 
         final MarketConfig marketConfig = marketConfigService.getMarketConfig(botId, marketId);
         return marketConfig == null
@@ -112,22 +112,22 @@ public class MarketConfigController extends AbstractController {
      * Updates a given Market configuration.
      *
      * @param user         the authenticated user.
+     * @param botId        the id of the Bot to update the Market config for.
      * @param marketId     id of the Market config to update.
      * @param marketConfig the updated Market config.
-     * @param botId        the id of the Bot to update the Market config for.
      * @return 200 'Ok' and the updated Market config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/markets/{marketId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMarket(@AuthenticationPrincipal User user, @PathVariable String marketId,
-                                          @RequestBody MarketConfig marketConfig, @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("PUT /markets/" + marketId + "/?" + BOT_ID_PARAM + "=" + botId + " - updateMarket() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + marketConfig);
+    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
+                                          @PathVariable String marketId, @RequestBody MarketConfig marketConfig) {
 
         if (botId == null || marketConfig.getId() == null || !marketId.equals(marketConfig.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + "/" + marketId + " - updateMarket() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + marketConfig);
 
         final MarketConfig updatedConfig = marketConfigService.updateMarketConfig(botId, marketConfig);
         return updatedConfig == null
@@ -139,21 +139,21 @@ public class MarketConfigController extends AbstractController {
      * Creates a new Market configuration.
      *
      * @param user         the authenticated user.
+     * @param botId        the id of the Bot to create the Market config for.
      * @param marketConfig the new Market config.
-     * @param botId        the id of the Bot to update the Market config for.
      * @return 201 'Created' HTTP status code and created Market config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/markets", method = RequestMethod.POST)
-    public ResponseEntity<?> createMarket(@AuthenticationPrincipal User user, @RequestBody MarketConfig marketConfig,
-                                          @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("POST /markets/?" + BOT_ID_PARAM + "=" + botId + " - createMarket()"); // - caller: " + user.getUsername());
-        LOG.info("Request: " + marketConfig);
+    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.POST)
+    public ResponseEntity<?> createMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
+                                          @RequestBody MarketConfig marketConfig) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("POST " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + " - createMarket()"); // - caller: " + user.getUsername());
+        LOG.info("Request: " + marketConfig);
 
         final MarketConfig createdConfig = marketConfigService.createMarketConfig(botId, marketConfig);
         return createdConfig == null
@@ -165,20 +165,20 @@ public class MarketConfigController extends AbstractController {
      * Deletes a Market configuration for a given id.
      *
      * @param user     the authenticated user.
-     * @param marketId the id of the Market configuration to delete.
      * @param botId    the id of the Bot to delete the Market config for.
+     * @param marketId the id of the Market configuration to delete.
      * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/markets/{marketId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteMarket(@AuthenticationPrincipal User user, @PathVariable String marketId,
-                                          @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("DELETE /markets/" + marketId + "/?" + BOT_ID_PARAM + "=" + botId + " - deleteMarket()"); // - caller: " + user.getUsername());
+    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
+                                          @PathVariable String marketId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("DELETE " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + "/" + marketId + " - deleteMarket()"); // - caller: " + user.getUsername());
 
         final boolean result = marketConfigService.deleteMarketConfig(botId, marketId);
         return !result

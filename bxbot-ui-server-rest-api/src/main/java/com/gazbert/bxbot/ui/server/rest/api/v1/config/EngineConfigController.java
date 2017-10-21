@@ -34,6 +34,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+
 /**
  * Controller for directing Engine config requests.
  * <p>
@@ -47,10 +49,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config/bots")
+@RequestMapping(CONFIG_ENDPOINT_BASE_URI)
 public class EngineConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String ENGINE_RESOURCE_PATH = "/engine";
     private final EngineConfigService engineConfigService;
 
     public EngineConfigController(EngineConfigService engineConfigService) {
@@ -65,14 +68,14 @@ public class EngineConfigController extends AbstractController {
      * @return the Engine configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}/engine", method = RequestMethod.GET)
+    @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("GET /api/v1/config/bots/" + botId + "/engine - getEngine() "); //- caller: " + user.getUsername());
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + ENGINE_RESOURCE_PATH + " - getEngine() "); //- caller: " + user.getUsername());
 
         final EngineConfig engineConfig = engineConfigService.getEngineConfig(botId);
         return engineConfig == null
@@ -89,7 +92,7 @@ public class EngineConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}/engine", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
                                           @PathVariable String botId) {
 
@@ -97,7 +100,7 @@ public class EngineConfigController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("PUT /api/v1/config/bots/" + botId + "/engine - updateEngine() "); //- caller: " + user.getUsername());
+        LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + ENGINE_RESOURCE_PATH + " - updateEngine() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + engineConfig);
 
         final EngineConfig updatedConfig = engineConfigService.updateEngineConfig(botId, engineConfig);

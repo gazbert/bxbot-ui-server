@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+
 /**
  * Controller for directing Bot config requests.
  * <p>
@@ -46,7 +48,7 @@ import java.util.List;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config")
+@RequestMapping(CONFIG_ENDPOINT_BASE_URI)
 public class BotsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -64,10 +66,10 @@ public class BotsConfigController extends AbstractController {
      * @return all the Bots configuration.
      */
     @PreAuthorize("hasRole('USER')") // Spring Security maps USER to ROLE_USER in database - ROLE_ prefix must be used.
-    @RequestMapping(value = "/bots", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getBots(@AuthenticationPrincipal User user) {
 
-        LOG.info("GET /bots - getBots()"); // caller: " + user.getUsername());
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + " - getBots()"); // caller: " + user.getUsername());
 
         final List<BotConfig> botConfigs = botConfigService.getAllBotConfig();
         return botConfigs.isEmpty()
@@ -83,10 +85,10 @@ public class BotsConfigController extends AbstractController {
      * @return the Bot config for the given id.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/bots/{botId}", method = RequestMethod.GET)
+    @RequestMapping(value = "{botId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        LOG.info("GET /bots/" + botId + " - getBot()"); // - caller: " + user.getUsername());
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + " - getBot()"); // - caller: " + user.getUsername());
 
         final BotConfig botConfig = botConfigService.getBotConfig(botId);
         return botConfig == null
@@ -102,10 +104,10 @@ public class BotsConfigController extends AbstractController {
      * @return 200 'OK' HTTP status code with updated Bot config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/bots/{botId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateBot(@AuthenticationPrincipal User user, @PathVariable String botId, @RequestBody BotConfig botConfig) {
 
-        LOG.info("PUT /bots/" + botId + " - updateBot()"); // - caller: " + user.getUsername());
+        LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + " - updateBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
         if (!botId.equals(botConfig.getId())) {
@@ -126,10 +128,10 @@ public class BotsConfigController extends AbstractController {
      * @return 201 'Created' HTTP status code if create successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/bots", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createBot(@AuthenticationPrincipal User user, @RequestBody BotConfig botConfig) {
 
-        LOG.info("POST /bots - createBot()"); // - caller: " + user.getUsername());
+        LOG.info("POST " + CONFIG_ENDPOINT_BASE_URI + " - createBot()"); // - caller: " + user.getUsername());
         LOG.info("Request: " + botConfig);
 
         final BotConfig createdConfig = botConfigService.createBotConfig(botConfig);
@@ -146,10 +148,10 @@ public class BotsConfigController extends AbstractController {
      * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/bots/{botId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{botId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        LOG.info("DELETE /bots/" + botId + " - deleteBot()"); // - caller: " + user.getUsername());
+        LOG.info("DELETE " + CONFIG_ENDPOINT_BASE_URI + botId + " - deleteBot()"); // - caller: " + user.getUsername());
 
         final BotConfig deletedConfig = botConfigService.deleteBotConfig(botId);
         return deletedConfig == null

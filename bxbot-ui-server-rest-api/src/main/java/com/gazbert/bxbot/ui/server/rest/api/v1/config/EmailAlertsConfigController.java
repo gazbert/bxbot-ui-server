@@ -34,6 +34,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+
 /**
  * Controller for directing Email Alerts config requests.
  * <p>
@@ -47,10 +49,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config/bots")
+@RequestMapping(CONFIG_ENDPOINT_BASE_URI)
 public class EmailAlertsConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String EMAIL_ALERTS_RESOURCE_PATH = "/email_alerts";
     private final EmailAlertsConfigService emailAlertsConfigService;
 
     public EmailAlertsConfigController(EmailAlertsConfigService emailAlertsConfigService) {
@@ -65,14 +68,14 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return the Email Alerts configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}/email_alerts", method = RequestMethod.GET)
+    @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("GET /api/v1/config/bots/" + botId + "/email_alerts - getEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EMAIL_ALERTS_RESOURCE_PATH + " - getEmailAlerts() "); //- caller: " + user.getUsername());
 
         final EmailAlertsConfig emailAlertsConfig = emailAlertsConfigService.getEmailAlertsConfig(botId);
         return emailAlertsConfig == null
@@ -89,7 +92,7 @@ public class EmailAlertsConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}/email_alerts", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
                                                @PathVariable String botId) {
 
@@ -97,7 +100,7 @@ public class EmailAlertsConfigController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        LOG.info("PUT /api/v1/config/bots/" + botId + "/email_alerts - updateEmailAlerts() "); //- caller: " + user.getUsername());
+        LOG.info("PUT" + CONFIG_ENDPOINT_BASE_URI + botId + EMAIL_ALERTS_RESOURCE_PATH + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + emailAlertsConfig);
 
         final EmailAlertsConfig updatedConfig = emailAlertsConfigService.updateEmailAlertsConfig(botId, emailAlertsConfig);
