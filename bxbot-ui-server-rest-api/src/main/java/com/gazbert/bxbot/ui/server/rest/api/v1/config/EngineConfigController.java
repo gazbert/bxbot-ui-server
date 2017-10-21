@@ -51,8 +51,6 @@ import org.springframework.web.bind.annotation.*;
 public class EngineConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String BOT_ID_PARAM = "botId";
-
     private final EngineConfigService engineConfigService;
 
     public EngineConfigController(EngineConfigService engineConfigService) {
