@@ -56,11 +56,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestEngineConfigController extends AbstractConfigControllerTest {
 
-    private static final String ENGINE_CONFIG_ENDPOINT_URI = "/api/v1/config/engines/";
+    private static final String ENGINE_RESOURCE_PATH = "/engine";
 
-    private static final String BOT_ID_PARAM = "botId";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
-
     private static final String BOT_ID = "bitstamp-bot-1";
     private static final String BOT_NAME = "Bitstamp Bot";
     private static final String ENGINE_EMERGENCY_STOP_CURRENCY = "BTC";
@@ -79,7 +77,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
     public void whenGetEngineConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(engineConfigService.getEngineConfig(BOT_ID)).willReturn(someEngineConfig());
-        mockMvc.perform(get(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -98,7 +96,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
 
         given(engineConfigService.getEngineConfig(UNKNOWN_BOT_ID)).willReturn(null); // none found!
 
-        mockMvc.perform(get(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -108,16 +106,16 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
 
     @Test
     public void whenGetEngineConfigCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
-        mockMvc.perform(get(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID))
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + ENGINE_RESOURCE_PATH))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGetEngineConfigCalledWithoutBotIdThenExpectBadRequestResponse() throws Exception {
-        mockMvc.perform(get(ENGINE_CONFIG_ENDPOINT_URI)
+    public void whenGetEngineConfigCalledWithoutBotIdThenExpectUnauthorizedResponse() throws Exception {
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -126,7 +124,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
         final EngineConfig updatedConfig = someEngineConfig();
         given(engineConfigService.updateEngineConfig(eq(BOT_ID), any())).willReturn(updatedConfig);
 
-        mockMvc.perform(put(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -147,7 +145,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
         final EngineConfig updatedConfig = someEngineConfig();
         given(engineConfigService.updateEngineConfig(UNKNOWN_BOT_ID, updatedConfig)).willReturn(null);
 
-        mockMvc.perform(put(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(updatedConfig)))
@@ -159,7 +157,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateEngineConfigCalledForKnownBotIdAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put(ENGINE_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + ENGINE_RESOURCE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEngineConfig())))
                 .andExpect(status().isUnauthorized());
@@ -168,7 +166,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateEngineConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put(ENGINE_CONFIG_ENDPOINT_URI + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEngineConfig())))
@@ -178,7 +176,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateEngineConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put(ENGINE_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + ENGINE_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someEngineConfig())))

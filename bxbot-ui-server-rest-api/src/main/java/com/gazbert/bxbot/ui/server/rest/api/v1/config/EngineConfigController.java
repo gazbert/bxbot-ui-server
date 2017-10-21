@@ -28,15 +28,11 @@ import com.gazbert.bxbot.ui.server.rest.security.model.User;
 import com.gazbert.bxbot.ui.server.services.EngineConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for directing Engine config requests.
@@ -51,7 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/api/v1/config")
+@RequestMapping("/api/v1/config/bots")
 public class EngineConfigController extends AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -71,14 +67,14 @@ public class EngineConfigController extends AbstractController {
      * @return the Engine configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/engines", method = RequestMethod.GET)
-    public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("GET /engines/?" + BOT_ID_PARAM + "=" + botId + " - getEngine() "); //- caller: " + user.getUsername());
+    @RequestMapping(value = "{botId}/engine", method = RequestMethod.GET)
+    public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("GET /api/v1/config/bots/" + botId + "/engine - getEngine() "); //- caller: " + user.getUsername());
 
         final EngineConfig engineConfig = engineConfigService.getEngineConfig(botId);
         return engineConfig == null
@@ -95,16 +91,16 @@ public class EngineConfigController extends AbstractController {
      * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/engines", method = RequestMethod.PUT)
+    @RequestMapping(value = "{botId}/engine", method = RequestMethod.PUT)
     public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
-                                          @Param(value = BOT_ID_PARAM) String botId) {
-
-        LOG.info("PUT /engines/?" + BOT_ID_PARAM + "=" + botId + " - updateEngine() "); //- caller: " + user.getUsername());
-        LOG.info("Request: " + engineConfig);
+                                          @PathVariable String botId) {
 
         if (botId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        LOG.info("PUT /api/v1/config/bots/" + botId + "/engine - updateEngine() "); //- caller: " + user.getUsername());
+        LOG.info("Request: " + engineConfig);
 
         final EngineConfig updatedConfig = engineConfigService.updateEngineConfig(botId, engineConfig);
         return updatedConfig == null
