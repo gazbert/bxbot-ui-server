@@ -32,7 +32,7 @@ import com.google.common.base.MoreObjects;
 public class BotConfig {
 
     private String id;
-    private String name;
+    private String displayName;
     private String status;
     private String baseUrl;
     private String username;
@@ -44,16 +44,16 @@ public class BotConfig {
 
     public BotConfig(BotConfig other) {
         this.id = other.id;
-        this.name = other.name;
+        this.displayName = other.displayName;
         this.status = other.status;
         this.baseUrl = other.baseUrl;
         this.username = other.username;
         this.password = other.password;
     }
 
-    public BotConfig(String id, String name, String status, String baseUrl, String username, String password) {
+    public BotConfig(String id, String displayName, String status, String baseUrl, String username, String password) {
         this.id = id;
-        this.name = name;
+        this.displayName = displayName;
         this.status = status;
         this.baseUrl = baseUrl;
         this.username = username;
@@ -68,12 +68,12 @@ public class BotConfig {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getStatus() {
@@ -112,7 +112,7 @@ public class BotConfig {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("name", name)
+                .add("displayName", displayName)
                 .add("status", status)
                 .add("baseUrl", baseUrl)
                 .add("username", username)

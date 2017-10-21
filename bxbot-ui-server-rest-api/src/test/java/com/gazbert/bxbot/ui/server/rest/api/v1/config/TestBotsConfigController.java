@@ -74,14 +74,14 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.[0].id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.[0].name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.[0].displayName").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.[0].status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.[0].baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.[0].username").value(BOT_1_USERNAME))
                 .andExpect(jsonPath("$.data.[0].password").value(BOT_1_PASSWORD))
 
                 .andExpect(jsonPath("$.data.[1].id").value(BOT_2_ID))
-                .andExpect(jsonPath("$.data.[1].name").value(BOT_2_NAME))
+                .andExpect(jsonPath("$.data.[1].displayName").value(BOT_2_NAME))
                 .andExpect(jsonPath("$.data.[1].status").value(BOT_2_STATUS))
                 .andExpect(jsonPath("$.data.[1].baseUrl").value(BOT_2_BASE_URL))
                 .andExpect(jsonPath("$.data.[1].username").value(BOT_2_USERNAME))
@@ -107,7 +107,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
@@ -150,7 +150,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
@@ -222,7 +222,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
+                .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))

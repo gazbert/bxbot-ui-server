@@ -46,7 +46,7 @@ public class TestBotConfig {
 
         final BotConfig botConfig = new BotConfig();
         assertEquals(null, botConfig.getId());
-        assertEquals(null, botConfig.getName());
+        assertEquals(null, botConfig.getDisplayName());
         assertEquals(null, botConfig.getStatus());
         assertEquals(null, botConfig.getBaseUrl());
         assertEquals(null, botConfig.getUsername());
@@ -61,8 +61,8 @@ public class TestBotConfig {
         botConfig.setId(BOT_ID);
         assertEquals(BOT_ID, botConfig.getId());
 
-        botConfig.setName(BOT_NAME);
-        assertEquals(BOT_NAME, botConfig.getName());
+        botConfig.setDisplayName(BOT_NAME);
+        assertEquals(BOT_NAME, botConfig.getDisplayName());
 
         botConfig.setStatus(BOT_STATUS);
         assertEquals(BOT_STATUS, botConfig.getStatus());

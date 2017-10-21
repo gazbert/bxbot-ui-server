@@ -186,7 +186,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
         internalBotConfig.forEach((item) -> {
             final BotConfig botConfig = new BotConfig();
             botConfig.setId(item.getId());
-            botConfig.setName(item.getName());
+            botConfig.setDisplayName(item.getDisplayName());
             botConfig.setStatus(item.getStatus());
             botConfig.setBaseUrl(item.getBaseUrl());
             botConfig.setUsername(item.getUsername());
@@ -205,7 +205,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
             // Should only ever be 1 unique Bot id
             final BotType internalBotConfig = internalBotsConfigItems.get(0);
             botConfig.setId(internalBotConfig.getId());
-            botConfig.setName(internalBotConfig.getName());
+            botConfig.setDisplayName(internalBotConfig.getDisplayName());
             botConfig.setStatus(internalBotConfig.getStatus());
             botConfig.setBaseUrl(internalBotConfig.getBaseUrl());
             botConfig.setUsername(internalBotConfig.getUsername());
@@ -218,7 +218,7 @@ public class BotConfigRepositoryXmlDatastore implements BotConfigRepository {
 
         final BotType botType = new BotType();
         botType.setId(externalBotConfig.getId());
-        botType.setName(externalBotConfig.getName());
+        botType.setDisplayName(externalBotConfig.getDisplayName());
         botType.setStatus(externalBotConfig.getStatus());
         botType.setBaseUrl(externalBotConfig.getBaseUrl());
         botType.setUsername(externalBotConfig.getUsername());

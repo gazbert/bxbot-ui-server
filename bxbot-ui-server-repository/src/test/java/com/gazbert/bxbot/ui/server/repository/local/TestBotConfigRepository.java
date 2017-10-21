@@ -100,14 +100,14 @@ public class TestBotConfigRepository {
         assertThat(botConfigItems.size()).isEqualTo(2);
 
         assertThat(botConfigItems.get(0).getId()).isEqualTo(BOT_1_ID);
-        assertThat(botConfigItems.get(0).getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfigItems.get(0).getDisplayName()).isEqualTo(BOT_1_NAME);
         assertThat(botConfigItems.get(0).getStatus()).isEqualTo(BOT_1_STATUS);
         assertThat(botConfigItems.get(0).getBaseUrl()).isEqualTo(BOT_1_BASE_URL);
         assertThat(botConfigItems.get(0).getUsername()).isEqualTo(BOT_1_USERNAME);
         assertThat(botConfigItems.get(0).getPassword()).isEqualTo(BOT_1_PASSWORD);
 
         assertThat(botConfigItems.get(1).getId()).isEqualTo(BOT_2_ID);
-        assertThat(botConfigItems.get(1).getName()).isEqualTo(BOT_2_NAME);
+        assertThat(botConfigItems.get(1).getDisplayName()).isEqualTo(BOT_2_NAME);
         assertThat(botConfigItems.get(1).getStatus()).isEqualTo(BOT_2_STATUS);
         assertThat(botConfigItems.get(1).getBaseUrl()).isEqualTo(BOT_2_BASE_URL);
         assertThat(botConfigItems.get(1).getUsername()).isEqualTo(BOT_2_USERNAME);
@@ -131,7 +131,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.findById(BOT_1_ID);
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
-        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getDisplayName()).isEqualTo(BOT_1_NAME);
         assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
         assertThat(botConfig.getBaseUrl()).isEqualTo(BOT_1_BASE_URL);
         assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
@@ -155,7 +155,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.findById(UNKNOWN_BOT_ID);
 
         assertThat(botConfig.getId()).isEqualTo(null);
-        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getDisplayName()).isEqualTo(null);
         assertThat(botConfig.getBaseUrl()).isEqualTo(null);
         assertThat(botConfig.getUsername()).isEqualTo(null);
         assertThat(botConfig.getPassword()).isEqualTo(null);
@@ -189,7 +189,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfig());
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
-        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getDisplayName()).isEqualTo(BOT_1_NAME);
         assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
         assertThat(botConfig.getBaseUrl()).isEqualTo(BOT_1_BASE_URL);
         assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
@@ -227,7 +227,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.save(someNewExternalBotConfig());
 
         assertThat(botConfig.getId()).isNotEmpty(); // uuid has been generated
-        assertThat(botConfig.getName()).isEqualTo(NEW_BOT_NAME);
+        assertThat(botConfig.getDisplayName()).isEqualTo(NEW_BOT_NAME);
         assertThat(botConfig.getStatus()).isEqualTo(NEW_BOT_STATUS);
         assertThat(botConfig.getBaseUrl()).isEqualTo(NEW_BOT_URL);
         assertThat(botConfig.getUsername()).isEqualTo(NEW_BOT_USERNAME);
@@ -251,7 +251,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.save(someUpdatedExternalBotConfigWithUnknownId());
 
         assertThat(botConfig.getId()).isEqualTo(null);
-        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getDisplayName()).isEqualTo(null);
         assertThat(botConfig.getStatus()).isEqualTo(null);
         assertThat(botConfig.getBaseUrl()).isEqualTo(null);
         assertThat(botConfig.getUsername()).isEqualTo(null);
@@ -280,7 +280,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.delete(BOT_1_ID);
 
         assertThat(botConfig.getId()).isEqualTo(BOT_1_ID);
-        assertThat(botConfig.getName()).isEqualTo(BOT_1_NAME);
+        assertThat(botConfig.getDisplayName()).isEqualTo(BOT_1_NAME);
         assertThat(botConfig.getStatus()).isEqualTo(BOT_1_STATUS);
         assertThat(botConfig.getBaseUrl()).isEqualTo(BOT_1_BASE_URL);
         assertThat(botConfig.getUsername()).isEqualTo(BOT_1_USERNAME);
@@ -304,7 +304,7 @@ public class TestBotConfigRepository {
         final BotConfig botConfig = botConfigRepository.delete(UNKNOWN_BOT_ID);
 
         assertThat(botConfig.getId()).isEqualTo(null);
-        assertThat(botConfig.getName()).isEqualTo(null);
+        assertThat(botConfig.getDisplayName()).isEqualTo(null);
         assertThat(botConfig.getStatus()).isEqualTo(null);
         assertThat(botConfig.getBaseUrl()).isEqualTo(null);
         assertThat(botConfig.getUsername()).isEqualTo(null);
@@ -321,7 +321,7 @@ public class TestBotConfigRepository {
 
         final BotType botType1 = new BotType();
         botType1.setId(BOT_1_ID);
-        botType1.setName(BOT_1_NAME);
+        botType1.setDisplayName(BOT_1_NAME);
         botType1.setStatus(BOT_1_STATUS);
         botType1.setBaseUrl(BOT_1_BASE_URL);
         botType1.setUsername(BOT_1_USERNAME);
@@ -329,7 +329,7 @@ public class TestBotConfigRepository {
 
         final BotType botType2 = new BotType();
         botType2.setId(BOT_2_ID);
-        botType2.setName(BOT_2_NAME);
+        botType2.setDisplayName(BOT_2_NAME);
         botType2.setStatus(BOT_2_STATUS);
         botType2.setBaseUrl(BOT_2_BASE_URL);
         botType2.setUsername(BOT_2_USERNAME);
@@ -345,7 +345,7 @@ public class TestBotConfigRepository {
 
         final BotType newBot = new BotType();
         newBot.setId(GENERATED_BOT_ID);
-        newBot.setName(NEW_BOT_NAME);
+        newBot.setDisplayName(NEW_BOT_NAME);
         newBot.setStatus(NEW_BOT_STATUS);
         newBot.setBaseUrl(NEW_BOT_URL);
         newBot.setUsername(NEW_BOT_USERNAME);
