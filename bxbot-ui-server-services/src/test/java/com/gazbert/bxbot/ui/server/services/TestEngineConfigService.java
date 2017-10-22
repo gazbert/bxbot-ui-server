@@ -53,7 +53,6 @@ public class TestEngineConfigService {
 
     private static final String BOT_ID = "bitstamp-bot-1";
     private static final String BOT_NAME = "Bitstamp Bot";
-    private static final String BOT_STATUS = "Running";
     private static final String BOT_BASE_URL = "https://hostname.one/api";
     private static final String BOT_USERNAME = "admin";
     private static final String BOT_PASSWORD = "password";
@@ -74,7 +73,7 @@ public class TestEngineConfigService {
 
     @Before
     public void setup() throws Exception {
-        knownBotConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        knownBotConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
         engineConfig = buildEngineConfig();
     }
 

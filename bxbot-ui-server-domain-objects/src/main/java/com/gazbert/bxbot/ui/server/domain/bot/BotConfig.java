@@ -33,7 +33,6 @@ public class BotConfig {
 
     private String id;
     private String displayName;
-    private String status;
     private String baseUrl;
     private String username;
     private String password;
@@ -45,16 +44,14 @@ public class BotConfig {
     public BotConfig(BotConfig other) {
         this.id = other.id;
         this.displayName = other.displayName;
-        this.status = other.status;
         this.baseUrl = other.baseUrl;
         this.username = other.username;
         this.password = other.password;
     }
 
-    public BotConfig(String id, String displayName, String status, String baseUrl, String username, String password) {
+    public BotConfig(String id, String displayName, String baseUrl, String username, String password) {
         this.id = id;
         this.displayName = displayName;
-        this.status = status;
         this.baseUrl = baseUrl;
         this.username = username;
         this.password = password;
@@ -74,14 +71,6 @@ public class BotConfig {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getBaseUrl() {
@@ -113,7 +102,6 @@ public class BotConfig {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("displayName", displayName)
-                .add("status", status)
                 .add("baseUrl", baseUrl)
                 .add("username", username)
                 .add("password", password)

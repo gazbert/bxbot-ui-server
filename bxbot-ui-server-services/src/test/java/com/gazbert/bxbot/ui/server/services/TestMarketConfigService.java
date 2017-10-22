@@ -56,7 +56,6 @@ public class TestMarketConfigService {
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
-    private static final String BOT_1_STATUS = "Running";
     private static final String BOT_1_BASE_URL = "https://hostname.one/api";
     private static final String BOT_1_USERNAME = "admin";
     private static final String BOT_1_PASSWORD = "password";
@@ -88,7 +87,7 @@ public class TestMarketConfigService {
 
     @Before
     public void setup() throws Exception {
-        knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
 
         marketConfig_1 = new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
                 MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);

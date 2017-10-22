@@ -58,7 +58,6 @@ public class TestStrategyConfigService {
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
-    private static final String BOT_1_STATUS = "Running";
     private static final String BOT_1_BASE_URL = "https://hostname.one/api";
     private static final String BOT_1_USERNAME = "admin";
     private static final String BOT_1_PASSWORD = "password";
@@ -91,7 +90,7 @@ public class TestStrategyConfigService {
 
     @Before
     public void setup() throws Exception {
-        knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        knownBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
 
         strategyConfig_1 = new StrategyConfig(STRAT_1_ID, STRAT_1_NAME, STRAT_1_DESCRIPTION,
                 STRAT_1_CLASSNAME, someConfigItems());

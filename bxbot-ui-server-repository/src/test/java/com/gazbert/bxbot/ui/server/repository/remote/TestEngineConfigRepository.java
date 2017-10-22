@@ -60,7 +60,6 @@ public class TestEngineConfigRepository {
     private static final String REST_ENDPOINT_PATH = "/config/engine";
 
     private static final String BOT_NAME = "GDAX";
-    private static final String BOT_STATUS = "Running";
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_BASE_URL = REST_ENDPOINT_BASE_URL;
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
@@ -85,7 +84,7 @@ public class TestEngineConfigRepository {
 
     @Before
     public void setUp() throws Exception {
-        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_STATUS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
         someEngineConfig = someEngineConfig();
     }
 

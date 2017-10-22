@@ -52,14 +52,12 @@ public class TestBotsConfigurationManagement {
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
-    private static final String BOT_1_STATUS = "Running";
     private static final String BOT_1_BASE_URL = "https://hostname.one/api";
     private static final String BOT_1_USERNAME = "admin";
     private static final String BOT_1_PASSWORD = "password";
 
     private static final String BOT_2_ID = "gdax-bot-1";
     private static final String BOT_2_NAME = "GDAX Bot";
-    private static final String BOT_2_STATUS = "Running";
     private static final String BOT_2_BASE_URL = "https://hostname.two/api";
     private static final String BOT_2_USERNAME = "admin";
     private static final String BOT_2_PASSWORD = "password";
@@ -75,14 +73,12 @@ public class TestBotsConfigurationManagement {
 
         assertEquals(BOT_1_ID, botsType.getBots().get(0).getId());
         assertEquals(BOT_1_NAME, botsType.getBots().get(0).getDisplayName());
-        assertEquals(BOT_1_STATUS, botsType.getBots().get(0).getStatus());
         assertEquals(BOT_1_BASE_URL, botsType.getBots().get(0).getBaseUrl());
         assertEquals(BOT_1_USERNAME, botsType.getBots().get(0).getUsername());
         assertEquals(BOT_1_PASSWORD, botsType.getBots().get(0).getPassword());
 
         assertEquals(BOT_2_ID, botsType.getBots().get(1).getId());
         assertEquals(BOT_2_NAME, botsType.getBots().get(1).getDisplayName());
-        assertEquals(BOT_2_STATUS, botsType.getBots().get(1).getStatus());
         assertEquals(BOT_2_BASE_URL, botsType.getBots().get(1).getBaseUrl());
         assertEquals(BOT_2_USERNAME, botsType.getBots().get(1).getUsername());
         assertEquals(BOT_2_PASSWORD, botsType.getBots().get(1).getPassword());
@@ -106,7 +102,6 @@ public class TestBotsConfigurationManagement {
         final BotType bot1 = new BotType();
         bot1.setId(BOT_1_ID);
         bot1.setDisplayName(BOT_1_NAME);
-        bot1.setStatus(BOT_1_STATUS);
         bot1.setBaseUrl(BOT_1_BASE_URL);
         bot1.setUsername(BOT_1_USERNAME);
         bot1.setPassword(BOT_1_PASSWORD);
@@ -114,7 +109,6 @@ public class TestBotsConfigurationManagement {
         final BotType bot2 = new BotType();
         bot2.setId(BOT_2_ID);
         bot2.setDisplayName(BOT_2_NAME);
-        bot2.setStatus(BOT_2_STATUS);
         bot2.setBaseUrl(BOT_2_BASE_URL);
         bot2.setUsername(BOT_2_USERNAME);
         bot2.setPassword(BOT_2_PASSWORD);
@@ -131,14 +125,12 @@ public class TestBotsConfigurationManagement {
 
         assertThat(botsReloaded.getBots().get(0).getId()).isEqualTo(BOT_1_ID);
         assertThat(botsReloaded.getBots().get(0).getDisplayName()).isEqualTo(BOT_1_NAME);
-        assertThat(botsReloaded.getBots().get(0).getStatus()).isEqualTo(BOT_1_STATUS);
         assertThat(botsReloaded.getBots().get(0).getBaseUrl()).isEqualTo(BOT_1_BASE_URL);
         assertThat(botsReloaded.getBots().get(0).getUsername()).isEqualTo(BOT_1_USERNAME);
         assertThat(botsReloaded.getBots().get(0).getPassword()).isEqualTo(BOT_1_PASSWORD);
 
         assertThat(botsReloaded.getBots().get(1).getId()).isEqualTo(BOT_2_ID);
         assertThat(botsReloaded.getBots().get(1).getDisplayName()).isEqualTo(BOT_2_NAME);
-        assertThat(botsReloaded.getBots().get(1).getStatus()).isEqualTo(BOT_2_STATUS);
         assertThat(botsReloaded.getBots().get(1).getBaseUrl()).isEqualTo(BOT_2_BASE_URL);
         assertThat(botsReloaded.getBots().get(1).getUsername()).isEqualTo(BOT_2_USERNAME);
         assertThat(botsReloaded.getBots().get(1).getPassword()).isEqualTo(BOT_2_PASSWORD);

@@ -36,7 +36,6 @@ public class TestBotConfig {
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_NAME = "GDAX";
-    private static final String BOT_STATUS = "Running";
     private static final String BOT_BASE_URL = "https://localhost/api";
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
@@ -47,7 +46,6 @@ public class TestBotConfig {
         final BotConfig botConfig = new BotConfig();
         assertEquals(null, botConfig.getId());
         assertEquals(null, botConfig.getDisplayName());
-        assertEquals(null, botConfig.getStatus());
         assertEquals(null, botConfig.getBaseUrl());
         assertEquals(null, botConfig.getUsername());
         assertEquals(null, botConfig.getPassword());
@@ -63,9 +61,6 @@ public class TestBotConfig {
 
         botConfig.setDisplayName(BOT_NAME);
         assertEquals(BOT_NAME, botConfig.getDisplayName());
-
-        botConfig.setStatus(BOT_STATUS);
-        assertEquals(BOT_STATUS, botConfig.getStatus());
 
         botConfig.setBaseUrl(BOT_BASE_URL);
         assertEquals(BOT_BASE_URL, botConfig.getBaseUrl());

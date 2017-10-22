@@ -37,14 +37,12 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
     private static final String BOT_1_ID = "bitstamp-bot-1";
     private static final String BOT_1_NAME = "Bitstamp Bot";
-    private static final String BOT_1_STATUS = "Running";
     private static final String BOT_1_BASE_URL = "https://hostname.one/api";
     private static final String BOT_1_USERNAME = "admin";
     private static final String BOT_1_PASSWORD = "password";
 
     private static final String BOT_2_ID = "gdax-bot-1";
     private static final String BOT_2_NAME = "GDAX Bot";
-    private static final String BOT_2_STATUS = "Running";
     private static final String BOT_2_BASE_URL = "https://hostname.two/api";
     private static final String BOT_2_USERNAME = "admin";
     private static final String BOT_2_PASSWORD = "password";
@@ -58,7 +56,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx).addFilter(springSecurityFilterChain).build();
-        someBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        someBotConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
     }
 
     @Test
@@ -73,14 +71,12 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
                 .andExpect(jsonPath("$.data.[0].id").value(BOT_1_ID))
                 .andExpect(jsonPath("$.data.[0].displayName").value(BOT_1_NAME))
-                .andExpect(jsonPath("$.data.[0].status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.[0].baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.[0].username").value(BOT_1_USERNAME))
                 .andExpect(jsonPath("$.data.[0].password").value(BOT_1_PASSWORD))
 
                 .andExpect(jsonPath("$.data.[1].id").value(BOT_2_ID))
                 .andExpect(jsonPath("$.data.[1].displayName").value(BOT_2_NAME))
-                .andExpect(jsonPath("$.data.[1].status").value(BOT_2_STATUS))
                 .andExpect(jsonPath("$.data.[1].baseUrl").value(BOT_2_BASE_URL))
                 .andExpect(jsonPath("$.data.[1].username").value(BOT_2_USERNAME))
                 .andExpect(jsonPath("$.data.[1].password").value(BOT_2_PASSWORD));
@@ -106,7 +102,6 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
                 .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
-                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
                 .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
@@ -137,7 +132,7 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     public void whenUpdateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
 
-        final BotConfig updatedConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        final BotConfig updatedConfig = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
         given(botConfigService.updateBotConfig(any())).willReturn(updatedConfig);
 
         mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_1_ID)
@@ -149,7 +144,6 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
                 .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
-                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
                 .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
@@ -207,8 +201,8 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateBotConfigCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        final BotConfig createdConfig = new BotConfig(null, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
-        final BotConfig createdConfigWithId = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        final BotConfig createdConfig = new BotConfig(null, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        final BotConfig createdConfigWithId = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
 
         given(botConfigService.createBotConfig(any())).willReturn(createdConfigWithId);
 
@@ -221,7 +215,6 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
                 .andExpect(jsonPath("$.data.displayName").value(BOT_1_NAME))
-                .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS))
                 .andExpect(jsonPath("$.data.baseUrl").value(BOT_1_BASE_URL))
                 .andExpect(jsonPath("$.data.username").value(BOT_1_USERNAME))
                 .andExpect(jsonPath("$.data.password").value(BOT_1_PASSWORD));
@@ -297,8 +290,8 @@ public class TestBotsConfigController extends AbstractConfigControllerTest {
 
     private static List<BotConfig> allTheBotsConfig() {
 
-        final BotConfig bot1 = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
-        final BotConfig bot2 = new BotConfig(BOT_2_ID, BOT_2_NAME, BOT_2_STATUS, BOT_2_BASE_URL, BOT_2_USERNAME, BOT_2_PASSWORD);
+        final BotConfig bot1 = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        final BotConfig bot2 = new BotConfig(BOT_2_ID, BOT_2_NAME, BOT_2_BASE_URL, BOT_2_USERNAME, BOT_2_PASSWORD);
 
         final List<BotConfig> allTheBots = new ArrayList<>();
         allTheBots.add(bot1);
