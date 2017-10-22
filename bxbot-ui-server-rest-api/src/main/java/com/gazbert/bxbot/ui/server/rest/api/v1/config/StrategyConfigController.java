@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
+import com.gazbert.bxbot.ui.server.services.config.StrategyConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractConfigController.CONFIG_ENDPOINT_BASE_URI;
 
 /**
  * Controller for directing Strategy config requests.
@@ -49,7 +49,7 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.
  */
 @RestController
 @RequestMapping(CONFIG_ENDPOINT_BASE_URI)
-public class StrategyConfigController extends AbstractController {
+public class StrategyConfigController extends AbstractConfigController {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String STRATEGIES_RESOURCE_PATH = "/strategies";
@@ -107,7 +107,7 @@ public class StrategyConfigController extends AbstractController {
      * @param botId          the id of the Bot to update the Strategy config for.
      * @param strategyId     id of the Strategy config to update.
      * @param strategyConfig the updated Strategy config.
-     * @return 200 'Ok' and the updated Strategy config if successful, some other HTTP status code otherwise.
+     * @return 200 'Ok' and the updated Strategy config if successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.PUT)
@@ -133,7 +133,7 @@ public class StrategyConfigController extends AbstractController {
      * @param user           the authenticated user.
      * @param botId          the id of the Bot to create the Strategy config for.
      * @param strategyConfig the new Strategy config.
-     * @return 201 'Created' HTTP status code and created Strategy config if successful, some other HTTP status code otherwise.
+     * @return 201 'Created' HTTP getStatus code and created Strategy config if successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH, method = RequestMethod.POST)
@@ -155,7 +155,7 @@ public class StrategyConfigController extends AbstractController {
      * @param user       the authenticated user.
      * @param botId      the id of the Bot to delete the Strategy config for.
      * @param strategyId the id of the Strategy configuration to delete.
-     * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
+     * @return 204 'No Content' HTTP getStatus code if delete successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.DELETE)

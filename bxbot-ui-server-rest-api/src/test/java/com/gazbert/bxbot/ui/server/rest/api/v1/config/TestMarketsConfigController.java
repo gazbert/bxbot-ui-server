@@ -24,7 +24,7 @@
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.market.MarketConfig;
-import com.gazbert.bxbot.ui.server.services.MarketConfigService;
+import com.gazbert.bxbot.ui.server.services.config.MarketConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

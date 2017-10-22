@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.BotConfigService;
+import com.gazbert.bxbot.ui.server.services.config.BotConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractConfigController.CONFIG_ENDPOINT_BASE_URI;
 
 /**
  * Controller for directing Bot config requests.
@@ -49,7 +49,7 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.
  */
 @RestController
 @RequestMapping(CONFIG_ENDPOINT_BASE_URI)
-public class BotsConfigController extends AbstractController {
+public class BotsConfigController extends AbstractConfigController {
 
     private static final Logger LOG = LogManager.getLogger();
     private final BotConfigService botConfigService;
@@ -101,7 +101,7 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user      the authenticated user making the request.
      * @param botConfig the Bot config to update.
-     * @return 200 'OK' HTTP status code with updated Bot config if successful, some other HTTP status code otherwise.
+     * @return 200 'OK' HTTP getStatus code with updated Bot config if successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}", method = RequestMethod.PUT)
@@ -125,7 +125,7 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user      the authenticated user.
      * @param botConfig the new Bot config.
-     * @return 201 'Created' HTTP status code if create successful, some other HTTP status code otherwise.
+     * @return 201 'Created' HTTP getStatus code if create successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.POST)
@@ -145,7 +145,7 @@ public class BotsConfigController extends AbstractController {
      *
      * @param user  the authenticated user.
      * @param botId the id of the Bot configuration to delete.
-     * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
+     * @return 204 'No Content' HTTP getStatus code if delete successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}", method = RequestMethod.DELETE)

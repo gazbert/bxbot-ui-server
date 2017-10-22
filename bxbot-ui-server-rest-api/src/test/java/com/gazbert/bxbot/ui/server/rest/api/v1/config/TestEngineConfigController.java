@@ -24,7 +24,7 @@
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
-import com.gazbert.bxbot.ui.server.services.EngineConfigService;
+import com.gazbert.bxbot.ui.server.services.config.EngineConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

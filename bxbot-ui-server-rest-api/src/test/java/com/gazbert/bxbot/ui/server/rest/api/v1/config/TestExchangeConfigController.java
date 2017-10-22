@@ -26,7 +26,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.OptionalConfig;
-import com.gazbert.bxbot.ui.server.services.ExchangeConfigService;
+import com.gazbert.bxbot.ui.server.services.config.ExchangeConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

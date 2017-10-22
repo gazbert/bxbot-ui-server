@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.emailalerts.EmailAlertsConfig;
 import com.gazbert.bxbot.ui.server.domain.emailalerts.SmtpConfig;
-import com.gazbert.bxbot.ui.server.services.EmailAlertsConfigService;
+import com.gazbert.bxbot.ui.server.services.config.EmailAlertsConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

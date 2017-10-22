@@ -1,7 +1,7 @@
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
-import com.gazbert.bxbot.ui.server.services.BotConfigService;
+import com.gazbert.bxbot.ui.server.services.config.BotConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

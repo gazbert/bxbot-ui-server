@@ -26,6 +26,7 @@ package com.gazbert.bxbot.ui.server.domain.bot;
 import com.google.common.base.MoreObjects;
 
 /**
+ * Domain object representing a Bot's config.
  *
  * @author gazbert
  */

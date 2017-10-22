@@ -24,7 +24,7 @@
 package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.strategy.StrategyConfig;
-import com.gazbert.bxbot.ui.server.services.StrategyConfigService;
+import com.gazbert.bxbot.ui.server.services.config.StrategyConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.config;
 
 import com.gazbert.bxbot.ui.server.domain.exchange.ExchangeConfig;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.ExchangeConfigService;
+import com.gazbert.bxbot.ui.server.services.config.ExchangeConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.CONFIG_ENDPOINT_BASE_URI;
+import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractConfigController.CONFIG_ENDPOINT_BASE_URI;
 
 /**
  * Controller for directing Exchange config requests.
@@ -50,7 +50,7 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractController.
  */
 @RestController
 @RequestMapping(CONFIG_ENDPOINT_BASE_URI)
-public class ExchangeConfigController extends AbstractController {
+public class ExchangeConfigController extends AbstractConfigController {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String EXCHANGE_RESOURCE_PATH = "/exchange";
@@ -88,7 +88,7 @@ public class ExchangeConfigController extends AbstractController {
      * @param user           the authenticated user making the request.
      * @param exchangeConfig the Exchange config to update.
      * @param botId          the id of the Bot to update the Exchange config for.
-     * @return 200 'Ok' HTTP status code with updated Exchange config if update successful, some other HTTP status code otherwise.
+     * @return 200 'Ok' HTTP getStatus code with updated Exchange config if update successful, some other HTTP getStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)
