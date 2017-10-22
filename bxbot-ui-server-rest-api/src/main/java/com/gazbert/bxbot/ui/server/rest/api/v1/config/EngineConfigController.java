@@ -71,10 +71,6 @@ public class EngineConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + ENGINE_RESOURCE_PATH + " - getEngine() "); //- caller: " + user.getUsername());
 
         final EngineConfig engineConfig = engineConfigService.getEngineConfig(botId);
@@ -95,10 +91,6 @@ public class EngineConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
                                           @PathVariable String botId) {
-
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + ENGINE_RESOURCE_PATH + " - updateEngine() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + engineConfig);

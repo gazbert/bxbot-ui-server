@@ -58,9 +58,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
-    private static final String STRATEGIES_CONFIG_ENDPOINT_URI = "/api/v1/config/strategies/";
+    private static final String STRATEGIES_RESOURCE_PATH = "/strategies";
 
-    private static final String BOT_ID_PARAM = "botId";
     private static final String BOT_ID = "gdax-bot-1";
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
@@ -98,7 +97,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.getAllStrategyConfig(BOT_ID)).willReturn(allTheStrategiesConfig());
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -126,7 +125,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.getAllStrategyConfig(UNKNOWN_BOT_ID)).willReturn(new ArrayList<>()); // none found!
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -137,26 +136,26 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetAllStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGetAllStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenGetAllStrategyConfigCalledWithMissingBotIdThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGeStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
+    public void whenGetStrategyConfigCalledForKnownBotIdAndUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
         given(strategyConfigService.getStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(strategyConfig_1);
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -172,11 +171,11 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenGeStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
+    public void whenGetStrategyConfigCalledForUnknownBotIdAndUserIsAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
         given(strategyConfigService.getStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(null);
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -187,18 +186,18 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenGetStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void whenGeStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenGetStrategyConfigCalledWithMissingBotIdThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(get(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID)
+        mockMvc.perform(get(CONFIG_ENDPOINT_BASE_URI + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -206,7 +205,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.updateStrategyConfig(BOT_ID, strategyConfig_1)).willReturn(strategyConfig_1);
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
@@ -227,7 +226,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.updateStrategyConfig(UNKNOWN_BOT_ID, strategyConfig_1)).willReturn(null);
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
@@ -239,7 +238,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
                 .andExpect(status().isUnauthorized());
@@ -248,7 +247,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenUpdateStrategyConfigCalledAndUserNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
@@ -256,19 +255,19 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenUpdateStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenUpdateStrategyConfigCalledWithMissingBotIdThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void whenUpdateStrategyConfigCalledWithBotIdMismatchThenExpectBadRequestResponse() throws Exception {
 
-        mockMvc.perform(put(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_2_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(put(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_2_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(strategyConfig_1)))
@@ -280,7 +279,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.deleteStrategyConfig(BOT_ID, STRAT_1_ID)).willReturn(true);
 
-        mockMvc.perform(delete(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNoContent());
 
@@ -290,7 +289,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
-        mockMvc.perform(delete(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID))
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -299,7 +298,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
 
         given(strategyConfigService.deleteStrategyConfig(UNKNOWN_BOT_ID, STRAT_1_ID)).willReturn(false);
 
-        mockMvc.perform(delete(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
                 .andExpect(status().isNotFound());
 
@@ -309,17 +308,17 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenDeleteStrategyConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(delete(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void whenDeleteStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenDeleteStrategyConfigCalledWithMissingBotIdThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(delete(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID)
+        mockMvc.perform(delete(CONFIG_ENDPOINT_BASE_URI + STRATEGIES_RESOURCE_PATH + "/" + STRAT_1_ID)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -328,7 +327,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         final StrategyConfig createdConfig = someNewStrategyConfig();
         given(strategyConfigService.createStrategyConfig(BOT_ID, createdConfig)).willReturn(strategyConfig_1);
 
-        mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(createdConfig)))
@@ -350,7 +349,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
         final StrategyConfig createdConfig = someNewStrategyConfig();
         given(strategyConfigService.createStrategyConfig(UNKNOWN_BOT_ID, createdConfig)).willReturn(null);
 
-        mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(createdConfig)))
@@ -362,7 +361,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateStrategyConfigCalledAndUserIsNotAuthenticatedThenExpectNotFoundResponse() throws Exception {
 
-        mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + STRAT_1_ID + "/?" + BOT_ID_PARAM + "=" + BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewStrategyConfig())))
                 .andExpect(status().isUnauthorized());
@@ -371,7 +370,7 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     @Test
     public void whenCreateStrategyConfigCalledAndUserIsNotAdminThenExpectForbiddenResponse() throws Exception {
 
-        mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI + "?" + BOT_ID_PARAM + "=" + UNKNOWN_BOT_ID)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewStrategyConfig())))
@@ -379,13 +378,13 @@ public class TestStrategyConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenCreateStrategyConfigCalledWithMissingBotIdThenExpectBadRequestResponse() throws Exception {
+    public void whenCreateStrategyConfigCalledWithMissingBotIdThenExpectNoSuchMethodResponse() throws Exception {
 
-        mockMvc.perform(post(STRATEGIES_CONFIG_ENDPOINT_URI)
+        mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + STRATEGIES_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))
                 .contentType(CONTENT_TYPE)
                 .content(jsonify(someNewStrategyConfig())))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is(405));
     }
 
     // ------------------------------------------------------------------------------------------------

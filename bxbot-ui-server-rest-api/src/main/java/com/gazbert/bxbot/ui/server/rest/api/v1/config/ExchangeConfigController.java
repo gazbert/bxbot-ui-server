@@ -74,10 +74,6 @@ public class ExchangeConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EXCHANGE_RESOURCE_PATH + " - getExchange() "); //- caller: " + user.getUsername());
 
         final ExchangeConfig exchangeConfig = exchangeConfigService.getExchangeConfig(botId);
@@ -98,10 +94,6 @@ public class ExchangeConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
                                             @PathVariable String botId) {
-
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + EXCHANGE_RESOURCE_PATH + " - updateExchange() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + exchangeConfig);

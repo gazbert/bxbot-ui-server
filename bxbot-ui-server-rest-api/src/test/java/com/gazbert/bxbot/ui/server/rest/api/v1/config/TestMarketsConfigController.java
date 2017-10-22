@@ -359,7 +359,7 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenCreateMarketConfigCalledAndUserIsNotAuthenticatedThenExpectNotFoundResponse() throws Exception {
+    public void whenCreateMarketConfigCalledAndUserIsNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
 
         mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + BOT_ID + MARKETS_RESOURCE_PATH)
                 .contentType(CONTENT_TYPE)
@@ -378,7 +378,7 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
     }
 
     @Test
-    public void whenCreateMarketConfigCalledWithMissingBotIdThenExpecNoSuchMethodResponse() throws Exception {
+    public void whenCreateMarketConfigCalledWithMissingBotIdThenExpectNoSuchMethodResponse() throws Exception {
 
         mockMvc.perform(post(CONFIG_ENDPOINT_BASE_URI + MARKETS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_ADMIN_NAME, VALID_ADMIN_PASSWORD))

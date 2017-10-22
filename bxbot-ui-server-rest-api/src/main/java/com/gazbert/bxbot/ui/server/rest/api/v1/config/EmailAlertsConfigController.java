@@ -71,10 +71,6 @@ public class EmailAlertsConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EMAIL_ALERTS_RESOURCE_PATH + " - getEmailAlerts() "); //- caller: " + user.getUsername());
 
         final EmailAlertsConfig emailAlertsConfig = emailAlertsConfigService.getEmailAlertsConfig(botId);
@@ -95,10 +91,6 @@ public class EmailAlertsConfigController extends AbstractController {
     @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
                                                @PathVariable String botId) {
-
-        if (botId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         LOG.info("PUT" + CONFIG_ENDPOINT_BASE_URI + botId + EMAIL_ALERTS_RESOURCE_PATH + " - updateEmailAlerts() "); //- caller: " + user.getUsername());
         LOG.info("Request: " + emailAlertsConfig);
