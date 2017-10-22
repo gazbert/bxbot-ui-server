@@ -68,7 +68,7 @@ public class EmailAlertsConfigController extends AbstractConfigController {
      * @return the Email Alerts configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEmailAlerts(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EMAIL_ALERTS_RESOURCE_PATH + " - getEmailAlerts() "); //- caller: " + user.getUsername());
@@ -88,7 +88,7 @@ public class EmailAlertsConfigController extends AbstractConfigController {
      * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEmailAlerts(@AuthenticationPrincipal User user, @RequestBody EmailAlertsConfig emailAlertsConfig,
                                                @PathVariable String botId) {
 

@@ -68,7 +68,7 @@ public class StrategyConfigController extends AbstractConfigController {
      * @return a list of Strategy configurations.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + STRATEGIES_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getAllStrategies(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + STRATEGIES_RESOURCE_PATH + " - getAllStrategies()"); // caller: " + user.getUsername());
@@ -88,7 +88,7 @@ public class StrategyConfigController extends AbstractConfigController {
      * @return the Strategy configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getStrategy(@AuthenticationPrincipal User user, @PathVariable String botId,
                                          @PathVariable String strategyId) {
 
@@ -110,7 +110,7 @@ public class StrategyConfigController extends AbstractConfigController {
      * @return 200 'Ok' and the updated Strategy config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStrategy(@AuthenticationPrincipal User user, @PathVariable String botId,
                                             @PathVariable String strategyId, @RequestBody StrategyConfig strategyConfig) {
 
@@ -136,7 +136,7 @@ public class StrategyConfigController extends AbstractConfigController {
      * @return 201 'Created' HTTP status code and created Strategy config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = "/{botId}" + STRATEGIES_RESOURCE_PATH, method = RequestMethod.POST)
     public ResponseEntity<?> createStrategy(@AuthenticationPrincipal User user, @PathVariable String botId,
                                             @RequestBody StrategyConfig strategyConfig) {
 
@@ -158,7 +158,7 @@ public class StrategyConfigController extends AbstractConfigController {
      * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{botId}" + STRATEGIES_RESOURCE_PATH + "/{strategyId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStrategy(@AuthenticationPrincipal User user, @PathVariable String botId,
                                             @PathVariable String strategyId) {
 

@@ -68,7 +68,7 @@ public class EngineConfigController extends AbstractConfigController {
      * @return the Engine configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getEngine(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + ENGINE_RESOURCE_PATH + " - getEngine() "); //- caller: " + user.getUsername());
@@ -88,7 +88,7 @@ public class EngineConfigController extends AbstractConfigController {
      * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateEngine(@AuthenticationPrincipal User user, @RequestBody EngineConfig engineConfig,
                                           @PathVariable String botId) {
 

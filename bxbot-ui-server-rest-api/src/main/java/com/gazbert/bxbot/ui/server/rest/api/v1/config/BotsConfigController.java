@@ -85,7 +85,7 @@ public class BotsConfigController extends AbstractConfigController {
      * @return the Bot config for the given id.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + " - getBot()"); // - caller: " + user.getUsername());
@@ -104,7 +104,7 @@ public class BotsConfigController extends AbstractConfigController {
      * @return 200 'OK' HTTP status code with updated Bot config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateBot(@AuthenticationPrincipal User user, @PathVariable String botId, @RequestBody BotConfig botConfig) {
 
         LOG.info("PUT " + CONFIG_ENDPOINT_BASE_URI + botId + " - updateBot()"); // - caller: " + user.getUsername());
@@ -148,7 +148,7 @@ public class BotsConfigController extends AbstractConfigController {
      * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{botId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteBot(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("DELETE " + CONFIG_ENDPOINT_BASE_URI + botId + " - deleteBot()"); // - caller: " + user.getUsername());

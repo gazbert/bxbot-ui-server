@@ -32,6 +32,6 @@ import com.gazbert.bxbot.ui.server.rest.api.v1.AbstractController;
  */
 public abstract class AbstractRuntimeController extends AbstractController {
 
-    static final String RUNTIME_ENDPOINT_BASE_URI = API_ENDPOINT_BASE_URI + "/runtime/bots/";
+    static final String RUNTIME_ENDPOINT_BASE_URI = API_ENDPOINT_BASE_URI + "/runtime/bots";
 }
 

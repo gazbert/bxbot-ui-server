@@ -72,7 +72,7 @@ public class BotProcessController extends AbstractRuntimeController {
      * @return the Bot status for the given id.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + PROCESS_RESOURCE_PATH + STATUS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + PROCESS_RESOURCE_PATH + STATUS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getBotStatus(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + botId + PROCESS_RESOURCE_PATH + STATUS_RESOURCE_PATH + " - getBotStatus()"); // - caller: " + user.getUsername());

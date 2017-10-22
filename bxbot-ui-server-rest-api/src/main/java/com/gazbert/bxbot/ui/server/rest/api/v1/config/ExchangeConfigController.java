@@ -71,7 +71,7 @@ public class ExchangeConfigController extends AbstractConfigController {
      * @return the Exchange configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getExchange(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + EXCHANGE_RESOURCE_PATH + " - getExchange() "); //- caller: " + user.getUsername());
@@ -91,7 +91,7 @@ public class ExchangeConfigController extends AbstractConfigController {
      * @return 200 'Ok' HTTP getBotStatus code with updated Exchange config if update successful, some other HTTP getBotStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)
     public ResponseEntity<?> updateExchange(@AuthenticationPrincipal User user, @RequestBody ExchangeConfig exchangeConfig,
                                             @PathVariable String botId) {
 

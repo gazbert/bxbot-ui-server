@@ -68,7 +68,7 @@ public class MarketsConfigController extends AbstractConfigController {
      * @return a list of Market configurations.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getAllMarkets(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
         LOG.info("GET " + CONFIG_ENDPOINT_BASE_URI + botId + MARKETS_RESOURCE_PATH + " - getAllMarkets()"); // caller: " + user.getUsername());
@@ -88,7 +88,7 @@ public class MarketsConfigController extends AbstractConfigController {
      * @return the Market configuration.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.GET)
     public ResponseEntity<?> getMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
                                        @PathVariable String marketId) {
 
@@ -110,7 +110,7 @@ public class MarketsConfigController extends AbstractConfigController {
      * @return 200 'Ok' and the updated Market config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
                                           @PathVariable String marketId, @RequestBody MarketConfig marketConfig) {
 
@@ -136,7 +136,7 @@ public class MarketsConfigController extends AbstractConfigController {
      * @return 201 'Created' HTTP status code and created Market config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = "/{botId}" + MARKETS_RESOURCE_PATH, method = RequestMethod.POST)
     public ResponseEntity<?> createMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
                                           @RequestBody MarketConfig marketConfig) {
 
@@ -158,7 +158,7 @@ public class MarketsConfigController extends AbstractConfigController {
      * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{botId}" + MARKETS_RESOURCE_PATH + "/{marketId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteMarket(@AuthenticationPrincipal User user, @PathVariable String botId,
                                           @PathVariable String marketId) {
 
