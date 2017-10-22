@@ -85,7 +85,7 @@ public class EngineConfigController extends AbstractConfigController {
      * @param user         the authenticated user making the request.
      * @param engineConfig the Engine config to update.
      * @param botId        the id of the Bot to update the Engine config for.
-     * @return 200 'Ok' HTTP getStatus code with updated Engine config if update successful, some other HTTP getStatus code otherwise.
+     * @return 200 'Ok' HTTP status code with updated Engine config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + ENGINE_RESOURCE_PATH, method = RequestMethod.PUT)

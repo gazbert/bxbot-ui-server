@@ -48,9 +48,9 @@ public class TestBotProcessController extends AbstractRuntimeControllerTest {
     }
 
     @Test
-    public void whenGetStatusCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
+    public void whenGetBotStatusCalledWhenUserIsAuthenticatedThenExpectSuccess() throws Exception {
 
-        given(botProcessService.getStatus(BOT_ID)).willReturn(someBotStatus);
+        given(botProcessService.getBotStatus(BOT_ID)).willReturn(someBotStatus);
 
         mockMvc.perform(get(RUNTIME_ENDPOINT_BASE_URI + BOT_ID + STATUS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
@@ -61,24 +61,24 @@ public class TestBotProcessController extends AbstractRuntimeControllerTest {
                 .andExpect(jsonPath("$.data.displayName").value(BOT_DISPLAY_NAME))
                 .andExpect(jsonPath("$.data.status").value(BOT_STATUS));
 
-        verify(botProcessService, times(1)).getStatus(BOT_ID);
+        verify(botProcessService, times(1)).getBotStatus(BOT_ID);
     }
 
     @Test
-    public void whenGetStatusCalledWithUnknownBotIdThenExpectNotFoundResponse() throws Exception {
+    public void whenGetBotStatusCalledWithUnknownBotIdThenExpectNotFoundResponse() throws Exception {
 
-        given(botProcessService.getStatus(UNKNOWN_BOT_ID)).willReturn(null);
+        given(botProcessService.getBotStatus(UNKNOWN_BOT_ID)).willReturn(null);
 
         mockMvc.perform(get(RUNTIME_ENDPOINT_BASE_URI + UNKNOWN_BOT_ID + STATUS_RESOURCE_PATH)
                 .header("Authorization", "Bearer " + getJwt(VALID_USER_NAME, VALID_USER_PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
-        verify(botProcessService, times(1)).getStatus(UNKNOWN_BOT_ID);
+        verify(botProcessService, times(1)).getBotStatus(UNKNOWN_BOT_ID);
     }
 
     @Test
-    public void whenGetStatusCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
+    public void whenGetBotStatusCalledWhenUserNotAuthenticatedThenExpectUnauthorizedResponse() throws Exception {
         mockMvc.perform(get(RUNTIME_ENDPOINT_BASE_URI + BOT_ID + STATUS_RESOURCE_PATH))
                 .andExpect(status().isUnauthorized());
     }

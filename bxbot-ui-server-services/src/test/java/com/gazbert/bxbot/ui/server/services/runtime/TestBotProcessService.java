@@ -78,16 +78,16 @@ public class TestBotProcessService {
     public void whenGetStatusCalledWithKnownBotIdThenReturnBotStatus() throws Exception {
 
         given(botConfigRepository.findById(BOT_ID)).willReturn(knownBotConfig);
-        given(botProcessRepository.getStatus(knownBotConfig)).willReturn(botStatus);
+        given(botProcessRepository.getBotStatus(knownBotConfig)).willReturn(botStatus);
 
         final BotProcessService botProcessService =
                 new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
 
-        final BotStatus status = botProcessService.getStatus(BOT_ID);
+        final BotStatus status = botProcessService.getBotStatus(BOT_ID);
         assertThat(status.equals(this.botStatus));
 
         verify(botConfigRepository, times(1)).findById(BOT_ID);
-        verify(botProcessRepository, times(1)).getStatus(knownBotConfig);
+        verify(botProcessRepository, times(1)).getBotStatus(knownBotConfig);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class TestBotProcessService {
         final BotProcessService botProcessService =
                 new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
 
-        final BotStatus status = botProcessService.getStatus(UNKNOWN_BOT_ID);
+        final BotStatus status = botProcessService.getBotStatus(UNKNOWN_BOT_ID);
         assertThat(status == null);
 
         verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);

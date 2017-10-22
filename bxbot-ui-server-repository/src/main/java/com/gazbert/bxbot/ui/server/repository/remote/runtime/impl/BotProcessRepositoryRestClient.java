@@ -52,7 +52,7 @@ public class BotProcessRepositoryRestClient extends AbstractRuntimeRepositoryRes
     }
 
     @Override
-    public BotStatus getStatus(BotConfig botConfig) {
+    public BotStatus getBotStatus(BotConfig botConfig) {
 
         try {
             restTemplate.getInterceptors().clear();

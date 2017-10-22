@@ -101,7 +101,7 @@ public class BotsConfigController extends AbstractConfigController {
      *
      * @param user      the authenticated user making the request.
      * @param botConfig the Bot config to update.
-     * @return 200 'OK' HTTP getStatus code with updated Bot config if successful, some other HTTP getStatus code otherwise.
+     * @return 200 'OK' HTTP status code with updated Bot config if successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}", method = RequestMethod.PUT)
@@ -125,7 +125,7 @@ public class BotsConfigController extends AbstractConfigController {
      *
      * @param user      the authenticated user.
      * @param botConfig the new Bot config.
-     * @return 201 'Created' HTTP getStatus code if create successful, some other HTTP getStatus code otherwise.
+     * @return 201 'Created' HTTP status code if create successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.POST)
@@ -145,7 +145,7 @@ public class BotsConfigController extends AbstractConfigController {
      *
      * @param user  the authenticated user.
      * @param botId the id of the Bot configuration to delete.
-     * @return 204 'No Content' HTTP getStatus code if delete successful, some other HTTP getStatus code otherwise.
+     * @return 204 'No Content' HTTP status code if delete successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}", method = RequestMethod.DELETE)

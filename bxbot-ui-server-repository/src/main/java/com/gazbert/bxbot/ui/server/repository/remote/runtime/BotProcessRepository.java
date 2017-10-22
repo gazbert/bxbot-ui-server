@@ -34,5 +34,5 @@ import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
  */
 public interface BotProcessRepository {
 
-    BotStatus getStatus(BotConfig botConfig);
+    BotStatus getBotStatus(BotConfig botConfig);
 }

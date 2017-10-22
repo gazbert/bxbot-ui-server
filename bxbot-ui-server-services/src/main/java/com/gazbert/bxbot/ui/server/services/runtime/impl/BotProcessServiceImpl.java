@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Implementation of the Bot proccess service.
+ * Implementation of the Bot process service.
  *
  * @author gazbert
  */
@@ -59,7 +59,7 @@ public class BotProcessServiceImpl implements BotProcessService {
     }
 
     @Override
-    public BotStatus getStatus(String botId) {
+    public BotStatus getBotStatus(String botId) {
 
         LOG.info(() -> "About to fetch BotStatus for botId: " + botId);
 
@@ -68,7 +68,14 @@ public class BotProcessServiceImpl implements BotProcessService {
             LOG.warn("Failed to find BotConfig for botId: " + botId);
             return null;
         } else {
-            return botProcessRepository.getStatus(botConfig);
+
+            BotStatus botStatus = botProcessRepository.getBotStatus(botConfig);
+            if (botStatus == null) {
+                botStatus = new BotStatus();
+                botStatus.setId(botId);
+                botStatus.setStatus("stopped"); // TODO use enum at some point...
+            }
+            return botStatus;
         }
     }
 }

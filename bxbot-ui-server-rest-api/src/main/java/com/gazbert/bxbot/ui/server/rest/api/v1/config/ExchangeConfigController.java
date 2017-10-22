@@ -88,7 +88,7 @@ public class ExchangeConfigController extends AbstractConfigController {
      * @param user           the authenticated user making the request.
      * @param exchangeConfig the Exchange config to update.
      * @param botId          the id of the Bot to update the Exchange config for.
-     * @return 200 'Ok' HTTP getStatus code with updated Exchange config if update successful, some other HTTP getStatus code otherwise.
+     * @return 200 'Ok' HTTP getBotStatus code with updated Exchange config if update successful, some other HTTP getBotStatus code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + EXCHANGE_RESOURCE_PATH, method = RequestMethod.PUT)

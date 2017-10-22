@@ -94,7 +94,7 @@ public class TestBotProcessRepository {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
-        final BotStatus botStatus = restClient.getStatus(botConfig);
+        final BotStatus botStatus = restClient.getBotStatus(botConfig);
         assertThat(botStatus.getId()).isEqualTo(BOT_ID);
         assertThat(botStatus.getDisplayName()).isEqualTo(BOT_DISPLAY_NAME);
         assertThat(botStatus.getStatus()).isEqualTo(BOT_STATUS);
@@ -109,7 +109,7 @@ public class TestBotProcessRepository {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
-        final BotStatus botStatus = restClient.getStatus(botConfig);
+        final BotStatus botStatus = restClient.getBotStatus(botConfig);
         assertThat(botStatus).isEqualTo(null);
 
         mockServer.verify();

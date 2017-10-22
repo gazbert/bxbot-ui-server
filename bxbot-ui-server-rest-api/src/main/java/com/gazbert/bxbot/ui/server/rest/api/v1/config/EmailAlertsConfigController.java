@@ -85,7 +85,7 @@ public class EmailAlertsConfigController extends AbstractConfigController {
      * @param user              the authenticated user making the request.
      * @param emailAlertsConfig the Email Alerts config to update.
      * @param botId             the id of the Bot to update the Email Alerts config for.
-     * @return 200 'Ok' HTTP getStatus code with updated Email Alerts config if update successful, some other HTTP getStatus code otherwise.
+     * @return 200 'Ok' HTTP status code with updated Email Alerts config if update successful, some other HTTP status code otherwise.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{botId}" + EMAIL_ALERTS_RESOURCE_PATH, method = RequestMethod.PUT)
