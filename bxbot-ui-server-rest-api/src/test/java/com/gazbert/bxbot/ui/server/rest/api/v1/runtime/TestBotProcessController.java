@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TestBotProcessController extends AbstractRuntimeControllerTest {
 
-    private static final String STATUS_RESOURCE_PATH = "/status";
+    private static final String STATUS_RESOURCE_PATH = "/process/status";
 
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
     private static final String BOT_ID = "gdax-bot-1";

@@ -60,7 +60,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestStrategyConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/strategies";
+    private static final String STRATEGIES_RESOURCE_PATH = "/config/strategies";
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_ALIAS = "GDAX";
@@ -117,7 +117,7 @@ public class TestStrategyConfigRepository {
 
         final String allTheStrategiesConfigInJson = objectMapper.writeValueAsString(allTheStrategyConfig());
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(allTheStrategiesConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -133,7 +133,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenFindAllCalledAndRemoteCallFailsThenExpectNoStrategyConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -148,7 +148,7 @@ public class TestStrategyConfigRepository {
 
         final String theStrategyConfigInJson = objectMapper.writeValueAsString(strategyConfig_1);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + '/' + STRAT_ID_1))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -161,7 +161,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenFindByIdCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + '/' + STRAT_ID_1))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
@@ -174,7 +174,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenFindByIdCalledAndRemoteCallFailsThenReturnNullStrategy() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + STRAT_ID_1))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + '/' + STRAT_ID_1))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -189,7 +189,7 @@ public class TestStrategyConfigRepository {
 
         final String theStrategyConfigInJson = objectMapper.writeValueAsString(strategyConfig_1);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(theStrategyConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -202,7 +202,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenSaveCalledWithUnknownIdThenReturnNullStrategy() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
@@ -215,7 +215,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenSaveCalledAndRemoteCallFailsThenReturnNullStrategy() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withServerError());
 
@@ -228,7 +228,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + STRAT_ID_1))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + "/" + STRAT_ID_1))
                 .andRespond(withNoContent());
 
         final boolean result = restClient.delete(botConfig, STRAT_ID_1);
@@ -240,7 +240,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenDeleteCalledWithUnknownIdThenExpectFailureResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + "/" + UNKNOWN_STRAT_ID))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);
@@ -252,7 +252,7 @@ public class TestStrategyConfigRepository {
     @Test
     public void whenDeleteCalledAndRemoteCallFailsThenExpectFailureResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_STRAT_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STRATEGIES_RESOURCE_PATH + "/" + UNKNOWN_STRAT_ID))
                 .andRespond(withServerError());
 
         final boolean result = restClient.delete(botConfig, UNKNOWN_STRAT_ID);

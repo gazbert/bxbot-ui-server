@@ -42,9 +42,10 @@ import org.springframework.web.client.RestClientException;
 public class BotProcessRepositoryRestClient extends AbstractRuntimeRepositoryRestClient implements BotProcessRepository {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String STATUS_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/status";
-    private static final String START_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/start";
-    private static final String STOP_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/stop";
+    private static final String PROCESS_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/process";
+    private static final String BOT_STATUS_RESOURCE_PATH = PROCESS_RESOURCE_PATH + "/status";
+    private static final String BOT_START_RESOURCE_PATH = PROCESS_RESOURCE_PATH + "/start";
+    private static final String BOT_STOP_RESOURCE_PATH = PROCESS_RESOURCE_PATH + "/stop";
 
     public BotProcessRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
         super(restTemplateBuilder);
@@ -58,7 +59,7 @@ public class BotProcessRepositoryRestClient extends AbstractRuntimeRepositoryRes
             restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                     botConfig.getUsername(), botConfig.getPassword()));
 
-            final String endpointUrl = botConfig.getBaseUrl() + STATUS_RESOURCE_PATH;
+            final String endpointUrl = botConfig.getBaseUrl() + BOT_STATUS_RESOURCE_PATH;
             LOG.info(() -> "Fetching BotStatus from: " + endpointUrl);
 
             final BotStatus botStatus = restTemplate.getForObject(endpointUrl, BotStatus.class);

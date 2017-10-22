@@ -57,7 +57,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestEngineConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/engine";
+    private static final String ENGINE_RESOURCE_PATH = "/config/engine";
 
     private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_ID = "gdax-bot-1";
@@ -93,7 +93,7 @@ public class TestEngineConfigRepository {
 
         final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + ENGINE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -110,7 +110,7 @@ public class TestEngineConfigRepository {
     @Test
     public void whenGetCalledAndRemoteCallFailsThenExpectNullEngineConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + ENGINE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -125,7 +125,7 @@ public class TestEngineConfigRepository {
 
         final String engineConfigInJson = objectMapper.writeValueAsString(someEngineConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + ENGINE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -142,7 +142,7 @@ public class TestEngineConfigRepository {
     @Test
     public void whenSaveCalledAndRemoteCallFailsThenExpectNullEngineConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + ENGINE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withServerError());
 

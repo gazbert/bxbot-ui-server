@@ -58,7 +58,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestMarketConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/markets";
+    private static final String MARKETS_RESOURCE_PATH = "/config/markets";
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_ALIAS = "GDAX";
@@ -113,7 +113,7 @@ public class TestMarketConfigRepository {
 
         final String allTheMarketsConfigInJson = objectMapper.writeValueAsString(allTheMarketConfig());
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(allTheMarketsConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -129,7 +129,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenFindAllCalledAndRemoteCallFailsThenExpectNoMarketConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -144,7 +144,7 @@ public class TestMarketConfigRepository {
 
         final String theMarketConfigInJson = objectMapper.writeValueAsString(marketConfig_1);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + MARKET_1_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + '/' + MARKET_1_ID))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(theMarketConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -157,7 +157,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenFindByIdCalledWithUnknownIdThenReturnNullMarket() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + MARKET_1_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + '/' + MARKET_1_ID))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
@@ -170,7 +170,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenFindByIdCalledAndRemoteCallFailsThenReturnNullMarket() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + '/' + MARKET_1_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + '/' + MARKET_1_ID))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -185,7 +185,7 @@ public class TestMarketConfigRepository {
 
         final String theMarketConfigInJson = objectMapper.writeValueAsString(marketConfig_1);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(theMarketConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -198,7 +198,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenSaveCalledWithUnknownIdThenReturnNullMarket() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
@@ -211,7 +211,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenSaveCalledAndRemoteCallFailsThenReturnNullMarket() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withServerError());
 
@@ -224,7 +224,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenDeleteCalledWithKnownIdThenExpectSuccessResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + MARKET_1_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + "/" + MARKET_1_ID))
                 .andRespond(withNoContent());
 
         final boolean result = restClient.delete(botConfig, MARKET_1_ID);
@@ -236,7 +236,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenDeleteCalledWithUnknownIdThenExpectFailureResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_MARKET_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + "/" + UNKNOWN_MARKET_ID))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         final boolean result = restClient.delete(botConfig, UNKNOWN_MARKET_ID);
@@ -248,7 +248,7 @@ public class TestMarketConfigRepository {
     @Test
     public void whenDeleteCalledAndRemoteCallFailsThenExpectFailureResponse() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH + "/" + UNKNOWN_MARKET_ID))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + MARKETS_RESOURCE_PATH + "/" + UNKNOWN_MARKET_ID))
                 .andRespond(withServerError());
 
         final boolean result = restClient.delete(botConfig, UNKNOWN_MARKET_ID);

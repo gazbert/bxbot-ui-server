@@ -60,7 +60,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestExchangeConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/exchange";
+    private static final String EXCHANGE_RESOURCE_PATH = "/config/exchange";
 
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_ALIAS = "GDAX";
@@ -105,7 +105,7 @@ public class TestExchangeConfigRepository {
 
         final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EXCHANGE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(exchangeConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -125,7 +125,7 @@ public class TestExchangeConfigRepository {
     @Test
     public void whenGetCalledAndRemoteCallFailsThenExpectNullExchangeConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EXCHANGE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -140,7 +140,7 @@ public class TestExchangeConfigRepository {
 
         final String exchangeConfigInJson = objectMapper.writeValueAsString(someExchangeConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EXCHANGE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(exchangeConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -160,7 +160,7 @@ public class TestExchangeConfigRepository {
     @Test
     public void whenSaveCalledAndRemoteCallFailsThenExpectNullExchangeConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EXCHANGE_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withServerError());
 

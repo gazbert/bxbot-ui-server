@@ -32,6 +32,6 @@ import com.gazbert.bxbot.ui.server.rest.api.v1.AbstractController;
  */
 public abstract class AbstractConfigController extends AbstractController {
 
-    static final String CONFIG_ENDPOINT_BASE_URI = "/api/v1/config/bots/";
+    static final String CONFIG_ENDPOINT_BASE_URI = API_ENDPOINT_BASE_URI + "/config/bots/";
 }
 

@@ -55,7 +55,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestBotProcessRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String STATUS_REST_ENDPOINT_PATH = "/runtime/status";
+    private static final String PROCESS_STATUS_RESOURCE_PATH = "/runtime/process/status";
 
     private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_ID = "gdax-bot-1";
@@ -90,7 +90,7 @@ public class TestBotProcessRepository {
 
         final String engineConfigInJson = objectMapper.writeValueAsString(botStatus);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STATUS_REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + PROCESS_STATUS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -105,7 +105,7 @@ public class TestBotProcessRepository {
     @Test
     public void whenGetStatusCalledAndRemoteCallFailsThenExpectNullBotStatusToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STATUS_REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + PROCESS_STATUS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 

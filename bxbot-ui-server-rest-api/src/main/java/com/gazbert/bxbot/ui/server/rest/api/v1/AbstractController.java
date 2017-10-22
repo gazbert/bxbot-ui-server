@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 public class AbstractController {
 
     private static final Logger LOG = LogManager.getLogger();
+    protected static final String API_ENDPOINT_BASE_URI = "/api/v1";
 
     protected ResponseEntity<?> buildResponseEntity(Object entity, HttpStatus httpStatus) {
         final ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper(entity);

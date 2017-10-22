@@ -56,7 +56,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TestEmailAlertsConfigRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String REST_ENDPOINT_PATH = "/config/email-alerts";
+    private static final String EMAIL_ALERTS_RESOURCE_PATH = "/config/email-alerts";
 
     private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_ID = "gdax-bot-1";
@@ -96,7 +96,7 @@ public class TestEmailAlertsConfigRepository {
 
         final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EMAIL_ALERTS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -115,7 +115,7 @@ public class TestEmailAlertsConfigRepository {
     @Test
     public void whenGetCalledAndRemoteCallFailsThenExpectNullEmailAlertsConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EMAIL_ALERTS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
@@ -130,7 +130,7 @@ public class TestEmailAlertsConfigRepository {
 
         final String emailAlertsConfigInJson = objectMapper.writeValueAsString(someEmailAlertsConfig);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EMAIL_ALERTS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -149,7 +149,7 @@ public class TestEmailAlertsConfigRepository {
     @Test
     public void whenSaveCalledAndRemoteCallFailsThenExpectNullEmailAlertsConfigToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + REST_ENDPOINT_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + EMAIL_ALERTS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withServerError());
 
