@@ -38,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of the Bot process service.
  *
+ * TODO - getAllBotStatus op needed next...
+ *
  * @author gazbert
  */
 @Service("botProcessService")

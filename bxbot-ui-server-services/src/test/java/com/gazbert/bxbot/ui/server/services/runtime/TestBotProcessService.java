@@ -42,6 +42,8 @@ import static org.mockito.Mockito.verify;
 /**
  * Tests the Bot process service behaves as expected.
  *
+ * TODO - test when bot is down and check 'stopped' status is returned (need enum)
+ *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
