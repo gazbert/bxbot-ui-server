@@ -63,7 +63,7 @@ public class TestExchangeConfigRepository {
     private static final String REST_ENDPOINT_PATH = "/config/exchange";
 
     private static final String BOT_ID = "gdax-bot-1";
-    private static final String BOT_NAME = "GDAX";
+    private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_BASE_URL = REST_ENDPOINT_BASE_URL;
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
@@ -96,7 +96,7 @@ public class TestExchangeConfigRepository {
 
     @Before
     public void setUp() throws Exception {
-        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        botConfig = new BotConfig(BOT_ID, BOT_ALIAS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
         someExchangeConfig = someExchangeConfig();
     }
 

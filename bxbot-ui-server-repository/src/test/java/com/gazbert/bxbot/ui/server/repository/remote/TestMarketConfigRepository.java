@@ -61,7 +61,7 @@ public class TestMarketConfigRepository {
     private static final String REST_ENDPOINT_PATH = "/config/markets";
 
     private static final String BOT_ID = "gdax-bot-1";
-    private static final String BOT_NAME = "GDAX";
+    private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_BASE_URL = REST_ENDPOINT_BASE_URL;
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
@@ -99,7 +99,7 @@ public class TestMarketConfigRepository {
     @Before
     public void setUp() throws Exception {
 
-        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        botConfig = new BotConfig(BOT_ID, BOT_ALIAS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
 
         marketConfig_1 = new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
                 MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);

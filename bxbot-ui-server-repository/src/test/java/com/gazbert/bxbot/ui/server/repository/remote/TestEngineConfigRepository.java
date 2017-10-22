@@ -59,7 +59,7 @@ public class TestEngineConfigRepository {
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
     private static final String REST_ENDPOINT_PATH = "/config/engine";
 
-    private static final String BOT_NAME = "GDAX";
+    private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_ID = "gdax-bot-1";
     private static final String BOT_BASE_URL = REST_ENDPOINT_BASE_URL;
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
@@ -84,7 +84,7 @@ public class TestEngineConfigRepository {
 
     @Before
     public void setUp() throws Exception {
-        botConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
+        botConfig = new BotConfig(BOT_ID, BOT_ALIAS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
         someEngineConfig = someEngineConfig();
     }
 
@@ -99,7 +99,7 @@ public class TestEngineConfigRepository {
 
         final EngineConfig engineConfig = restClient.get(botConfig);
         assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
-        assertThat(engineConfig.getBotName()).isEqualTo(BOT_NAME);
+        assertThat(engineConfig.getBotName()).isEqualTo(BOT_ALIAS);
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
         assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
         assertThat(engineConfig.getEmergencyStopBalance()).isEqualTo(ENGINE_EMERGENCY_STOP_BALANCE);
@@ -131,7 +131,7 @@ public class TestEngineConfigRepository {
 
         final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig);
         assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
-        assertThat(engineConfig.getBotName()).isEqualTo(BOT_NAME);
+        assertThat(engineConfig.getBotName()).isEqualTo(BOT_ALIAS);
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
         assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
         assertThat(engineConfig.getEmergencyStopBalance()).isEqualTo(ENGINE_EMERGENCY_STOP_BALANCE);
@@ -159,7 +159,7 @@ public class TestEngineConfigRepository {
     private static EngineConfig someEngineConfig() {
         final EngineConfig engineConfig = new EngineConfig();
         engineConfig.setBotId(BOT_ID);
-        engineConfig.setBotName(BOT_NAME);
+        engineConfig.setBotName(BOT_ALIAS);
         engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);
         engineConfig.setTradeCycleInterval(ENGINE_TRADE_CYCLE_INTERVAL);

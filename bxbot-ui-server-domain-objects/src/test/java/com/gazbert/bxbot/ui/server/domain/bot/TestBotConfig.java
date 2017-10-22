@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 public class TestBotConfig {
 
     private static final String BOT_ID = "gdax-bot-1";
-    private static final String BOT_NAME = "GDAX";
+    private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_BASE_URL = "https://localhost/api";
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
@@ -45,7 +45,7 @@ public class TestBotConfig {
 
         final BotConfig botConfig = new BotConfig();
         assertEquals(null, botConfig.getId());
-        assertEquals(null, botConfig.getDisplayName());
+        assertEquals(null, botConfig.getAlias());
         assertEquals(null, botConfig.getBaseUrl());
         assertEquals(null, botConfig.getUsername());
         assertEquals(null, botConfig.getPassword());
@@ -59,8 +59,8 @@ public class TestBotConfig {
         botConfig.setId(BOT_ID);
         assertEquals(BOT_ID, botConfig.getId());
 
-        botConfig.setDisplayName(BOT_NAME);
-        assertEquals(BOT_NAME, botConfig.getDisplayName());
+        botConfig.setAlias(BOT_ALIAS);
+        assertEquals(BOT_ALIAS, botConfig.getAlias());
 
         botConfig.setBaseUrl(BOT_BASE_URL);
         assertEquals(BOT_BASE_URL, botConfig.getBaseUrl());
