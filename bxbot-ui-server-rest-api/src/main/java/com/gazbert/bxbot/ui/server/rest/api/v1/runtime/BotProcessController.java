@@ -53,10 +53,7 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.runtime.AbstractRuntimeCon
 public class BotProcessController extends AbstractRuntimeController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String PROCESS_RESOURCE_PATH = "/process";
-    private static final String STATUS_RESOURCE_PATH = "/status";
-    private static final String START_RESOURCE_PATH = "/start";
-    private static final String STOP_RESOURCE_PATH = "/stop";
+    private static final String PROCESS_STATUS_RESOURCE_PATH = "/process/status";
     private final BotProcessService botProcessService;
 
     @Autowired
@@ -72,10 +69,10 @@ public class BotProcessController extends AbstractRuntimeController {
      * @return the Bot status for the given id.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/{botId}" + PROCESS_RESOURCE_PATH + STATUS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + PROCESS_STATUS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getBotStatus(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + botId + PROCESS_RESOURCE_PATH + STATUS_RESOURCE_PATH + " - getBotStatus()"); // - caller: " + user.getUsername());
+        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + botId + PROCESS_STATUS_RESOURCE_PATH + " - getBotStatus()"); // - caller: " + user.getUsername());
 
         final BotStatus botStatus = botProcessService.getBotStatus(botId);
         return botStatus == null
