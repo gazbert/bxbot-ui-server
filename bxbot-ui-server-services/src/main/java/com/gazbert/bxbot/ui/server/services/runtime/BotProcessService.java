@@ -25,6 +25,8 @@ package com.gazbert.bxbot.ui.server.services.runtime;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 
+import java.util.List;
+
 /**
  * The Bot process service.
  *
@@ -33,4 +35,6 @@ import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 public interface BotProcessService {
 
     BotStatus getBotStatus(String botId);
+
+    List<BotStatus> getAllBotStatus();
 }

@@ -34,6 +34,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -41,7 +44,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Tests the Bot process service behaves as expected.
- *
+ * <p>
  * TODO - test when bot is down and check 'stopped' status is returned (need enum)
  *
  * @author gazbert
@@ -51,17 +54,29 @@ public class TestBotProcessService {
 
     private static final String UNKNOWN_BOT_ID = "unknown-or-new-bot-id";
 
-    private static final String BOT_ID = "bitstamp-bot-1";
-    private static final String BOT_NAME = "Bitstamp Bot";
-    private static final String BOT_BASE_URL = "https://hostname.one/api";
-    private static final String BOT_USERNAME = "admin";
-    private static final String BOT_PASSWORD = "password";
+    private static final String BOT_1_ID = "bitstamp-bot-1";
+    private static final String BOT_1_NAME = "Bitstamp Bot";
+    private static final String BOT_1_BASE_URL = "https://hostname.one/api";
+    private static final String BOT_1_USERNAME = "admin";
+    private static final String BOT_1_PASSWORD = "password";
 
-    private static final String BOT_DISPLAY_NAME = "Bitstamp";
-    private static final String BOT_STATUS = "running";
+    private static final String BOT_1_DISPLAY_NAME = "Bitstamp";
+    private static final String BOT_1_STATUS = "running";
 
-    private BotConfig knownBotConfig;
-    private BotStatus botStatus;
+    private static final String BOT_2_ID = "gdax-bot-1";
+    private static final String BOT_2_NAME = "GDAX Bot";
+    private static final String BOT_2_BASE_URL = "https://hostname.one/api";
+    private static final String BOT_2_USERNAME = "admin";
+    private static final String BOT_2_PASSWORD = "password";
+
+    private static final String BOT_2_DISPLAY_NAME = "GDAX";
+    private static final String BOT_2_STATUS = "running";
+
+    private BotConfig bot1Config;
+    private BotStatus bot1Status;
+
+    private BotConfig bot2Config;
+    private BotStatus bot2Status;
 
     @MockBean
     BotProcessRepository botProcessRepository;
@@ -72,24 +87,26 @@ public class TestBotProcessService {
 
     @Before
     public void setup() throws Exception {
-        knownBotConfig = new BotConfig(BOT_ID, BOT_NAME, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
-        botStatus = someBotStatus();
+        bot1Config = new BotConfig(BOT_1_ID, BOT_1_NAME, BOT_1_BASE_URL, BOT_1_USERNAME, BOT_1_PASSWORD);
+        bot1Status = new BotStatus(BOT_1_ID, BOT_1_DISPLAY_NAME, BOT_1_STATUS);
+        bot2Config = new BotConfig(BOT_2_ID, BOT_2_NAME, BOT_2_BASE_URL, BOT_2_USERNAME, BOT_2_PASSWORD);
+        bot2Status = new BotStatus(BOT_2_ID, BOT_2_DISPLAY_NAME, BOT_2_STATUS);
     }
 
     @Test
     public void whenGetStatusCalledWithKnownBotIdThenReturnBotStatus() throws Exception {
 
-        given(botConfigRepository.findById(BOT_ID)).willReturn(knownBotConfig);
-        given(botProcessRepository.getBotStatus(knownBotConfig)).willReturn(botStatus);
+        given(botConfigRepository.findById(BOT_1_ID)).willReturn(bot1Config);
+        given(botProcessRepository.getBotStatus(bot1Config)).willReturn(bot1Status);
 
         final BotProcessService botProcessService =
                 new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
 
-        final BotStatus status = botProcessService.getBotStatus(BOT_ID);
-        assertThat(status.equals(this.botStatus));
+        final BotStatus status = botProcessService.getBotStatus(BOT_1_ID);
+        assertThat(status.equals(this.bot1Status));
 
-        verify(botConfigRepository, times(1)).findById(BOT_ID);
-        verify(botProcessRepository, times(1)).getBotStatus(knownBotConfig);
+        verify(botConfigRepository, times(1)).findById(BOT_1_ID);
+        verify(botProcessRepository, times(1)).getBotStatus(bot1Config);
     }
 
     @Test
@@ -106,15 +123,27 @@ public class TestBotProcessService {
         verify(botConfigRepository, times(1)).findById(UNKNOWN_BOT_ID);
     }
 
-    // ------------------------------------------------------------------------------------------------
-    // Private utils
-    // ------------------------------------------------------------------------------------------------
+    @Test
+    public void whenGetAllStatusCalledWThenReturnAllBotStatus() throws Exception {
 
-    private static BotStatus someBotStatus() {
-        final BotStatus botStatus = new BotStatus();
-        botStatus.setId(BOT_ID);
-        botStatus.setDisplayName(BOT_DISPLAY_NAME);
-        botStatus.setStatus(BOT_STATUS);
-        return botStatus;
+        final List<BotConfig> allBotConfig = new ArrayList<>();
+        allBotConfig.add(bot1Config);
+        allBotConfig.add(bot2Config);
+
+        given(botConfigRepository.findAll()).willReturn(allBotConfig);
+        given(botProcessRepository.getBotStatus(bot1Config)).willReturn(bot1Status);
+        given(botProcessRepository.getBotStatus(bot2Config)).willReturn(bot2Status);
+
+        final BotProcessService botProcessService =
+                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+
+        final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
+        assertThat(allBotStatus.size() == 2);
+        assertThat(allBotStatus.contains(bot1Status));
+        assertThat(allBotStatus.contains(bot2Status));
+
+        verify(botConfigRepository, times(1)).findAll();
+        verify(botProcessRepository, times(1)).getBotStatus(bot1Config);
+        verify(botProcessRepository, times(1)).getBotStatus(bot2Config);
     }
 }

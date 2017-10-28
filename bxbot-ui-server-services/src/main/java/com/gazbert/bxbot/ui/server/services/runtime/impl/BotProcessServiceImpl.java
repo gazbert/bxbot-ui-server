@@ -35,10 +35,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Implementation of the Bot process service.
- *
- * TODO - getAllBotStatus op needed next...
  *
  * @author gazbert
  */
@@ -79,5 +80,26 @@ public class BotProcessServiceImpl implements BotProcessService {
             }
             return botStatus;
         }
+    }
+
+    @Override
+    public List<BotStatus> getAllBotStatus() {
+
+        LOG.info(() -> "About to fetch BotStatus for all bots...");
+
+        final List<BotStatus> allBotStatus = new ArrayList<>();
+
+        final List<BotConfig> allBotConfigs = botConfigRepository.findAll();
+        for (final BotConfig botConfig : allBotConfigs) {
+
+            BotStatus botStatus = botProcessRepository.getBotStatus(botConfig);
+            if (botStatus == null) {
+                botStatus = new BotStatus();
+                botStatus.setId(botConfig.getId());
+                botStatus.setStatus("stopped"); // TODO use enum at some point...
+            }
+            allBotStatus.add(botStatus);
+        }
+        return allBotStatus;
     }
 }
