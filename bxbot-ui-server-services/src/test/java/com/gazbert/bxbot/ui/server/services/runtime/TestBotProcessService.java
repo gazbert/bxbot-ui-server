@@ -146,4 +146,19 @@ public class TestBotProcessService {
         verify(botProcessRepository, times(1)).getBotStatus(bot1Config);
         verify(botProcessRepository, times(1)).getBotStatus(bot2Config);
     }
+
+    @Test
+    public void whenGetAllStatusCalledAndNoBotsFoundThenExpectEmptyBotStatusList() throws Exception {
+
+        final List<BotConfig> allBotConfig = new ArrayList<>();
+        given(botConfigRepository.findAll()).willReturn(allBotConfig);
+
+        final BotProcessService botProcessService =
+                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+
+        final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
+        assertThat(allBotStatus.isEmpty());
+
+        verify(botConfigRepository, times(1)).findAll();
+    }
 }

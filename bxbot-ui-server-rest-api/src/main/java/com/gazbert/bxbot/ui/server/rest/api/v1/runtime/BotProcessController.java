@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static com.gazbert.bxbot.ui.server.rest.api.v1.runtime.AbstractRuntimeController.RUNTIME_ENDPOINT_BASE_URI;
 
 /**
@@ -78,6 +80,24 @@ public class BotProcessController extends AbstractRuntimeController {
         return botStatus == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : buildResponseEntity(botStatus, HttpStatus.OK);
+    }
+
+    /**
+     * Returns a list of all the Bots and their status.
+     *
+     * @param user the authenticated user.
+     * @return the status of all of the Bots.
+     */
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = PROCESS_STATUS_RESOURCE_PATH, method = RequestMethod.GET)
+    public ResponseEntity<?> getAllBotStatus(@AuthenticationPrincipal User user) {
+
+        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + PROCESS_STATUS_RESOURCE_PATH + " - getAllBotStatus()"); // - caller: " + user.getUsername());
+
+        final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
+        return allBotStatus.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : buildResponseEntity(allBotStatus, HttpStatus.OK);
     }
 }
 
