@@ -1,7 +1,7 @@
 package com.gazbert.bxbot.ui.server.rest.api.v1.runtime;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
-import com.gazbert.bxbot.ui.server.services.runtime.BotProcessService;
+import com.gazbert.bxbot.ui.server.services.runtime.BotStatusService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,16 +23,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Tests the Bot process controller behaviour.
+ * Tests the Bot Status controller behaviour.
  *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-public class TestBotProcessController extends AbstractRuntimeControllerTest {
+public class TestBotStatusController extends AbstractRuntimeControllerTest {
 
-    private static final String STATUS_RESOURCE_PATH = "/process/status";
+    private static final String STATUS_RESOURCE_PATH = "/status";
 
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
@@ -48,7 +48,7 @@ public class TestBotProcessController extends AbstractRuntimeControllerTest {
     private BotStatus bot2Status;
 
     @MockBean
-    BotProcessService botProcessService;
+    BotStatusService botProcessService;
 
     @Before
     public void setup() {

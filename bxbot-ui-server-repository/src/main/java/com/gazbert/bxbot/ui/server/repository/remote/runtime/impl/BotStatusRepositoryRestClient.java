@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.repository.remote.runtime.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
-import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotProcessRepository;
+import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotStatusRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -34,17 +34,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 
 /**
- * A REST client implementation of the remote Bot process repository.
+ * A REST client implementation of the remote Bot status repository.
  *
  * @author gazbert
  */
-@Repository("botProcessRepository")
-public class BotProcessRepositoryRestClient extends AbstractRuntimeRepositoryRestClient implements BotProcessRepository {
+@Repository("botStatusRepository")
+public class BotStatusRepositoryRestClient extends AbstractRuntimeRepositoryRestClient implements BotStatusRepository {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String PROCESS_STATUS_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/process/status";
+    private static final String STATUS_RESOURCE_PATH = RUNTIME_RESOURCE_PATH + "/status";
 
-    public BotProcessRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
+    public BotStatusRepositoryRestClient(RestTemplateBuilder restTemplateBuilder) {
         super(restTemplateBuilder);
     }
 
@@ -56,7 +56,7 @@ public class BotProcessRepositoryRestClient extends AbstractRuntimeRepositoryRes
             restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(
                     botConfig.getUsername(), botConfig.getPassword()));
 
-            final String endpointUrl = botConfig.getBaseUrl() + PROCESS_STATUS_RESOURCE_PATH;
+            final String endpointUrl = botConfig.getBaseUrl() + STATUS_RESOURCE_PATH;
             LOG.info(() -> "Fetching BotStatus from: " + endpointUrl);
 
             final BotStatus botStatus = restTemplate.getForObject(endpointUrl, BotStatus.class);

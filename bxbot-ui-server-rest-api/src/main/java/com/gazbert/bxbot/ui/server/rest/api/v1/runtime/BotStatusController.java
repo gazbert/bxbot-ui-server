@@ -25,7 +25,7 @@ package com.gazbert.bxbot.ui.server.rest.api.v1.runtime;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 import com.gazbert.bxbot.ui.server.rest.security.model.User;
-import com.gazbert.bxbot.ui.server.services.runtime.BotProcessService;
+import com.gazbert.bxbot.ui.server.services.runtime.BotStatusService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ import java.util.List;
 import static com.gazbert.bxbot.ui.server.rest.api.v1.runtime.AbstractRuntimeController.RUNTIME_ENDPOINT_BASE_URI;
 
 /**
- * Controller for directing Bot process requests.
+ * Controller for directing Bot Status requests.
  * <p>
  * TODO - AuthenticationPrincipal User - get equivalent for use with JWT auth?
  *
@@ -52,14 +52,14 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.runtime.AbstractRuntimeCon
  */
 @RestController
 @RequestMapping(RUNTIME_ENDPOINT_BASE_URI)
-public class BotProcessController extends AbstractRuntimeController {
+public class BotStatusController extends AbstractRuntimeController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String PROCESS_STATUS_RESOURCE_PATH = "/process/status";
-    private final BotProcessService botProcessService;
+    private static final String STATUS_RESOURCE_PATH = "/status";
+    private final BotStatusService botProcessService;
 
     @Autowired
-    public BotProcessController(BotProcessService botProcessService) {
+    public BotStatusController(BotStatusService botProcessService) {
         this.botProcessService = botProcessService;
     }
 
@@ -71,10 +71,10 @@ public class BotProcessController extends AbstractRuntimeController {
      * @return the Bot status for the given id.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/{botId}" + PROCESS_STATUS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = "/{botId}" + STATUS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getBotStatus(@AuthenticationPrincipal User user, @PathVariable String botId) {
 
-        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + botId + PROCESS_STATUS_RESOURCE_PATH + " - getBotStatus()"); // - caller: " + user.getUsername());
+        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + botId + STATUS_RESOURCE_PATH + " - getBotStatus()"); // - caller: " + user.getUsername());
 
         final BotStatus botStatus = botProcessService.getBotStatus(botId);
         return botStatus == null
@@ -83,16 +83,16 @@ public class BotProcessController extends AbstractRuntimeController {
     }
 
     /**
-     * Returns a list of all the Bots and their status.
+     * Returns a list of all the Bots and their statuses.
      *
      * @param user the authenticated user.
      * @return the status of all of the Bots.
      */
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = PROCESS_STATUS_RESOURCE_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = STATUS_RESOURCE_PATH, method = RequestMethod.GET)
     public ResponseEntity<?> getAllBotStatus(@AuthenticationPrincipal User user) {
 
-        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + PROCESS_STATUS_RESOURCE_PATH + " - getAllBotStatus()"); // - caller: " + user.getUsername());
+        LOG.info("GET " + RUNTIME_ENDPOINT_BASE_URI + STATUS_RESOURCE_PATH + " - getAllBotStatus()"); // - caller: " + user.getUsername());
 
         final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
         return allBotStatus.isEmpty()

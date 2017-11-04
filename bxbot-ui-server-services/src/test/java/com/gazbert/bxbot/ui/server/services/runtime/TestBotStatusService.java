@@ -26,8 +26,8 @@ package com.gazbert.bxbot.ui.server.services.runtime;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
-import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotProcessRepository;
-import com.gazbert.bxbot.ui.server.services.runtime.impl.BotProcessServiceImpl;
+import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotStatusRepository;
+import com.gazbert.bxbot.ui.server.services.runtime.impl.BotStatusServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,14 +43,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Tests the Bot process service behaves as expected.
+ * Tests the Bot Status service behaves as expected.
  * <p>
  * TODO - test when bot is down and check 'stopped' status is returned (need enum)
  *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
-public class TestBotProcessService {
+public class TestBotStatusService {
 
     private static final String UNKNOWN_BOT_ID = "unknown-or-new-bot-id";
 
@@ -79,7 +79,7 @@ public class TestBotProcessService {
     private BotStatus bot2Status;
 
     @MockBean
-    BotProcessRepository botProcessRepository;
+    BotStatusRepository botProcessRepository;
 
     @MockBean
     BotConfigRepository botConfigRepository;
@@ -99,8 +99,8 @@ public class TestBotProcessService {
         given(botConfigRepository.findById(BOT_1_ID)).willReturn(bot1Config);
         given(botProcessRepository.getBotStatus(bot1Config)).willReturn(bot1Status);
 
-        final BotProcessService botProcessService =
-                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+        final BotStatusService botProcessService =
+                new BotStatusServiceImpl(botProcessRepository, botConfigRepository);
 
         final BotStatus status = botProcessService.getBotStatus(BOT_1_ID);
         assertThat(status.equals(this.bot1Status));
@@ -114,8 +114,8 @@ public class TestBotProcessService {
 
         given(botConfigRepository.findById(UNKNOWN_BOT_ID)).willReturn(null);
 
-        final BotProcessService botProcessService =
-                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+        final BotStatusService botProcessService =
+                new BotStatusServiceImpl(botProcessRepository, botConfigRepository);
 
         final BotStatus status = botProcessService.getBotStatus(UNKNOWN_BOT_ID);
         assertThat(status == null);
@@ -134,8 +134,8 @@ public class TestBotProcessService {
         given(botProcessRepository.getBotStatus(bot1Config)).willReturn(bot1Status);
         given(botProcessRepository.getBotStatus(bot2Config)).willReturn(bot2Status);
 
-        final BotProcessService botProcessService =
-                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+        final BotStatusService botProcessService =
+                new BotStatusServiceImpl(botProcessRepository, botConfigRepository);
 
         final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
         assertThat(allBotStatus.size() == 2);
@@ -153,8 +153,8 @@ public class TestBotProcessService {
         final List<BotConfig> allBotConfig = new ArrayList<>();
         given(botConfigRepository.findAll()).willReturn(allBotConfig);
 
-        final BotProcessService botProcessService =
-                new BotProcessServiceImpl(botProcessRepository, botConfigRepository);
+        final BotStatusService botProcessService =
+                new BotStatusServiceImpl(botProcessRepository, botConfigRepository);
 
         final List<BotStatus> allBotStatus = botProcessService.getAllBotStatus();
         assertThat(allBotStatus.isEmpty());

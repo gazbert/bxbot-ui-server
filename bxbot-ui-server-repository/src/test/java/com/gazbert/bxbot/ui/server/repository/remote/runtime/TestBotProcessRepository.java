@@ -26,7 +26,7 @@ package com.gazbert.bxbot.ui.server.repository.remote.runtime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
-import com.gazbert.bxbot.ui.server.repository.remote.runtime.impl.BotProcessRepositoryRestClient;
+import com.gazbert.bxbot.ui.server.repository.remote.runtime.impl.BotStatusRepositoryRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,17 +45,17 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
- * Tests the behaviour of the Bot process repository.
+ * Tests the behaviour of the Bot status repository.
  *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
-@RestClientTest(BotProcessRepositoryRestClient.class)
-@SpringBootTest(classes = BotProcessRepositoryRestClient.class)
+@RestClientTest(BotStatusRepositoryRestClient.class)
+@SpringBootTest(classes = BotStatusRepositoryRestClient.class)
 public class TestBotProcessRepository {
 
     private static final String REST_ENDPOINT_BASE_URL = "https://localhost.one/api";
-    private static final String PROCESS_STATUS_RESOURCE_PATH = "/runtime/process/status";
+    private static final String STATUS_RESOURCE_PATH = "/runtime/status";
 
     private static final String BOT_ALIAS = "GDAX";
     private static final String BOT_ID = "gdax-bot-1";
@@ -73,7 +73,7 @@ public class TestBotProcessRepository {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private BotProcessRepositoryRestClient restClient;
+    private BotStatusRepositoryRestClient restClient;
 
     private BotConfig botConfig;
     private BotStatus botStatus;
@@ -90,7 +90,7 @@ public class TestBotProcessRepository {
 
         final String engineConfigInJson = objectMapper.writeValueAsString(botStatus);
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + PROCESS_STATUS_RESOURCE_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STATUS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
@@ -105,7 +105,7 @@ public class TestBotProcessRepository {
     @Test
     public void whenGetStatusCalledAndRemoteCallFailsThenExpectNullBotStatusToBeReturned() throws Exception {
 
-        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + PROCESS_STATUS_RESOURCE_PATH))
+        mockServer.expect(requestTo(REST_ENDPOINT_BASE_URL + STATUS_RESOURCE_PATH))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 

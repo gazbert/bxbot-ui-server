@@ -26,8 +26,8 @@ package com.gazbert.bxbot.ui.server.services.runtime.impl;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
-import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotProcessRepository;
-import com.gazbert.bxbot.ui.server.services.runtime.BotProcessService;
+import com.gazbert.bxbot.ui.server.repository.remote.runtime.BotStatusRepository;
+import com.gazbert.bxbot.ui.server.services.runtime.BotStatusService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,19 +43,19 @@ import java.util.List;
  *
  * @author gazbert
  */
-@Service("botProcessService")
+@Service("botStatusService")
 @Transactional
 @ComponentScan(basePackages = {"com.gazbert.bxbot.ui.server.repository"})
-public class BotProcessServiceImpl implements BotProcessService {
+public class BotStatusServiceImpl implements BotStatusService {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private final BotProcessRepository botProcessRepository;
+    private final BotStatusRepository botProcessRepository;
     private final BotConfigRepository botConfigRepository;
 
     @Autowired
-    public BotProcessServiceImpl(BotProcessRepository botProcessRepository,
-                                 BotConfigRepository botConfigRepository) {
+    public BotStatusServiceImpl(BotStatusRepository botProcessRepository,
+                                BotConfigRepository botConfigRepository) {
 
         this.botProcessRepository = botProcessRepository;
         this.botConfigRepository = botConfigRepository;

@@ -20,21 +20,19 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package com.gazbert.bxbot.ui.server.repository.remote.runtime;
 
-package com.gazbert.bxbot.ui.server.services.runtime;
-
+import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.bot.BotStatus;
 
-import java.util.List;
-
 /**
- * The Bot process service.
+ * The remote Bot Status repository.
+ * <p>
+ * It sends runtime status commands to remote BX-bot nodes.
  *
  * @author gazbert
  */
-public interface BotProcessService {
+public interface BotStatusRepository {
 
-    BotStatus getBotStatus(String botId);
-
-    List<BotStatus> getAllBotStatus();
+    BotStatus getBotStatus(BotConfig botConfig);
 }
