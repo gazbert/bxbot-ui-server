@@ -49,14 +49,14 @@ import static com.gazbert.bxbot.ui.server.rest.api.v1.config.AbstractConfigContr
  */
 @RestController
 @RequestMapping(CONFIG_ENDPOINT_BASE_URI)
-public class StrategyConfigController extends AbstractConfigController {
+public class StrategiesConfigController extends AbstractConfigController {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String STRATEGIES_RESOURCE_PATH = "/strategies";
     private final StrategyConfigService strategyConfigService;
 
     @Autowired
-    public StrategyConfigController(StrategyConfigService strategyConfigService) {
+    public StrategiesConfigController(StrategyConfigService strategyConfigService) {
         this.strategyConfigService = strategyConfigService;
     }
 

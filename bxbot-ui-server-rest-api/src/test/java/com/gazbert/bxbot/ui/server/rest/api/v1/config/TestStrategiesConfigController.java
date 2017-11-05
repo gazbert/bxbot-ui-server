@@ -49,14 +49,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Tests the Strategy config controller behaviour.
+ * Tests the Strategies config controller behaviour.
  *
  * @author gazbert
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-public class TestStrategyConfigController extends AbstractConfigControllerTest {
+public class TestStrategiesConfigController extends AbstractConfigControllerTest {
 
     private static final String STRATEGIES_RESOURCE_PATH = "/strategies";
 
