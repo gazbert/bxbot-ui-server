@@ -25,6 +25,7 @@ package com.gazbert.bxbot.ui.server.repository.remote.config.impl;
 
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.emailalerts.EmailAlertsConfig;
+import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
 import com.gazbert.bxbot.ui.server.repository.remote.config.EmailAlertsConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +66,7 @@ public class EmailAlertsConfigRepositoryRestClient extends AbstractConfigReposit
             final EmailAlertsConfig config = restTemplate.getForObject(endpointUrl, EmailAlertsConfig.class);
 
             LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + config);
+            config.setId(botConfig.getId());
             return config;
 
         } catch (RestClientException e) {
@@ -91,7 +93,9 @@ public class EmailAlertsConfigRepositoryRestClient extends AbstractConfigReposit
                     endpointUrl, HttpMethod.PUT, requestUpdate, EmailAlertsConfig.class);
 
             LOG.info(() -> REMOTE_RESPONSE_RECEIVED_LOG_MSG + savedConfig);
-            return savedConfig.getBody();
+            final EmailAlertsConfig savedConfigBody = savedConfig.getBody();
+            savedConfigBody.setId(botConfig.getId());
+            return savedConfigBody;
 
         } catch (RestClientException e) {
             LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);

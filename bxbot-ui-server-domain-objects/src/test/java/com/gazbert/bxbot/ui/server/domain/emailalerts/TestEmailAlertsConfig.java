@@ -34,13 +34,15 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestEmailAlertsConfig {
 
+    private static final String ID = "gdax-1";
     private static final boolean ENABLED = true;
     private static final SmtpConfig SMTP_CONFIG = new SmtpConfig();
 
     @Test
     public void testInitialisationWorksAsExpected() {
 
-        final EmailAlertsConfig emailAlertsConfig = new EmailAlertsConfig(ENABLED, SMTP_CONFIG);
+        final EmailAlertsConfig emailAlertsConfig = new EmailAlertsConfig(ID, ENABLED, SMTP_CONFIG);
+        assertEquals(ID, emailAlertsConfig.getId());
         assertEquals(ENABLED, emailAlertsConfig.isEnabled());
         assertEquals(SMTP_CONFIG, emailAlertsConfig.getSmtpConfig());
     }
@@ -51,6 +53,9 @@ public class TestEmailAlertsConfig {
         final EmailAlertsConfig emailAlertsConfig = new EmailAlertsConfig();
         assertEquals(false, emailAlertsConfig.isEnabled());
         assertEquals(null, emailAlertsConfig.getSmtpConfig());
+
+        emailAlertsConfig.setId(ID);
+        assertEquals(ID, emailAlertsConfig.getId());
 
         emailAlertsConfig.setEnabled(ENABLED);
         assertEquals(ENABLED, emailAlertsConfig.isEnabled());

@@ -32,6 +32,7 @@ import com.google.common.base.MoreObjects;
  */
 public class EmailAlertsConfig {
 
+    private String id;
     private boolean enabled;
     private SmtpConfig smtpConfig;
 
@@ -39,7 +40,8 @@ public class EmailAlertsConfig {
     public EmailAlertsConfig() {
     }
 
-    public EmailAlertsConfig(boolean enabled, SmtpConfig smtpConfig) {
+    public EmailAlertsConfig(String id, boolean enabled, SmtpConfig smtpConfig) {
+        this.id = id;
         this.enabled = enabled;
         this.smtpConfig = smtpConfig;
     }
@@ -60,9 +62,18 @@ public class EmailAlertsConfig {
         this.smtpConfig = smtpConfig;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
+                .add("id", id)
                 .add("enabled", enabled)
                 .add("smtpConfig", smtpConfig)
                 .toString();

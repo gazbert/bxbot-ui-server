@@ -101,6 +101,7 @@ public class TestEmailAlertsConfigRepository {
                 .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
         final EmailAlertsConfig emailAlertsConfig = restClient.get(botConfig);
+        assertThat(emailAlertsConfig.getId()).isEqualTo(BOT_ID);
         assertThat(emailAlertsConfig.isEnabled()).isEqualTo(ENABLED);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountUsername()).isEqualTo(ACCOUNT_USERNAME);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountPassword()).isEqualTo(ACCOUNT_PASSWORD);
@@ -135,6 +136,7 @@ public class TestEmailAlertsConfigRepository {
                 .andRespond(withSuccess(emailAlertsConfigInJson, MediaType.APPLICATION_JSON));
 
         final EmailAlertsConfig emailAlertsConfig = restClient.save(botConfig, someEmailAlertsConfig);
+        assertThat(emailAlertsConfig.getId()).isEqualTo(BOT_ID);
         assertThat(emailAlertsConfig.isEnabled()).isEqualTo(ENABLED);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountUsername()).isEqualTo(ACCOUNT_USERNAME);
         assertThat(emailAlertsConfig.getSmtpConfig().getAccountPassword()).isEqualTo(ACCOUNT_PASSWORD);
@@ -168,6 +170,7 @@ public class TestEmailAlertsConfigRepository {
         final SmtpConfig smtpConfig = new SmtpConfig(HOST, TLS_PORT, ACCOUNT_USERNAME, ACCOUNT_PASSWORD, FROM_ADDRESS, TO_ADDRESS);
         emailAlertsConfig.setSmtpConfig(smtpConfig);
         emailAlertsConfig.setEnabled(ENABLED);
+        emailAlertsConfig.setId(BOT_ID);
         return emailAlertsConfig;
     }
 }
