@@ -26,6 +26,7 @@ package com.gazbert.bxbot.ui.server.repository.remote.config.impl;
 import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
 import com.gazbert.bxbot.ui.server.repository.remote.config.EngineConfigRepository;
+import com.gazbert.bxbot.ui.server.repository.remote.config.impl.dto.EngineConfigDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -97,5 +98,19 @@ public class EngineConfigRepositoryRestClient extends AbstractConfigRepositoryRe
             LOG.error(FAILED_TO_INVOKE_REMOTE_BOT_LOG_MSG + e.getMessage(), e);
             return null;
         }
+    }
+
+    // ------------------------------------------------------------------------
+    // Private utils
+    // ------------------------------------------------------------------------
+
+    private static EngineConfig adaptDtoToDomainObject(EngineConfigDto engineConfigDto) {
+        final EngineConfig engineConfig = new EngineConfig();
+        engineConfig.setId(engineConfigDto.getBotId());
+        engineConfig.setBotName(engineConfigDto.getBotName());
+        engineConfig.setTradeCycleInterval(engineConfigDto.getTradeCycleInterval());
+        engineConfig.setEmergencyStopBalance(engineConfigDto.getEmergencyStopBalance());
+        engineConfig.setEmergencyStopCurrency(engineConfigDto.getEmergencyStopCurrency());
+        return engineConfig;
     }
 }

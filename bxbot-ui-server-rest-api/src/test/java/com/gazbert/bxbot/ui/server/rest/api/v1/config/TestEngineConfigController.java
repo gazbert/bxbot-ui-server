@@ -82,7 +82,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("$.data.botId").value(BOT_ID))
+                .andExpect(jsonPath("$.data.id").value(BOT_ID))
                 .andExpect(jsonPath("$.data.botName").value(BOT_NAME))
                 .andExpect(jsonPath("$.data.tradeCycleInterval").value(ENGINE_TRADE_CYCLE_INTERVAL))
                 .andExpect(jsonPath("$.data.emergencyStopCurrency").value(ENGINE_EMERGENCY_STOP_CURRENCY))
@@ -130,7 +130,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
                 .content(jsonify(updatedConfig)))
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("$.data.botId").value(BOT_ID))
+                .andExpect(jsonPath("$.data.id").value(BOT_ID))
                 .andExpect(jsonPath("$.data.botName").value(BOT_NAME))
                 .andExpect(jsonPath("$.data.tradeCycleInterval").value(ENGINE_TRADE_CYCLE_INTERVAL))
                 .andExpect(jsonPath("$.data.emergencyStopCurrency").value(ENGINE_EMERGENCY_STOP_CURRENCY))
@@ -189,7 +189,7 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
 
     private static EngineConfig someEngineConfig() {
         final EngineConfig engineConfig = new EngineConfig();
-        engineConfig.setBotId(BOT_ID);
+        engineConfig.setId(BOT_ID);
         engineConfig.setBotName(BOT_NAME);
         engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);

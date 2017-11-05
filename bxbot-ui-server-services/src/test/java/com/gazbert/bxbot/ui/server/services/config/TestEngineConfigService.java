@@ -27,7 +27,6 @@ import com.gazbert.bxbot.ui.server.domain.bot.BotConfig;
 import com.gazbert.bxbot.ui.server.domain.engine.EngineConfig;
 import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import com.gazbert.bxbot.ui.server.repository.remote.config.EngineConfigRepository;
-import com.gazbert.bxbot.ui.server.services.config.EngineConfigService;
 import com.gazbert.bxbot.ui.server.services.config.impl.EngineConfigServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,7 +143,7 @@ public class TestEngineConfigService {
 
     private static EngineConfig buildEngineConfig() {
         final EngineConfig engineConfig = new EngineConfig();
-        engineConfig.setBotId(BOT_ID);
+        engineConfig.setId(BOT_ID);
         engineConfig.setBotName(BOT_NAME);
         engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);

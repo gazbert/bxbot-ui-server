@@ -98,7 +98,7 @@ public class TestEngineConfigRepository {
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
         final EngineConfig engineConfig = restClient.get(botConfig);
-        assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
+        assertThat(engineConfig.getId()).isEqualTo(BOT_ID);
         assertThat(engineConfig.getBotName()).isEqualTo(BOT_ALIAS);
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
         assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
@@ -130,7 +130,7 @@ public class TestEngineConfigRepository {
                 .andRespond(withSuccess(engineConfigInJson, MediaType.APPLICATION_JSON));
 
         final EngineConfig engineConfig = restClient.save(botConfig, someEngineConfig);
-        assertThat(engineConfig.getBotId()).isEqualTo(BOT_ID);
+        assertThat(engineConfig.getId()).isEqualTo(BOT_ID);
         assertThat(engineConfig.getBotName()).isEqualTo(BOT_ALIAS);
         assertThat(engineConfig.getTradeCycleInterval()).isEqualTo(ENGINE_TRADE_CYCLE_INTERVAL);
         assertThat(engineConfig.getEmergencyStopCurrency()).isEqualTo(ENGINE_EMERGENCY_STOP_CURRENCY);
@@ -158,7 +158,7 @@ public class TestEngineConfigRepository {
 
     private static EngineConfig someEngineConfig() {
         final EngineConfig engineConfig = new EngineConfig();
-        engineConfig.setBotId(BOT_ID);
+        engineConfig.setId(BOT_ID);
         engineConfig.setBotName(BOT_ALIAS);
         engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);

@@ -21,45 +21,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.gazbert.bxbot.ui.server.domain.engine;
+package com.gazbert.bxbot.ui.server.repository.remote.config.impl.dto;
 
 import com.google.common.base.MoreObjects;
 
 import java.math.BigDecimal;
 
 /**
- * Domain object representing the Engine config.
+ * DTO for the upstream Engine config.
  *
  * @author gazbert
  */
-public class EngineConfig {
+public class EngineConfigDto {
 
-    private String id;
+    private String botId;
     private String botName;
     private String emergencyStopCurrency;
     private BigDecimal emergencyStopBalance;
     private int tradeCycleInterval;
 
     // required for jackson
-    public EngineConfig() {
+    public EngineConfigDto() {
     }
 
-    public EngineConfig(String id, String botName, String emergencyStopCurrency, BigDecimal emergencyStopBalance,
-                        int tradeCycleInterval) {
+    public EngineConfigDto(String botId, String botName, String emergencyStopCurrency, BigDecimal emergencyStopBalance,
+                           int tradeCycleInterval) {
 
-        this.id = id;
+        this.botId = botId;
         this.botName = botName;
         this.emergencyStopCurrency = emergencyStopCurrency;
         this.emergencyStopBalance = emergencyStopBalance;
         this.tradeCycleInterval = tradeCycleInterval;
     }
 
-    public String getId() {
-        return id;
+    public String getBotId() {
+        return botId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBotId(String botId) {
+        this.botId = botId;
     }
 
     public String getBotName() {
@@ -97,7 +97,7 @@ public class EngineConfig {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("id", id)
+                .add("botId", botId)
                 .add("botName", botName)
                 .add("emergencyStopCurrency", emergencyStopCurrency)
                 .add("emergencyStopBalance", emergencyStopBalance)

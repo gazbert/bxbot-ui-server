@@ -48,7 +48,7 @@ public class TestEngineConfig {
         final EngineConfig engineConfig = new EngineConfig(BOT_ID, BOT_NAME, EMERGENCY_STOP_CURRENCY,
                 EMERGENCY_STOP_BALANCE, TRADE_CYCLE_INTERVAL);
 
-        assertEquals(BOT_ID, engineConfig.getBotId());
+        assertEquals(BOT_ID, engineConfig.getId());
         assertEquals(BOT_NAME, engineConfig.getBotName());
         assertEquals(EMERGENCY_STOP_CURRENCY, engineConfig.getEmergencyStopCurrency());
         assertEquals(EMERGENCY_STOP_BALANCE, engineConfig.getEmergencyStopBalance());
@@ -59,14 +59,14 @@ public class TestEngineConfig {
     public void testSettersWorkAsExpected() {
 
         final EngineConfig engineConfig = new EngineConfig();
-        assertEquals(null, engineConfig.getBotId());
+        assertEquals(null, engineConfig.getId());
         assertEquals(null, engineConfig.getBotName());
         assertEquals(null, engineConfig.getEmergencyStopCurrency());
         assertEquals(null, engineConfig.getEmergencyStopBalance());
         assertEquals(0, engineConfig.getTradeCycleInterval());
 
-        engineConfig.setBotId(BOT_ID);
-        assertEquals(BOT_ID, engineConfig.getBotId());
+        engineConfig.setId(BOT_ID);
+        assertEquals(BOT_ID, engineConfig.getId());
 
         engineConfig.setBotName(BOT_NAME);
         assertEquals(BOT_NAME, engineConfig.getBotName());
