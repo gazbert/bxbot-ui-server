@@ -35,15 +35,15 @@ import static org.junit.Assert.assertEquals;
 public class TestBotStatus {
 
     private static final String BOT_ID = "gdax-bot-1";
-    private static final String DISPLAY_NAME = "GDAX";
-    private static final String STATUS = "running";
+    private static final String BOT_NAME = "GDAX";
+    private static final String STATUS_RUNNING = "running";
 
     @Test
     public void testInitialisationWorksAsExpected() {
 
         final BotStatus botStatus = new BotStatus();
         assertEquals(null, botStatus.getId());
-        assertEquals(null, botStatus.getDisplayName());
+        assertEquals(null, botStatus.getName());
         assertEquals(null, botStatus.getStatus());
     }
 
@@ -55,10 +55,10 @@ public class TestBotStatus {
         botStatus.setId(BOT_ID);
         assertEquals(BOT_ID, botStatus.getId());
 
-        botStatus.setDisplayName(DISPLAY_NAME);
-        assertEquals(DISPLAY_NAME, botStatus.getDisplayName());
+        botStatus.setName(BOT_NAME);
+        assertEquals(BOT_NAME, botStatus.getName());
 
-        botStatus.setStatus(STATUS);
-        assertEquals(STATUS, botStatus.getStatus());
+        botStatus.setStatus(STATUS_RUNNING);
+        assertEquals(STATUS_RUNNING, botStatus.getStatus());
     }
 }

@@ -35,7 +35,7 @@ import com.google.common.base.MoreObjects;
 public class BotStatus {
 
     private String id;
-    private String displayName;
+    private String name;
     private String status;
 
     // required for Jackson
@@ -44,13 +44,13 @@ public class BotStatus {
 
     public BotStatus(BotStatus other) {
         this.id = other.id;
-        this.displayName = other.displayName;
+        this.name = other.name;
         this.status = other.status;
     }
 
     public BotStatus(String id, String alias, String status) {
         this.id = id;
-        this.displayName = alias;
+        this.name = alias;
         this.status = status;
     }
 
@@ -62,12 +62,12 @@ public class BotStatus {
         this.id = id;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStatus() {
@@ -82,7 +82,7 @@ public class BotStatus {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("displayName", displayName)
+                .add("name", name)
                 .add("status", status)
                 .toString();
     }

@@ -37,11 +37,11 @@ public class TestBotStatusController extends AbstractRuntimeControllerTest {
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
     private static final String BOT_1_ID = "gdax-bot-1";
-    private static final String BOT_1_DISPLAY_NAME = "GDAX";
+    private static final String BOT_1_NAME = "GDAX";
     private static final String BOT_1_STATUS = "running";
 
     private static final String BOT_2_ID = "bitstamp-bot-1";
-    private static final String BOT_2_DISPLAY_NAME = "Bitstamp";
+    private static final String BOT_2_NAME = "Bitstamp";
     private static final String BOT_2_STATUS = "running";
 
     private BotStatus bot1Status;
@@ -53,8 +53,8 @@ public class TestBotStatusController extends AbstractRuntimeControllerTest {
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx).addFilter(springSecurityFilterChain).build();
-        bot1Status = new BotStatus(BOT_1_ID, BOT_1_DISPLAY_NAME, BOT_1_STATUS);
-        bot2Status = new BotStatus(BOT_2_ID, BOT_2_DISPLAY_NAME, BOT_2_STATUS);
+        bot1Status = new BotStatus(BOT_1_ID, BOT_1_NAME, BOT_1_STATUS);
+        bot2Status = new BotStatus(BOT_2_ID, BOT_2_NAME, BOT_2_STATUS);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TestBotStatusController extends AbstractRuntimeControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.displayName").value(BOT_1_DISPLAY_NAME))
+                .andExpect(jsonPath("$.data.name").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.status").value(BOT_1_STATUS));
 
         verify(botProcessService, times(1)).getBotStatus(BOT_1_ID);
@@ -108,11 +108,11 @@ public class TestBotStatusController extends AbstractRuntimeControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.[0].id").value(BOT_1_ID))
-                .andExpect(jsonPath("$.data.[0].displayName").value(BOT_1_DISPLAY_NAME))
+                .andExpect(jsonPath("$.data.[0].name").value(BOT_1_NAME))
                 .andExpect(jsonPath("$.data.[0].status").value(BOT_1_STATUS))
 
                 .andExpect(jsonPath("$.data.[1].id").value(BOT_2_ID))
-                .andExpect(jsonPath("$.data.[1].displayName").value(BOT_2_DISPLAY_NAME))
+                .andExpect(jsonPath("$.data.[1].name").value(BOT_2_NAME))
                 .andExpect(jsonPath("$.data.[1].status").value(BOT_2_STATUS));
 
         verify(botProcessService, times(1)).getAllBotStatus();

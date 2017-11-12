@@ -63,7 +63,7 @@ public class TestBotProcessRepository {
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
 
-    private static final String BOT_DISPLAY_NAME = "GDAX";
+    private static final String BOT_NAME = "GDAX";
     private static final String BOT_STATUS = "running";
 
     @Autowired
@@ -96,7 +96,7 @@ public class TestBotProcessRepository {
 
         final BotStatus botStatus = restClient.getBotStatus(botConfig);
         assertThat(botStatus.getId()).isEqualTo(BOT_ID);
-        assertThat(botStatus.getDisplayName()).isEqualTo(BOT_DISPLAY_NAME);
+        assertThat(botStatus.getName()).isEqualTo(BOT_NAME);
         assertThat(botStatus.getStatus()).isEqualTo(BOT_STATUS);
 
         mockServer.verify();
@@ -122,7 +122,7 @@ public class TestBotProcessRepository {
     private static BotStatus someBotStatus() {
         final BotStatus botStatus = new BotStatus();
         botStatus.setId(BOT_ID);
-        botStatus.setDisplayName(BOT_DISPLAY_NAME);
+        botStatus.setName(BOT_NAME);
         botStatus.setStatus(BOT_STATUS);
         return botStatus;
     }
