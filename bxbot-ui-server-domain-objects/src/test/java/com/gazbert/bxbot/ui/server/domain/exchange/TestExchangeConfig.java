@@ -46,7 +46,7 @@ public class TestExchangeConfig {
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
         assertEquals(null, exchangeConfig.getId());
-        assertEquals(null, exchangeConfig.getExchangeName());
+        assertEquals(null, exchangeConfig.getName());
         assertEquals(null, exchangeConfig.getAdapterClass());
         assertEquals(null, exchangeConfig.getNetworkConfig());
         assertEquals(null, exchangeConfig.getOptionalConfig());
@@ -60,8 +60,8 @@ public class TestExchangeConfig {
         exchangeConfig.setId(EXCHANGE_ID);
         assertEquals(EXCHANGE_ID, exchangeConfig.getId());
 
-        exchangeConfig.setExchangeName(EXCHANGE_NAME);
-        assertEquals(EXCHANGE_NAME, exchangeConfig.getExchangeName());
+        exchangeConfig.setName(EXCHANGE_NAME);
+        assertEquals(EXCHANGE_NAME, exchangeConfig.getName());
 
         exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         assertEquals(ADAPTER_CLASS, exchangeConfig.getAdapterClass());

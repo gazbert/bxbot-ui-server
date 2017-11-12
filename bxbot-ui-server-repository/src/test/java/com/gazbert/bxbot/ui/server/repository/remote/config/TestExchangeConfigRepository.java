@@ -111,7 +111,7 @@ public class TestExchangeConfigRepository {
 
         final ExchangeConfig exchangeConfig = restClient.get(botConfig);
 
-        assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
+        assertThat(exchangeConfig.getName()).isEqualTo(EXCHANGE_NAME);
         assertThat(exchangeConfig.getAdapterClass()).isEqualTo(ADAPTER_CLASS);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
@@ -146,7 +146,7 @@ public class TestExchangeConfigRepository {
 
         final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig);
 
-        assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
+        assertThat(exchangeConfig.getName()).isEqualTo(EXCHANGE_NAME);
         assertThat(exchangeConfig.getAdapterClass()).isEqualTo(ADAPTER_CLASS);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
@@ -186,7 +186,7 @@ public class TestExchangeConfigRepository {
         optionalConfig.getItems().put(SELL_FEE_CONFIG_ITEM_KEY, SELL_FEE_CONFIG_ITEM_VALUE);
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
-        exchangeConfig.setExchangeName(EXCHANGE_NAME);
+        exchangeConfig.setName(EXCHANGE_NAME);
         exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         exchangeConfig.setNetworkConfig(networkConfig);
         exchangeConfig.setOptionalConfig(optionalConfig);

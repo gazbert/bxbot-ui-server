@@ -174,7 +174,7 @@ public class TestExchangeConfigService {
         optionalConfig.getItems().put(SELL_FEE_CONFIG_ITEM_KEY, SELL_FEE_CONFIG_ITEM_VALUE);
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
-        exchangeConfig.setExchangeName(EXCHANGE_NAME);
+        exchangeConfig.setName(EXCHANGE_NAME);
         exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         exchangeConfig.setNetworkConfig(networkConfig);
         exchangeConfig.setOptionalConfig(optionalConfig);

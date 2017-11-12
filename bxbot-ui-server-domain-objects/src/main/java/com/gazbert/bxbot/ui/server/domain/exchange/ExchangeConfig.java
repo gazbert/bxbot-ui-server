@@ -33,7 +33,7 @@ import com.google.common.base.MoreObjects;
 public class ExchangeConfig {
 
     private String id;
-    private String exchangeName;
+    private String name;
     private String adapterClass;
     private NetworkConfig networkConfig;
     private OptionalConfig optionalConfig;
@@ -46,12 +46,12 @@ public class ExchangeConfig {
         this.id = id;
     }
 
-    public String getExchangeName() {
-        return exchangeName;
+    public String getName() {
+        return name;
     }
 
-    public void setExchangeName(String exchangeName) {
-        this.exchangeName = exchangeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAdapterClass() {
@@ -82,7 +82,7 @@ public class ExchangeConfig {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("name", exchangeName)
+                .add("name", name)
                 .add("adapterClass", adapterClass)
                 .add("networkConfig", networkConfig)
                 .add("optionalConfig", optionalConfig)
