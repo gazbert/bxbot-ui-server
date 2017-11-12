@@ -38,7 +38,7 @@ public class MarketConfig {
     private boolean enabled;
     private String baseCurrency;
     private String counterCurrency;
-    private String tradingStrategyId; // TODO might change this to ref to StrategyConfig ...
+    private String strategyId; // TODO might change this to ref to StrategyConfig ...
 
 
     // required for Jackson
@@ -51,17 +51,17 @@ public class MarketConfig {
         this.enabled = other.enabled;
         this.baseCurrency = other.baseCurrency;
         this.counterCurrency = other.counterCurrency;
-        this.tradingStrategyId = other.tradingStrategyId;
+        this.strategyId = other.strategyId;
     }
 
     public MarketConfig(String id, String name,  boolean enabled, String baseCurrency, String counterCurrency,
-                        String tradingStrategyId) {
+                        String strategyId) {
         this.id = id;
         this.name = name;
         this.enabled = enabled;
         this.baseCurrency = baseCurrency;
         this.counterCurrency = counterCurrency;
-        this.tradingStrategyId = tradingStrategyId;
+        this.strategyId = strategyId;
     }
 
     public String getId() {
@@ -104,12 +104,12 @@ public class MarketConfig {
         this.counterCurrency = counterCurrency;
     }
 
-    public String getTradingStrategyId() {
-        return tradingStrategyId;
+    public String getStrategyId() {
+        return strategyId;
     }
 
-    public void setTradingStrategyId(String tradingStrategyId) {
-        this.tradingStrategyId = tradingStrategyId;
+    public void setStrategyId(String strategyId) {
+        this.strategyId = strategyId;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class MarketConfig {
                 .add("enabled", enabled)
                 .add("baseCurrency", baseCurrency)
                 .add("counterCurrency", counterCurrency)
-                .add("tradingStrategyId", tradingStrategyId)
+                .add("strategyId", strategyId)
                 .toString();
     }
 }

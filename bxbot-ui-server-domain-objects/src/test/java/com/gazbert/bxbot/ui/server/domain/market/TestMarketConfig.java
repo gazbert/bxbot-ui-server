@@ -39,19 +39,19 @@ public class TestMarketConfig {
     private static final boolean IS_ENABLED = true;
     private static final String BASE_CURRENCY = "BTC";
     private static final String COUNTER_CURRENCY = "USD";
-    private static final String TRADING_STRATEGY = "macd_trend_follower";
+    private static final String STRATEGY_ID = "macd_trend_follower";
 
 
     @Test
     public void testInitialisationWorksAsExpected() {
 
-        final MarketConfig marketConfig = new MarketConfig(ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, TRADING_STRATEGY);
+        final MarketConfig marketConfig = new MarketConfig(ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, STRATEGY_ID);
         assertEquals(NAME, marketConfig.getName());
         assertEquals(ID, marketConfig.getId());
         assertEquals(IS_ENABLED, marketConfig.isEnabled());
         assertEquals(BASE_CURRENCY, marketConfig.getBaseCurrency());
         assertEquals(COUNTER_CURRENCY, marketConfig.getCounterCurrency());
-        assertEquals(TRADING_STRATEGY, marketConfig.getTradingStrategyId());
+        assertEquals(STRATEGY_ID, marketConfig.getStrategyId());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TestMarketConfig {
         assertEquals(false, marketConfig.isEnabled());
         assertEquals(null, marketConfig.getBaseCurrency());
         assertEquals(null, marketConfig.getCounterCurrency());
-        assertEquals(null, marketConfig.getTradingStrategyId());
+        assertEquals(null, marketConfig.getStrategyId());
 
         marketConfig.setId(ID);
         assertEquals(ID, marketConfig.getId());
@@ -80,14 +80,14 @@ public class TestMarketConfig {
         marketConfig.setCounterCurrency(COUNTER_CURRENCY);
         assertEquals(COUNTER_CURRENCY, marketConfig.getCounterCurrency());
 
-        marketConfig.setTradingStrategyId(TRADING_STRATEGY);
-        assertEquals(TRADING_STRATEGY, marketConfig.getTradingStrategyId());
+        marketConfig.setStrategyId(STRATEGY_ID);
+        assertEquals(STRATEGY_ID, marketConfig.getStrategyId());
     }
 
     @Test
     public void testCloningWorksAsExpected() {
         final MarketConfig marketConfig = new MarketConfig(
-                ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, TRADING_STRATEGY);
+                ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, STRATEGY_ID);
         final MarketConfig clonedMarketConfig = new MarketConfig(marketConfig);
         assertEquals(clonedMarketConfig, marketConfig);
     }

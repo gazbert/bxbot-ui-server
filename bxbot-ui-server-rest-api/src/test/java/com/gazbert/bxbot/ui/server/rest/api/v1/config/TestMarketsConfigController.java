@@ -108,14 +108,14 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.[0].enabled").value(MARKET_1_ENABLED))
                 .andExpect(jsonPath("$.data.[0].baseCurrency").value(MARKET_1_BASE_CURRENCY))
                 .andExpect(jsonPath("$.data.[0].counterCurrency").value(MARKET_1_COUNTER_CURRENCY))
-                .andExpect(jsonPath("$.data.[0].tradingStrategyId").value(MARKET_1_STRATEGY_ID))
+                .andExpect(jsonPath("$.data.[0].strategyId").value(MARKET_1_STRATEGY_ID))
 
                 .andExpect(jsonPath("$.data.[1].id").value(MARKET_2_ID))
                 .andExpect(jsonPath("$.data.[1].name").value(MARKET_2_NAME))
                 .andExpect(jsonPath("$.data.[1].enabled").value(MARKET_2_ENABLED))
                 .andExpect(jsonPath("$.data.[1].baseCurrency").value(MARKET_2_BASE_CURRENCY))
                 .andExpect(jsonPath("$.data.[1].counterCurrency").value(MARKET_2_COUNTER_CURRENCY))
-                .andExpect(jsonPath("$.data.[1].tradingStrategyId").value(MARKET_2_STRATEGY_ID));
+                .andExpect(jsonPath("$.data.[1].strategyId").value(MARKET_2_STRATEGY_ID));
 
         verify(marketConfigService, times(1)).getAllMarketConfig(BOT_ID);
     }
@@ -165,7 +165,7 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.enabled").value(MARKET_1_ENABLED))
                 .andExpect(jsonPath("$.data.baseCurrency").value(MARKET_1_BASE_CURRENCY))
                 .andExpect(jsonPath("$.data.counterCurrency").value(MARKET_1_COUNTER_CURRENCY))
-                .andExpect(jsonPath("$.data.tradingStrategyId").value(MARKET_1_STRATEGY_ID));
+                .andExpect(jsonPath("$.data.strategyId").value(MARKET_1_STRATEGY_ID));
 
         verify(marketConfigService, times(1)).getMarketConfig(BOT_ID, MARKET_1_ID);
     }
@@ -216,7 +216,7 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.enabled").value(MARKET_1_ENABLED))
                 .andExpect(jsonPath("$.data.baseCurrency").value(MARKET_1_BASE_CURRENCY))
                 .andExpect(jsonPath("$.data.counterCurrency").value(MARKET_1_COUNTER_CURRENCY))
-                .andExpect(jsonPath("$.data.tradingStrategyId").value(MARKET_1_STRATEGY_ID));
+                .andExpect(jsonPath("$.data.strategyId").value(MARKET_1_STRATEGY_ID));
 
         verify(marketConfigService, times(1)).updateMarketConfig(BOT_ID, marketConfig_1);
     }
@@ -338,7 +338,7 @@ public class TestMarketsConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.enabled").value(MARKET_2_ENABLED))
                 .andExpect(jsonPath("$.data.baseCurrency").value(MARKET_2_BASE_CURRENCY))
                 .andExpect(jsonPath("$.data.counterCurrency").value(MARKET_2_COUNTER_CURRENCY))
-                .andExpect(jsonPath("$.data.tradingStrategyId").value(MARKET_2_STRATEGY_ID));
+                .andExpect(jsonPath("$.data.strategyId").value(MARKET_2_STRATEGY_ID));
 
         verify(marketConfigService, times(1)).createMarketConfig(BOT_ID, createdConfig);
     }
