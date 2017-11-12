@@ -36,22 +36,22 @@ public class EngineConfig {
 
     private String id;
     private String botName;
+    private int tradeCycleInterval;
     private String emergencyStopCurrency;
     private BigDecimal emergencyStopBalance;
-    private int tradeCycleInterval;
 
     // required for jackson
     public EngineConfig() {
     }
 
-    public EngineConfig(String id, String botName, String emergencyStopCurrency, BigDecimal emergencyStopBalance,
-                        int tradeCycleInterval) {
+    public EngineConfig(String id, String botName, int tradeCycleInterval, String emergencyStopCurrency,
+                        BigDecimal emergencyStopBalance) {
 
         this.id = id;
         this.botName = botName;
+        this.tradeCycleInterval = tradeCycleInterval;
         this.emergencyStopCurrency = emergencyStopCurrency;
         this.emergencyStopBalance = emergencyStopBalance;
-        this.tradeCycleInterval = tradeCycleInterval;
     }
 
     public String getId() {
@@ -70,6 +70,14 @@ public class EngineConfig {
         this.botName = botName;
     }
 
+    public int getTradeCycleInterval() {
+        return tradeCycleInterval;
+    }
+
+    public void setTradeCycleInterval(int tradeCycleInterval) {
+        this.tradeCycleInterval = tradeCycleInterval;
+    }
+
     public String getEmergencyStopCurrency() {
         return emergencyStopCurrency;
     }
@@ -86,22 +94,14 @@ public class EngineConfig {
         this.emergencyStopBalance = emergencyStopBalance;
     }
 
-    public int getTradeCycleInterval() {
-        return tradeCycleInterval;
-    }
-
-    public void setTradeCycleInterval(int tradeCycleInterval) {
-        this.tradeCycleInterval = tradeCycleInterval;
-    }
-
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("botName", botName)
+                .add("tradeCycleInterval", tradeCycleInterval)
                 .add("emergencyStopCurrency", emergencyStopCurrency)
                 .add("emergencyStopBalance", emergencyStopBalance)
-                .add("tradeCycleInterval", tradeCycleInterval)
                 .toString();
     }
 }

@@ -65,9 +65,9 @@ public class TestEngineConfigRepository {
     private static final String BOT_USERNAME = "bxbot-ui-server-admin";
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
 
+    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
     private static final String ENGINE_EMERGENCY_STOP_CURRENCY = "BTC";
     private static final BigDecimal ENGINE_EMERGENCY_STOP_BALANCE = new BigDecimal("0.9232320");
-    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
 
     @Autowired
     private MockRestServiceServer mockServer;
@@ -160,9 +160,9 @@ public class TestEngineConfigRepository {
         final EngineConfig engineConfig = new EngineConfig();
         engineConfig.setId(BOT_ID);
         engineConfig.setBotName(BOT_ALIAS);
-        engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
-        engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);
         engineConfig.setTradeCycleInterval(ENGINE_TRADE_CYCLE_INTERVAL);
+        engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);
+        engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         return engineConfig;
     }
 }

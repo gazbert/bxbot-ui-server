@@ -57,9 +57,9 @@ public class TestEngineConfigService {
     private static final String BOT_USERNAME = "admin";
     private static final String BOT_PASSWORD = "password";
 
+    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
     private static final String ENGINE_EMERGENCY_STOP_CURRENCY = "BTC";
     private static final BigDecimal ENGINE_EMERGENCY_STOP_BALANCE = new BigDecimal("0.9232320");
-    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
 
     private BotConfig knownBotConfig;
     private EngineConfig engineConfig;

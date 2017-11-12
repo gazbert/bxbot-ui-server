@@ -61,9 +61,9 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
     private static final String BOT_ID = "bitstamp-bot-1";
     private static final String BOT_NAME = "Bitstamp Bot";
+    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
     private static final String ENGINE_EMERGENCY_STOP_CURRENCY = "BTC";
     private static final BigDecimal ENGINE_EMERGENCY_STOP_BALANCE = new BigDecimal("0.923232");
-    private static final int ENGINE_TRADE_CYCLE_INTERVAL = 60;
 
     @MockBean
     EngineConfigService engineConfigService;
@@ -191,9 +191,9 @@ public class TestEngineConfigController extends AbstractConfigControllerTest {
         final EngineConfig engineConfig = new EngineConfig();
         engineConfig.setId(BOT_ID);
         engineConfig.setBotName(BOT_NAME);
+        engineConfig.setTradeCycleInterval(ENGINE_TRADE_CYCLE_INTERVAL);
         engineConfig.setEmergencyStopCurrency(ENGINE_EMERGENCY_STOP_CURRENCY);
         engineConfig.setEmergencyStopBalance(ENGINE_EMERGENCY_STOP_BALANCE);
-        engineConfig.setTradeCycleInterval(ENGINE_TRADE_CYCLE_INTERVAL);
         return engineConfig;
     }
 }
