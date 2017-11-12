@@ -73,7 +73,8 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     private static final int HTTP_STATUS_502 = 502;
     private static final int HTTP_STATUS_503 = 503;
     private static final int HTTP_STATUS_504 = 504;
-    private static final List<Integer> NON_FATAL_ERROR_CODES = Arrays.asList(HTTP_STATUS_502, HTTP_STATUS_503, HTTP_STATUS_504);
+    private static final List<Integer> NON_FATAL_HTTP_STATUS_CODES =
+            Arrays.asList(HTTP_STATUS_502, HTTP_STATUS_503, HTTP_STATUS_504);
 
     private static final String ERROR_MESSAGE_REFUSED = "Connection refused";
     private static final String ERROR_MESSAGE_RESET = "Connection reset";
@@ -111,9 +112,9 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.authenticationConfig").doesNotExist())
 
                 .andExpect(jsonPath("$.data.networkConfig.connectionTimeout").value(CONNECTION_TIMEOUT))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[0]").value(HTTP_STATUS_502))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[1]").value(HTTP_STATUS_503))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[2]").value(HTTP_STATUS_504))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[0]").value(HTTP_STATUS_502))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[1]").value(HTTP_STATUS_503))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[2]").value(HTTP_STATUS_504))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[0]").value(ERROR_MESSAGE_REFUSED))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[1]").value(ERROR_MESSAGE_RESET))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[2]").value(ERROR_MESSAGE_CLOSED))
@@ -170,9 +171,9 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
                 .andExpect(jsonPath("$.data.authenticationConfig").doesNotExist())
 
                 .andExpect(jsonPath("$.data.networkConfig.connectionTimeout").value(CONNECTION_TIMEOUT))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[0]").value(HTTP_STATUS_502))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[1]").value(HTTP_STATUS_503))
-                .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorCodes[2]").value(HTTP_STATUS_504))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[0]").value(HTTP_STATUS_502))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[1]").value(HTTP_STATUS_503))
+                .andExpect(jsonPath("$.data.networkConfig.nonFatalHttpStatusCodes[2]").value(HTTP_STATUS_504))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[0]").value(ERROR_MESSAGE_REFUSED))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[1]").value(ERROR_MESSAGE_RESET))
                 .andExpect(jsonPath("$.data.networkConfig.nonFatalErrorMessages[2]").value(ERROR_MESSAGE_CLOSED))
@@ -235,7 +236,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(CONNECTION_TIMEOUT);
-        networkConfig.setNonFatalErrorCodes(NON_FATAL_ERROR_CODES);
+        networkConfig.setNonFatalHttpStatusCodes(NON_FATAL_HTTP_STATUS_CODES);
         networkConfig.setNonFatalErrorMessages(NON_FATAL_ERROR_MESSAGES);
 
         final OptionalConfig optionalConfig = new OptionalConfig();

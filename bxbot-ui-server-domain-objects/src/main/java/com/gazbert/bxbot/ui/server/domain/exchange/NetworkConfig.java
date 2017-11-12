@@ -36,11 +36,11 @@ import java.util.List;
 public class NetworkConfig {
 
     private Integer connectionTimeout;
-    private List<Integer> nonFatalErrorCodes;
+    private List<Integer> nonFatalHttpStatusCodes;
     private List<String> nonFatalErrorMessages;
 
     public NetworkConfig() {
-        nonFatalErrorCodes = new ArrayList<>();
+        nonFatalHttpStatusCodes = new ArrayList<>();
         nonFatalErrorMessages = new ArrayList<>();
     }
 
@@ -52,12 +52,12 @@ public class NetworkConfig {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public List<Integer> getNonFatalErrorCodes() {
-        return nonFatalErrorCodes;
+    public List<Integer> getNonFatalHttpStatusCodes() {
+        return nonFatalHttpStatusCodes;
     }
 
-    public void setNonFatalErrorCodes(List<Integer> nonFatalErrorCodes) {
-        this.nonFatalErrorCodes = nonFatalErrorCodes;
+    public void setNonFatalHttpStatusCodes(List<Integer> nonFatalHttpStatusCodes) {
+        this.nonFatalHttpStatusCodes = nonFatalHttpStatusCodes;
     }
 
     public List<String> getNonFatalErrorMessages() {
@@ -72,7 +72,7 @@ public class NetworkConfig {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("connectionTimeout", connectionTimeout)
-                .add("nonFatalErrorCodes", nonFatalErrorCodes)
+                .add("nonFatalHttpStatusCodes", nonFatalHttpStatusCodes)
                 .add("nonFatalErrorMessages", nonFatalErrorMessages)
                 .toString();
     }

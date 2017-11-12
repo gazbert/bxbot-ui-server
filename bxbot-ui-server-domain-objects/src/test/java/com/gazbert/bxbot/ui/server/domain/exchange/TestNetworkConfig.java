@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class TestNetworkConfig {
 
     private static final Integer CONNECTION_TIMEOUT = 30;
-    private static final List<Integer> NON_FATAL_ERROR_CODES = Arrays.asList(502, 503, 504);
+    private static final List<Integer> NON_FATAL_HTTP_STATUS_CODES = Arrays.asList(502, 503, 504);
     private static final List<String> NON_FATAL_ERROR_MESSAGES = Arrays.asList(
             "Connection refused", "Connection reset", "Remote host closed connection during handshake");
 
@@ -48,7 +48,7 @@ public class TestNetworkConfig {
 
         final NetworkConfig networkConfig = new NetworkConfig();
         assertEquals(null, networkConfig.getConnectionTimeout());
-        assertTrue(networkConfig.getNonFatalErrorCodes().isEmpty());
+        assertTrue(networkConfig.getNonFatalHttpStatusCodes().isEmpty());
         assertTrue(networkConfig.getNonFatalErrorMessages().isEmpty());
     }
 
@@ -60,8 +60,8 @@ public class TestNetworkConfig {
         networkConfig.setConnectionTimeout(CONNECTION_TIMEOUT);
         assertEquals(CONNECTION_TIMEOUT, networkConfig.getConnectionTimeout());
 
-        networkConfig.setNonFatalErrorCodes(NON_FATAL_ERROR_CODES);
-        assertEquals(NON_FATAL_ERROR_CODES, networkConfig.getNonFatalErrorCodes());
+        networkConfig.setNonFatalHttpStatusCodes(NON_FATAL_HTTP_STATUS_CODES);
+        assertEquals(NON_FATAL_HTTP_STATUS_CODES, networkConfig.getNonFatalHttpStatusCodes());
 
         networkConfig.setNonFatalErrorMessages(NON_FATAL_ERROR_MESSAGES);
         assertEquals(NON_FATAL_ERROR_MESSAGES, networkConfig.getNonFatalErrorMessages());

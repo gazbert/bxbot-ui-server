@@ -72,7 +72,7 @@ public class TestExchangeConfigRepository {
     private static final String EXCHANGE_ADAPTER = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
 
     private static final Integer CONNECTION_TIMEOUT = 30;
-    private static final List<Integer> NON_FATAL_ERROR_CODES = Arrays.asList(502, 503, 504);
+    private static final List<Integer> NON_FATAL_HTTP_STATUS_CODES = Arrays.asList(502, 503, 504);
     private static final List<String> NON_FATAL_ERROR_MESSAGES = Arrays.asList(
             "Connection refused", "Connection reset", "Remote host closed connection during handshake");
 
@@ -115,7 +115,7 @@ public class TestExchangeConfigRepository {
         assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
-        assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorCodes()).isEqualTo(NON_FATAL_ERROR_CODES);
+        assertThat(exchangeConfig.getNetworkConfig().getNonFatalHttpStatusCodes()).isEqualTo(NON_FATAL_HTTP_STATUS_CODES);
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorMessages()).isEqualTo(NON_FATAL_ERROR_MESSAGES);
         assertThat(exchangeConfig.getOptionalConfig().getItems().get(BUY_FEE_CONFIG_ITEM_KEY)).isEqualTo(BUY_FEE_CONFIG_ITEM_VALUE);
 
@@ -150,7 +150,7 @@ public class TestExchangeConfigRepository {
         assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
-        assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorCodes()).isEqualTo(NON_FATAL_ERROR_CODES);
+        assertThat(exchangeConfig.getNetworkConfig().getNonFatalHttpStatusCodes()).isEqualTo(NON_FATAL_HTTP_STATUS_CODES);
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalErrorMessages()).isEqualTo(NON_FATAL_ERROR_MESSAGES);
         assertThat(exchangeConfig.getOptionalConfig().getItems().get(BUY_FEE_CONFIG_ITEM_KEY)).isEqualTo(BUY_FEE_CONFIG_ITEM_VALUE);
 
@@ -178,7 +178,7 @@ public class TestExchangeConfigRepository {
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(CONNECTION_TIMEOUT);
-        networkConfig.setNonFatalErrorCodes(NON_FATAL_ERROR_CODES);
+        networkConfig.setNonFatalHttpStatusCodes(NON_FATAL_HTTP_STATUS_CODES);
         networkConfig.setNonFatalErrorMessages(NON_FATAL_ERROR_MESSAGES);
 
         final OptionalConfig optionalConfig = new OptionalConfig();

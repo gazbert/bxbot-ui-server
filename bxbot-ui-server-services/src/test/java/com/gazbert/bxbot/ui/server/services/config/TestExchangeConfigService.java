@@ -29,7 +29,6 @@ import com.gazbert.bxbot.ui.server.domain.exchange.NetworkConfig;
 import com.gazbert.bxbot.ui.server.domain.exchange.OptionalConfig;
 import com.gazbert.bxbot.ui.server.repository.local.BotConfigRepository;
 import com.gazbert.bxbot.ui.server.repository.remote.config.ExchangeConfigRepository;
-import com.gazbert.bxbot.ui.server.services.config.ExchangeConfigService;
 import com.gazbert.bxbot.ui.server.services.config.impl.ExchangeConfigServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +41,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -71,7 +68,8 @@ public class TestExchangeConfigService {
     private static final int HTTP_STATUS_502 = 502;
     private static final int HTTP_STATUS_503 = 503;
     private static final int HTTP_STATUS_504 = 504;
-    private static final List<Integer> NON_FATAL_ERROR_CODES = Arrays.asList(HTTP_STATUS_502, HTTP_STATUS_503, HTTP_STATUS_504);
+    private static final List<Integer> NON_FATAL_HTTP_STATUS_CODES =
+            Arrays.asList(HTTP_STATUS_502, HTTP_STATUS_503, HTTP_STATUS_504);
 
     private static final String ERROR_MESSAGE_REFUSED = "Connection refused";
     private static final String ERROR_MESSAGE_RESET = "Connection reset";
@@ -168,7 +166,7 @@ public class TestExchangeConfigService {
 
         final NetworkConfig networkConfig = new NetworkConfig();
         networkConfig.setConnectionTimeout(CONNECTION_TIMEOUT);
-        networkConfig.setNonFatalErrorCodes(NON_FATAL_ERROR_CODES);
+        networkConfig.setNonFatalHttpStatusCodes(NON_FATAL_HTTP_STATUS_CODES);
         networkConfig.setNonFatalErrorMessages(NON_FATAL_ERROR_MESSAGES);
 
         final OptionalConfig optionalConfig = new OptionalConfig();
