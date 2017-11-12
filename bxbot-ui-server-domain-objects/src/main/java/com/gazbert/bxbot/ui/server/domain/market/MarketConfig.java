@@ -35,9 +35,9 @@ public class MarketConfig {
 
     private String id;
     private String name;
+    private boolean enabled;
     private String baseCurrency;
     private String counterCurrency;
-    private boolean enabled;
     private String tradingStrategyId; // TODO might change this to ref to StrategyConfig ...
 
 
@@ -48,18 +48,19 @@ public class MarketConfig {
     public MarketConfig(MarketConfig other) {
         this.id = other.id;
         this.name = other.name;
+        this.enabled = other.enabled;
         this.baseCurrency = other.baseCurrency;
         this.counterCurrency = other.counterCurrency;
-        this.enabled = other.enabled;
         this.tradingStrategyId = other.tradingStrategyId;
     }
 
-    public MarketConfig(String id, String name, String baseCurrency, String counterCurrency, boolean enabled, String tradingStrategyId) {
+    public MarketConfig(String id, String name,  boolean enabled, String baseCurrency, String counterCurrency,
+                        String tradingStrategyId) {
         this.id = id;
         this.name = name;
+        this.enabled = enabled;
         this.baseCurrency = baseCurrency;
         this.counterCurrency = counterCurrency;
-        this.enabled = enabled;
         this.tradingStrategyId = tradingStrategyId;
     }
 
@@ -79,6 +80,14 @@ public class MarketConfig {
         this.name = name;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String getBaseCurrency() {
         return baseCurrency;
     }
@@ -93,14 +102,6 @@ public class MarketConfig {
 
     public void setCounterCurrency(String counterCurrency) {
         this.counterCurrency = counterCurrency;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public String getTradingStrategyId() {
@@ -129,9 +130,9 @@ public class MarketConfig {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                .add("enabled", enabled)
                 .add("baseCurrency", baseCurrency)
                 .add("counterCurrency", counterCurrency)
-                .add("enabled", enabled)
                 .add("tradingStrategyId", tradingStrategyId)
                 .toString();
     }

@@ -36,21 +36,21 @@ public class TestMarketConfig {
 
     private static final String ID = "gemini_usd/btc";
     private static final String NAME = "BTC/USD";
+    private static final boolean IS_ENABLED = true;
     private static final String BASE_CURRENCY = "BTC";
     private static final String COUNTER_CURRENCY = "USD";
-    private static final boolean IS_ENABLED = true;
     private static final String TRADING_STRATEGY = "macd_trend_follower";
 
 
     @Test
     public void testInitialisationWorksAsExpected() {
 
-        final MarketConfig marketConfig = new MarketConfig(ID, NAME, BASE_CURRENCY, COUNTER_CURRENCY, IS_ENABLED, TRADING_STRATEGY);
+        final MarketConfig marketConfig = new MarketConfig(ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, TRADING_STRATEGY);
         assertEquals(NAME, marketConfig.getName());
         assertEquals(ID, marketConfig.getId());
+        assertEquals(IS_ENABLED, marketConfig.isEnabled());
         assertEquals(BASE_CURRENCY, marketConfig.getBaseCurrency());
         assertEquals(COUNTER_CURRENCY, marketConfig.getCounterCurrency());
-        assertEquals(IS_ENABLED, marketConfig.isEnabled());
         assertEquals(TRADING_STRATEGY, marketConfig.getTradingStrategyId());
     }
 
@@ -60,9 +60,9 @@ public class TestMarketConfig {
         final MarketConfig marketConfig = new MarketConfig();
         assertEquals(null, marketConfig.getId());
         assertEquals(null, marketConfig.getName());
+        assertEquals(false, marketConfig.isEnabled());
         assertEquals(null, marketConfig.getBaseCurrency());
         assertEquals(null, marketConfig.getCounterCurrency());
-        assertEquals(false, marketConfig.isEnabled());
         assertEquals(null, marketConfig.getTradingStrategyId());
 
         marketConfig.setId(ID);
@@ -71,14 +71,14 @@ public class TestMarketConfig {
         marketConfig.setName(NAME);
         assertEquals(NAME, marketConfig.getName());
 
+        marketConfig.setEnabled(IS_ENABLED);
+        assertEquals(IS_ENABLED, marketConfig.isEnabled());
+
         marketConfig.setBaseCurrency(BASE_CURRENCY);
         assertEquals(BASE_CURRENCY, marketConfig.getBaseCurrency());
 
         marketConfig.setCounterCurrency(COUNTER_CURRENCY);
         assertEquals(COUNTER_CURRENCY, marketConfig.getCounterCurrency());
-
-        marketConfig.setEnabled(IS_ENABLED);
-        assertEquals(IS_ENABLED, marketConfig.isEnabled());
 
         marketConfig.setTradingStrategyId(TRADING_STRATEGY);
         assertEquals(TRADING_STRATEGY, marketConfig.getTradingStrategyId());
@@ -87,7 +87,7 @@ public class TestMarketConfig {
     @Test
     public void testCloningWorksAsExpected() {
         final MarketConfig marketConfig = new MarketConfig(
-                ID, NAME, BASE_CURRENCY, COUNTER_CURRENCY, IS_ENABLED, TRADING_STRATEGY);
+                ID, NAME, IS_ENABLED, BASE_CURRENCY, COUNTER_CURRENCY, TRADING_STRATEGY);
         final MarketConfig clonedMarketConfig = new MarketConfig(marketConfig);
         assertEquals(clonedMarketConfig, marketConfig);
     }

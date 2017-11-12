@@ -70,16 +70,16 @@ public class TestMarketConfigRepository {
 
     private static final String MARKET_1_ID = "btc_usd";
     private static final String MARKET_1_NAME = "BTC/USD";
+    private static final boolean MARKET_1_ENABLED = true;
     private static final String MARKET_1_BASE_CURRENCY = "BTC";
     private static final String MARKET_1_COUNTER_CURRENCY = "USD";
-    private static final boolean MARKET_1_ENABLED = true;
     private static final String MARKET_1_STRATEGY_ID = "scalper-strategy";
 
     private static final String MARKET_2_ID = "btc_gbp";
     private static final String MARKET_2_NAME = "BTC/GBP";
+    private static final boolean MARKET_2_ENABLED = false;
     private static final String MARKET_2_BASE_CURRENCY = "BTC";
     private static final String MARKET_2_COUNTER_CURRENCY = "GBP";
-    private static final boolean MARKET_2_ENABLED = false;
     private static final String MARKET_2_STRATEGY_ID = "macd-strategy";
 
     @Autowired
@@ -101,11 +101,11 @@ public class TestMarketConfigRepository {
 
         botConfig = new BotConfig(BOT_ID, BOT_ALIAS, BOT_BASE_URL, BOT_USERNAME, BOT_PASSWORD);
 
-        marketConfig_1 = new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
-                MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);
+        marketConfig_1 = new MarketConfig(MARKET_1_ID, MARKET_1_NAME, MARKET_1_ENABLED, MARKET_1_BASE_CURRENCY,
+                MARKET_1_COUNTER_CURRENCY, MARKET_1_STRATEGY_ID);
 
-        marketConfig_2 = new MarketConfig(MARKET_2_ID, MARKET_2_NAME, MARKET_2_BASE_CURRENCY,
-                MARKET_2_COUNTER_CURRENCY, MARKET_2_ENABLED, MARKET_2_STRATEGY_ID);
+        marketConfig_2 = new MarketConfig(MARKET_2_ID, MARKET_2_NAME, MARKET_2_ENABLED, MARKET_2_BASE_CURRENCY,
+                MARKET_2_COUNTER_CURRENCY, MARKET_2_STRATEGY_ID);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class TestMarketConfigRepository {
     }
 
     private static MarketConfig unrecognizedMarketConfig() {
-        return new MarketConfig(UNKNOWN_MARKET_ID, MARKET_1_NAME, MARKET_1_BASE_CURRENCY,
-                MARKET_1_COUNTER_CURRENCY, MARKET_1_ENABLED, MARKET_1_STRATEGY_ID);
+        return new MarketConfig(UNKNOWN_MARKET_ID, MARKET_1_NAME, MARKET_1_ENABLED, MARKET_1_BASE_CURRENCY,
+                MARKET_1_COUNTER_CURRENCY, MARKET_1_STRATEGY_ID);
     }
 }
