@@ -69,7 +69,7 @@ public class TestExchangeConfigRepository {
     private static final String BOT_PASSWORD = "aintGonnaTellYa!";
 
     private static final String EXCHANGE_NAME = "Bitstamp";
-    private static final String EXCHANGE_ADAPTER = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
+    private static final String ADAPTER_CLASS = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
 
     private static final Integer CONNECTION_TIMEOUT = 30;
     private static final List<Integer> NON_FATAL_HTTP_STATUS_CODES = Arrays.asList(502, 503, 504);
@@ -112,7 +112,7 @@ public class TestExchangeConfigRepository {
         final ExchangeConfig exchangeConfig = restClient.get(botConfig);
 
         assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
-        assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);
+        assertThat(exchangeConfig.getAdapterClass()).isEqualTo(ADAPTER_CLASS);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalHttpStatusCodes()).isEqualTo(NON_FATAL_HTTP_STATUS_CODES);
@@ -147,7 +147,7 @@ public class TestExchangeConfigRepository {
         final ExchangeConfig exchangeConfig = restClient.save(botConfig, someExchangeConfig);
 
         assertThat(exchangeConfig.getExchangeName()).isEqualTo(EXCHANGE_NAME);
-        assertThat(exchangeConfig.getExchangeAdapter()).isEqualTo(EXCHANGE_ADAPTER);
+        assertThat(exchangeConfig.getAdapterClass()).isEqualTo(ADAPTER_CLASS);
 
         assertThat(exchangeConfig.getNetworkConfig().getConnectionTimeout()).isEqualTo(CONNECTION_TIMEOUT);
         assertThat(exchangeConfig.getNetworkConfig().getNonFatalHttpStatusCodes()).isEqualTo(NON_FATAL_HTTP_STATUS_CODES);
@@ -187,7 +187,7 @@ public class TestExchangeConfigRepository {
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
         exchangeConfig.setExchangeName(EXCHANGE_NAME);
-        exchangeConfig.setExchangeAdapter(EXCHANGE_ADAPTER);
+        exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         exchangeConfig.setNetworkConfig(networkConfig);
         exchangeConfig.setOptionalConfig(optionalConfig);
 

@@ -34,7 +34,7 @@ public class ExchangeConfig {
 
     private String id;
     private String exchangeName;
-    private String exchangeAdapter;
+    private String adapterClass;
     private NetworkConfig networkConfig;
     private OptionalConfig optionalConfig;
 
@@ -54,12 +54,12 @@ public class ExchangeConfig {
         this.exchangeName = exchangeName;
     }
 
-    public String getExchangeAdapter() {
-        return exchangeAdapter;
+    public String getAdapterClass() {
+        return adapterClass;
     }
 
-    public void setExchangeAdapter(String exchangeAdapter) {
-        this.exchangeAdapter = exchangeAdapter;
+    public void setAdapterClass(String adapterClass) {
+        this.adapterClass = adapterClass;
     }
 
     public void setNetworkConfig(NetworkConfig networkConfig) {
@@ -83,7 +83,7 @@ public class ExchangeConfig {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("name", exchangeName)
-                .add("exchangeAdapter", exchangeAdapter)
+                .add("adapterClass", adapterClass)
                 .add("networkConfig", networkConfig)
                 .add("optionalConfig", optionalConfig)
                 .toString();

@@ -36,7 +36,7 @@ public class TestExchangeConfig {
 
     private static final String EXCHANGE_ID = "bitstamp-1";
     private static final String EXCHANGE_NAME = "Bitstamp";
-    private static final String EXCHANGE_ADAPTER = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
+    private static final String ADAPTER_CLASS = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
     private static final NetworkConfig NETWORK_CONFIG = new NetworkConfig();
     private static final OptionalConfig OTHER_CONFIG = new OptionalConfig();
 
@@ -47,7 +47,7 @@ public class TestExchangeConfig {
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
         assertEquals(null, exchangeConfig.getId());
         assertEquals(null, exchangeConfig.getExchangeName());
-        assertEquals(null, exchangeConfig.getExchangeAdapter());
+        assertEquals(null, exchangeConfig.getAdapterClass());
         assertEquals(null, exchangeConfig.getNetworkConfig());
         assertEquals(null, exchangeConfig.getOptionalConfig());
     }
@@ -63,8 +63,8 @@ public class TestExchangeConfig {
         exchangeConfig.setExchangeName(EXCHANGE_NAME);
         assertEquals(EXCHANGE_NAME, exchangeConfig.getExchangeName());
 
-        exchangeConfig.setExchangeAdapter(EXCHANGE_ADAPTER);
-        assertEquals(EXCHANGE_ADAPTER, exchangeConfig.getExchangeAdapter());
+        exchangeConfig.setAdapterClass(ADAPTER_CLASS);
+        assertEquals(ADAPTER_CLASS, exchangeConfig.getAdapterClass());
 
         exchangeConfig.setNetworkConfig(NETWORK_CONFIG);
         assertEquals(NETWORK_CONFIG, exchangeConfig.getNetworkConfig());

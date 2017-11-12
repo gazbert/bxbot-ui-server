@@ -66,7 +66,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
     private static final String UNKNOWN_BOT_ID = "unknown-bot-id";
 
     private static final String EXCHANGE_NAME = "Bitstamp";
-    private static final String EXCHANGE_ADAPTER = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
+    private static final String ADAPTER_CLASS = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
 
     private static final Integer CONNECTION_TIMEOUT = 30;
 
@@ -106,7 +106,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.exchangeName").value(EXCHANGE_NAME))
-                .andExpect(jsonPath("$.data.exchangeAdapter").value(EXCHANGE_ADAPTER))
+                .andExpect(jsonPath("$.data.adapterClass").value(ADAPTER_CLASS))
 
                 // REST API does not expose AuthenticationConfig - potential security risk.
                 .andExpect(jsonPath("$.data.authenticationConfig").doesNotExist())
@@ -165,7 +165,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("$.data.exchangeName").value(EXCHANGE_NAME))
-                .andExpect(jsonPath("$.data.exchangeAdapter").value(EXCHANGE_ADAPTER))
+                .andExpect(jsonPath("$.data.adapterClass").value(ADAPTER_CLASS))
 
                 // REST API does not expose AuthenticationConfig - potential security risk.
                 .andExpect(jsonPath("$.data.authenticationConfig").doesNotExist())
@@ -245,7 +245,7 @@ public class TestExchangeConfigController extends AbstractConfigControllerTest {
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
         exchangeConfig.setExchangeName(EXCHANGE_NAME);
-        exchangeConfig.setExchangeAdapter(EXCHANGE_ADAPTER);
+        exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         exchangeConfig.setNetworkConfig(networkConfig);
         exchangeConfig.setOptionalConfig(optionalConfig);
 

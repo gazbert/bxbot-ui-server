@@ -61,7 +61,7 @@ public class TestExchangeConfigService {
     private static final String BOT_1_PASSWORD = "password";
 
     private static final String EXCHANGE_NAME = "Bitstamp";
-    private static final String EXCHANGE_ADAPTER = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
+    private static final String ADAPTER_CLASS = "com.gazbert.bxbot.exchanges.TestExchangeAdapter";
 
     private static final Integer CONNECTION_TIMEOUT = 30;
 
@@ -175,7 +175,7 @@ public class TestExchangeConfigService {
 
         final ExchangeConfig exchangeConfig = new ExchangeConfig();
         exchangeConfig.setExchangeName(EXCHANGE_NAME);
-        exchangeConfig.setExchangeAdapter(EXCHANGE_ADAPTER);
+        exchangeConfig.setAdapterClass(ADAPTER_CLASS);
         exchangeConfig.setNetworkConfig(networkConfig);
         exchangeConfig.setOptionalConfig(optionalConfig);
 
